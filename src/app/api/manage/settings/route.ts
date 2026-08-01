@@ -48,6 +48,7 @@ export async function PUT(request: Request) {
       legalPages,
       trustTitle,
       trustSubtext,
+      packagesPerPage,
     } = body;
 
     const updated = await prisma.siteSettings.upsert({
@@ -63,6 +64,7 @@ export async function PUT(request: Request) {
         legalPagesJson: typeof legalPages === 'string' ? legalPages : JSON.stringify(legalPages || {}),
         trustTitle: trustTitle || 'Why Travel & Hault?',
         trustSubtext: trustSubtext || '',
+        packagesPerPage: packagesPerPage || 9,
       },
       update: {
         phoneNumbersJson: JSON.stringify(phoneNumbers || []),
@@ -74,6 +76,7 @@ export async function PUT(request: Request) {
         legalPagesJson: typeof legalPages === 'string' ? legalPages : JSON.stringify(legalPages || {}),
         trustTitle: trustTitle || 'Why Travel & Hault?',
         trustSubtext: trustSubtext || '',
+        packagesPerPage: packagesPerPage || 9,
       },
     });
 

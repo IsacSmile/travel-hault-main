@@ -19,6 +19,7 @@ import {
   ChevronDown,
   Eye,
   EyeOff,
+  LayoutGrid,
 } from 'lucide-react';
 
 interface SocialLinkItem {
@@ -61,6 +62,7 @@ export default function SiteSettingsPage() {
 
   const [trustTitle, setTrustTitle] = useState('');
   const [trustSubtext, setTrustSubtext] = useState('');
+  const [packagesPerPage, setPackagesPerPage] = useState(9);
 
   const [activeLegalTab, setActiveLegalTab] = useState<'privacy' | 'terms' | 'cancellation' | 'cookie'>('privacy');
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -106,6 +108,7 @@ export default function SiteSettingsPage() {
           setLegalPages(JSON.parse(data.legalPagesJson || '{}'));
           setTrustTitle(data.trustTitle || 'Why Travel & Hault?');
           setTrustSubtext(data.trustSubtext || '');
+          setPackagesPerPage(data.packagesPerPage || 9);
         }
       } catch (e) {
         console.error(e);
@@ -134,6 +137,7 @@ export default function SiteSettingsPage() {
           legalPages,
           trustTitle,
           trustSubtext,
+          packagesPerPage,
         }),
       });
 
@@ -461,6 +465,31 @@ export default function SiteSettingsPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+
+        {/* 4. DISPLAY SETTINGS */}
+        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-6">
+          <h2 className="text-base font-bold text-gray-900 border-b pb-3 flex items-center gap-2">
+            <LayoutGrid className="w-5 h-5 text-[#c9a15a]" /> Display Settings
+          </h2>
+
+          <div className="max-w-xs space-y-2">
+            <label className="block text-xs font-semibold uppercase text-gray-600">
+              Packages Per Page
+            </label>
+            <input
+              type="number"
+              min={3}
+              max={30}
+              step={3}
+              value={packagesPerPage}
+              onChange={(e) => setPackagesPerPage(Math.max(3, Math.min(30, parseInt(e.target.value) || 9)))}
+              className="w-full px-4 py-2.5 bg-gray-50 border rounded-xl text-sm font-mono focus:outline-none focus:border-[#c9a15a]"
+            />
+            <p className="text-xs text-gray-500 leading-relaxed">
+              Number of package cards to display per page on the public Packages listing. Recommended: 9 or 12 (multiples of 3 for grid alignment).
+            </p>
           </div>
         </div>
 

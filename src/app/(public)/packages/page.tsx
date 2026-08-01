@@ -1,6 +1,6 @@
 import React from 'react';
 import { prisma } from '@/lib/prisma';
-import PackageCard from '@/components/public/PackageCard';
+import PackagesListingClient from '@/components/public/PackagesListingClient';
 import { Compass } from 'lucide-react';
 
 export const metadata = {
@@ -11,13 +11,21 @@ export const metadata = {
 export const revalidate = 60;
 
 export default async function PackagesPage() {
-  const packages = await prisma.package.findMany({
-    orderBy: { createdAt: 'desc' },
-    include: {
-      variants: { include: { itineraryDays: true } },
-      destinations: { include: { destination: true } },
-    },
-  });
+  const [packages, themes, destinations, settings] = await Promise.all([
+    prisma.package.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: {
+        variants: { include: { itineraryDays: true } },
+        themes: { include: { theme: true } },
+        destinations: { include: { destination: true } },
+      },
+    }),
+    prisma.theme.findMany({ orderBy: { name: 'asc' } }),
+    prisma.destination.findMany({ orderBy: { name: 'asc' } }),
+    prisma.siteSettings.findUnique({ where: { id: 'singleton' } }),
+  ]);
+
+  const perPage = settings?.packagesPerPage || 9;
 
   return (
     <div className="pt-24 pb-0 space-y-0">
@@ -36,14 +44,15 @@ export default async function PackagesPage() {
         </div>
       </section>
 
-      {/* Package Grid (WHITE background) */}
+      {/* Package Grid with Filters & Pagination (WHITE background) */}
       <section className="bg-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {packages.map((pkg) => (
-              <PackageCard key={pkg.id} pkg={pkg} />
-            ))}
-          </div>
+          <PackagesListingClient
+            initialPackages={packages}
+            themes={themes}
+            destinations={destinations}
+            perPage={perPage}
+          />
         </div>
       </section>
     </div>
