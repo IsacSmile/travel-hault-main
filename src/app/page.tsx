@@ -13,7 +13,7 @@ import { ArrowRight, Camera } from 'lucide-react';
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const [slides, packages, destinations, trustBadges, testimonials, faqs, gallery] =
+  const [slides, packages, destinations, trustBadges, testimonials, faqs, gallery, regions] =
     await Promise.all([
       prisma.heroSlide.findMany({ orderBy: { order: 'asc' } }),
       prisma.package.findMany({
@@ -32,6 +32,7 @@ export default async function HomePage() {
       prisma.testimonial.findMany({ orderBy: { createdAt: 'desc' } }),
       prisma.fAQItem.findMany({ orderBy: { order: 'asc' } }),
       prisma.galleryImage.findMany({ take: 6, orderBy: { createdAt: 'desc' } }),
+      prisma.region.findMany({ orderBy: { order: 'asc' } }),
     ]);
 
   return (
@@ -128,10 +129,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Section 5: Destination By Region (WHITE background — directly below What Our Customers Say) */}
+      {/* Section 5: Destination By Region (WHITE background — fetched from backend database) */}
       <section className="bg-white py-12 sm:py-16 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <DestinationByRegionSection />
+          <DestinationByRegionSection initialRegions={regions} />
         </div>
       </section>
 

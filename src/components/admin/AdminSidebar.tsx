@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Package,
   MapPin,
+  Globe,
   Tag,
   Home,
   Image as ImageIcon,
@@ -22,6 +23,7 @@ const navigation = [
   { name: 'Overview', href: '/manage', icon: LayoutDashboard },
   { name: 'Packages & Variants', href: '/manage/packages', icon: Package },
   { name: 'Destinations', href: '/manage/destinations', icon: MapPin },
+  { name: 'Regions Manager', href: '/manage/regions', icon: Globe },
   { name: 'Trip Themes', href: '/manage/trip-themes', icon: Tag },
   { name: 'Homepage Content', href: '/manage/homepage', icon: Home },
   { name: 'Gallery Manager', href: '/manage/gallery', icon: ImageIcon },
@@ -73,7 +75,7 @@ export default function AdminSidebar() {
               className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition ${
                 isActive
                   ? 'bg-[#051b2e] text-[#c9a15a] shadow-md'
-                  : 'text-gray-700 hover:bg-[#F5F0E6] hover:text-[#051b2e]'
+                  : 'text-gray-700 hover:bg-gray-100 hover:text-[#051b2e]'
               }`}
             >
               <Icon className={`w-5 h-5 ${isActive ? 'text-[#c9a15a]' : 'text-gray-500'}`} />
@@ -89,7 +91,7 @@ export default function AdminSidebar() {
           href="/"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold text-gray-700 hover:bg-[#F5F0E6] transition"
+          className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold text-gray-700 hover:bg-gray-100 transition"
         >
           <ExternalLink className="w-4 h-4 text-[#b8934b]" />
           <span>View Public Site</span>

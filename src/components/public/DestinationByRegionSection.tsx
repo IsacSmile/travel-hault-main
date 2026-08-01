@@ -1,69 +1,74 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
 
-const regionsData = [
+interface DestinationByRegionSectionProps {
+  initialRegions?: any[];
+}
+
+const fallbackRegions = [
   {
     id: 'north-india',
     name: 'North India',
-    badges: ['ALL ADVENTURES', 'DEALS'],
+    badgesJson: JSON.stringify(['ALL ADVENTURES', 'DEALS']),
     states: 'Ladakh, Delhi, Uttar Pradesh, Uttarakhand, Himachal Pradesh, Punjab, Jammu & Kashmir',
-    count: '+ 20 destinations',
+    destinationCount: '+ 20 destinations',
     slug: 'north-india',
     image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 'south-india',
     name: 'South India',
-    badges: ['NATURE', 'WELLNESS'],
+    badgesJson: JSON.stringify(['NATURE', 'WELLNESS']),
     states: 'Kerala, Tamil Nadu, Karnataka',
-    count: '+ 10 destinations',
+    destinationCount: '+ 10 destinations',
     slug: 'south-india',
     image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 'west-india',
     name: 'West India',
-    badges: ['BEACHES', 'HERITAGE'],
+    badgesJson: JSON.stringify(['BEACHES', 'HERITAGE']),
     states: 'Rajasthan, Goa',
-    count: '+ 9 destinations',
+    destinationCount: '+ 9 destinations',
     slug: 'west-india',
     image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 'east-india',
     name: 'East India',
-    badges: ['HILLS', 'TEA GARDENS'],
+    badgesJson: JSON.stringify(['HILLS', 'TEA GARDENS']),
     states: 'West Bengal',
-    count: '+ 1 destinations',
+    destinationCount: '+ 1 destinations',
     slug: 'east-india',
     image: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 'central-india',
     name: 'Central India',
-    badges: ['CULTURE', 'HISTORY'],
+    badgesJson: JSON.stringify(['CULTURE', 'HISTORY']),
     states: 'Madhya Pradesh',
-    count: '+ 1 destinations',
+    destinationCount: '+ 1 destinations',
     slug: 'central-india',
     image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 'northeast-india',
     name: 'Northeast India',
-    badges: ['MONASTERIES', 'SCENIC'],
+    badgesJson: JSON.stringify(['MONASTERIES', 'SCENIC']),
     states: 'Sikkim',
-    count: '+ 2 destinations',
+    destinationCount: '+ 2 destinations',
     slug: 'northeast-india',
     image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
   },
 ];
 
-export default function DestinationByRegionSection() {
+export default function DestinationByRegionSection({ initialRegions }: DestinationByRegionSectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  const regionsData = initialRegions && initialRegions.length > 0 ? initialRegions : fallbackRegions;
 
   const handleMobileScroll = () => {
     const el = scrollRef.current;
@@ -75,7 +80,7 @@ export default function DestinationByRegionSection() {
 
   return (
     <div className="space-y-8 font-sans">
-      {/* Section Header (1:1 matching reference image) */}
+      {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div className="space-y-1.5 max-w-xl">
           <h2 className="text-3xl sm:text-5xl font-extrabold text-black tracking-tight font-sans">
@@ -140,9 +145,16 @@ export default function DestinationByRegionSection() {
 }
 
 /* ─────────────────────────────────────────────────
-   Region Card Item (1:1 matching reference image)
+   Region Card Item
    ───────────────────────────────────────────────── */
 function RegionCard({ region }: { region: any }) {
+  let badges: string[] = [];
+  try {
+    badges = typeof region.badgesJson === 'string' ? JSON.parse(region.badgesJson) : region.badges || [];
+  } catch {
+    badges = [];
+  }
+
   return (
     <Link
       href={`/destinations?region=${region.slug}`}
@@ -159,7 +171,7 @@ function RegionCard({ region }: { region: any }) {
 
         {/* Top-Left Tag Badges */}
         <div className="absolute top-4 left-4 z-10 flex items-center gap-2 flex-wrap">
-          {region.badges.map((badge: string, idx: number) => (
+          {badges.map((badge: string, idx: number) => (
             <span
               key={idx}
               className="bg-black/50 text-white backdrop-blur-md text-[10px] font-extrabold tracking-wider uppercase px-3 py-1.5 rounded-full border border-white/20 shadow-xs"
@@ -182,7 +194,7 @@ function RegionCard({ region }: { region: any }) {
 
         <div className="pt-1.5">
           <span className="inline-block bg-gray-100 text-gray-700 text-[11px] font-bold px-3.5 py-1.5 rounded-full border border-gray-200/70 shadow-xs">
-            {region.count}
+            {region.destinationCount}
           </span>
         </div>
       </div>

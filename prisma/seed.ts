@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   console.log('Cleaning up existing data...');
+  await prisma.region.deleteMany();
   await prisma.enquiry.deleteMany();
   await prisma.subscriber.deleteMany();
   await prisma.itineraryDay.deleteMany();
@@ -22,6 +23,66 @@ async function main() {
   await prisma.heroSlide.deleteMany();
   await prisma.adminUser.deleteMany();
   await prisma.siteSettings.deleteMany();
+
+  console.log('Seeding Regions...');
+  await prisma.region.createMany({
+    data: [
+      {
+        slug: 'north-india',
+        name: 'North India',
+        badgesJson: JSON.stringify(['ALL ADVENTURES', 'DEALS']),
+        states: 'Ladakh, Delhi, Uttar Pradesh, Uttarakhand, Himachal Pradesh, Punjab, Jammu & Kashmir',
+        destinationCount: '+ 20 destinations',
+        image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
+        order: 1,
+      },
+      {
+        slug: 'south-india',
+        name: 'South India',
+        badgesJson: JSON.stringify(['NATURE', 'WELLNESS']),
+        states: 'Kerala, Tamil Nadu, Karnataka',
+        destinationCount: '+ 10 destinations',
+        image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=800&q=80',
+        order: 2,
+      },
+      {
+        slug: 'west-india',
+        name: 'West India',
+        badgesJson: JSON.stringify(['BEACHES', 'HERITAGE']),
+        states: 'Rajasthan, Goa',
+        destinationCount: '+ 9 destinations',
+        image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80',
+        order: 3,
+      },
+      {
+        slug: 'east-india',
+        name: 'East India',
+        badgesJson: JSON.stringify(['HILLS', 'TEA GARDENS']),
+        states: 'West Bengal',
+        destinationCount: '+ 1 destinations',
+        image: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=800&q=80',
+        order: 4,
+      },
+      {
+        slug: 'central-india',
+        name: 'Central India',
+        badgesJson: JSON.stringify(['CULTURE', 'HISTORY']),
+        states: 'Madhya Pradesh',
+        destinationCount: '+ 1 destinations',
+        image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80',
+        order: 5,
+      },
+      {
+        slug: 'northeast-india',
+        name: 'Northeast India',
+        badgesJson: JSON.stringify(['MONASTERIES', 'SCENIC']),
+        states: 'Sikkim',
+        destinationCount: '+ 2 destinations',
+        image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+        order: 6,
+      },
+    ],
+  });
 
   console.log('Seeding Admin User...');
   const passwordHash = await bcrypt.hash('admin123', 10);
