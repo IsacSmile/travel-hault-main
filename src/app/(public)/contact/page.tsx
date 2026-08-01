@@ -1,5 +1,6 @@
 import React from 'react';
 import ContactForm from '@/components/public/ContactForm';
+import PageHeader from '@/components/public/PageHeader';
 import { Phone, Mail, MapPin, Clock, MessageSquare } from 'lucide-react';
 
 export const metadata = {
@@ -8,27 +9,21 @@ export const metadata = {
 };
 
 export default function ContactPage() {
-  return (
-    <div className="pt-24 pb-0 space-y-0">
-      {/* Top Banner (BEIGE background #F5F0E6) */}
-      <section className="bg-[#F5F0E6] text-[#051b2e] py-16 border-b border-gray-200/60">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
-          <span className="text-xs font-extrabold uppercase tracking-widest text-[#b8934b]">
-            Get In Touch
-          </span>
-          <h1 className="font-serif text-4xl sm:text-5xl font-bold tracking-tight">
-            Contact Travel & Hault
-          </h1>
-          <p className="text-sm text-gray-700 max-w-xl mx-auto">
-            Have questions about a package or need a custom trip designed? Our friendly travel specialists are standing by to help.
-          </p>
-        </div>
-      </section>
+  const breadcrumbs = [
+    { label: 'Home', href: '/' },
+    { label: 'Contact' },
+  ];
 
-      {/* Main Grid (WHITE background) */}
-      <section className="bg-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+  return (
+    <div className="pt-28 pb-20 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <PageHeader
+          breadcrumbs={breadcrumbs}
+          title="Get In Touch"
+          subtext="Have questions about a package or need a custom trip designed? Our friendly travel specialists are standing by to help."
+        />
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start mt-8">
             {/* Left Column: Contact Info Cards */}
             <div className="space-y-6">
               <div className="bg-[#F5F0E6] p-6 rounded-3xl border border-gray-200/80 shadow-sm space-y-4">
@@ -99,7 +94,6 @@ export default function ContactPage() {
             </div>
           </div>
         </div>
-      </section>
-    </div>
+      </div>
   );
 }

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PackageCard from '@/components/public/PackageCard';
 import { Search, Filter, Compass, X, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from 'lucide-react';
+import PageHeader from '@/components/public/PageHeader';
 
 interface PackagesListingClientProps {
   initialPackages: any[];
@@ -93,8 +94,27 @@ export default function PackagesListingClient({
   const isFirstPage = safeCurrentPage === 1;
   const isLastPage = safeCurrentPage === totalPages;
 
+  const breadcrumbs = [
+    { label: 'Home', href: '/' },
+    { label: 'Packages' },
+  ];
+
+  const showingCount = {
+    start: filtered.length === 0 ? 0 : startIdx + 1,
+    end: Math.min(startIdx + perPage, filtered.length),
+    total: filtered.length,
+    label: 'PACKAGES',
+  };
+
   return (
     <div className="space-y-8" ref={gridRef}>
+      <PageHeader
+        breadcrumbs={breadcrumbs}
+        title="All Tour Packages"
+        subtext="Embark on unforgettable journeys with our premium, custom-designed itineraries. Explore majestic sights across India and handpicked international destinations."
+        showingCount={showingCount}
+      />
+
       {/* Search & Filters Controls Bar */}
       <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm space-y-4">
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
