@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Compass, ChevronRight, CheckCircle2, Play, X } from 'lucide-react';
+import { Compass, ChevronRight, CheckCircle2, Play } from 'lucide-react';
 
 interface StatItem {
   number: string;
@@ -12,7 +12,6 @@ interface StatItem {
 export default function AboutPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [videoOpen, setVideoOpen] = useState(false);
 
   useEffect(() => {
     async function loadData() {
@@ -280,43 +279,22 @@ export default function AboutPage() {
           </p>
         </div>
 
-        {/* Video Thumbnail with Play Button */}
-        <div className="relative group aspect-[16/9] w-full rounded-3xl overflow-hidden shadow-2xl border border-gray-100 bg-gray-50 max-w-4xl mx-auto">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={doc.videoThumbnail} alt="Video Preview" className="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
-          <div className="absolute inset-0 bg-black/35 group-hover:bg-black/45 transition flex items-center justify-center">
-            <button
-              onClick={() => setVideoOpen(true)}
-              className="w-16 h-16 rounded-full bg-[#051b2e]/90 text-[#c9a15a] hover:bg-[#c9a15a] hover:text-[#051b2e] hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center shadow-2xl"
-              aria-label="Play Work Process Video"
-            >
-              <Play className="w-6 h-6 fill-current ml-1" />
-            </button>
-          </div>
-        </div>
-
-        {/* Video Lightbox Modal */}
-        {videoOpen && (
-          <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="relative w-full max-w-4xl aspect-[16/9] bg-black rounded-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-250">
-              <button
-                onClick={() => setVideoOpen(false)}
-                className="absolute top-4 right-4 z-10 p-2 bg-black/60 hover:bg-black/90 text-white rounded-full transition-colors"
-                aria-label="Close video player"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <iframe
-                src={getEmbedUrl(doc.videoUrl)}
-                title="Work Process Video"
-                className="w-full h-full border-0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+        {/* Video Embedded Inline */}
+        <div className="relative aspect-[16/9] w-full rounded-3xl overflow-hidden shadow-2xl border border-gray-100 bg-gray-50 max-w-4xl mx-auto">
+          {doc.videoUrl ? (
+            <iframe
+              src={getEmbedUrl(doc.videoUrl)}
+              title="Work Process Video"
+              className="w-full h-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
+              No video URL configured.
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </section>
     </div>
   );
