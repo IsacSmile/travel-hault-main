@@ -5,8 +5,18 @@ import Link from 'next/link';
 import { Heart, MapPin, ArrowRight } from 'lucide-react';
 import { useWishlist } from '@/context/WishlistContext';
 
+interface DestinationItem {
+  id: string;
+  name: string;
+  slug: string;
+  heroImage: string;
+  categoryBadge: string;
+  stateOrCountry: string;
+  aboutText: string;
+}
+
 interface DestinationCardProps {
-  dest: any;
+  dest: DestinationItem;
 }
 
 export default function DestinationCard({ dest }: DestinationCardProps) {

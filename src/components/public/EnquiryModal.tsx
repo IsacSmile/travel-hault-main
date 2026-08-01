@@ -6,7 +6,10 @@ import { X, Send, CheckCircle2, Compass, AlertCircle } from 'lucide-react';
 interface EnquiryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  packageItem?: any;
+  packageItem?: {
+    id?: string;
+    title: string;
+  } | null;
   defaultType?: string;
 }
 
@@ -56,7 +59,7 @@ export default function EnquiryModal({
       } else {
         setErrorMessage(data.error || 'Submission failed. Please check your fields and try again.');
       }
-    } catch (e: any) {
+    } catch (e) {
       console.error('Enquiry client submit error:', e);
       setErrorMessage('Network error occurred. Please try again.');
     } finally {

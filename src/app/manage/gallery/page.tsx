@@ -2,10 +2,18 @@
 
 import React, { useState, useEffect } from 'react';
 import ImageUploader from '@/components/admin/ImageUploader';
-import { Image as ImageIcon, Plus, Trash2, X } from 'lucide-react';
+import { Plus, Trash2, X } from 'lucide-react';
+
+interface GalleryItem {
+  id: string;
+  image: string;
+  locationTag?: string;
+  caption?: string;
+  category: string;
+}
 
 export default function GalleryManagerPage() {
-  const [items, setItems] = useState<any[]>([]);
+  const [items, setItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -16,7 +24,6 @@ export default function GalleryManagerPage() {
 
   const fetchItems = async () => {
     try {
-      setLoading(true);
       const res = await fetch('/api/manage/gallery');
       if (res.ok) setItems(await res.json());
     } catch (e) {
@@ -27,7 +34,23 @@ export default function GalleryManagerPage() {
   };
 
   useEffect(() => {
-    fetchItems();
+    let active = true;
+    const load = async () => {
+      try {
+        const res = await fetch('/api/manage/gallery');
+        if (res.ok && active) {
+          setItems(await res.json());
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      active = false;
+    };
   }, []);
 
   const handleSave = async (e: React.FormEvent) => {

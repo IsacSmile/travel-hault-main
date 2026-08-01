@@ -2,13 +2,21 @@
 
 import React, { useState, useEffect } from 'react';
 import ImageUploader from '@/components/admin/ImageUploader';
-import { Tag, Plus, Edit, Trash2, X, Check, Eye } from 'lucide-react';
+import { Plus, Edit, Trash2, X, Eye } from 'lucide-react';
 import Link from 'next/link';
 
+interface TripTheme {
+  id: string;
+  name: string;
+  slug: string;
+  bannerImage: string;
+  description: string;
+}
+
 export default function TripThemesManagerPage() {
-  const [themes, setThemes] = useState<any[]>([]);
+  const [themes, setThemes] = useState<TripTheme[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingTheme, setEditingTheme] = useState<any | null>(null);
+  const [editingTheme, setEditingTheme] = useState<Partial<TripTheme> | null>(null);
 
   // Form State
   const [name, setName] = useState('');
@@ -19,7 +27,6 @@ export default function TripThemesManagerPage() {
 
   const fetchThemes = async () => {
     try {
-      setLoading(true);
       const res = await fetch('/api/manage/trip-themes');
       if (res.ok) setThemes(await res.json());
     } catch (e) {
@@ -30,10 +37,26 @@ export default function TripThemesManagerPage() {
   };
 
   useEffect(() => {
-    fetchThemes();
+    let active = true;
+    const load = async () => {
+      try {
+        const res = await fetch('/api/manage/trip-themes');
+        if (res.ok && active) {
+          setThemes(await res.json());
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      active = false;
+    };
   }, []);
 
-  const openForm = (theme?: any) => {
+  const openForm = (theme?: TripTheme) => {
     if (theme) {
       setEditingTheme(theme);
       setName(theme.name);
@@ -83,8 +106,9 @@ export default function TripThemesManagerPage() {
 
       fetchThemes();
       setEditingTheme(null);
-    } catch (err: any) {
-      alert(err.message || 'Error saving theme');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error saving theme';
+      alert(message);
     } finally {
       setSaving(false);
     }

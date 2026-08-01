@@ -3,8 +3,16 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 
+interface Testimonial {
+  id: string;
+  name: string;
+  reviewText: string;
+  avatar?: string;
+  initial?: string;
+  color?: string;
+}
 interface TestimonialsSectionProps {
-  testimonials: any[];
+  testimonials: Testimonial[];
 }
 
 const avatarColors = [
@@ -179,7 +187,7 @@ export default function TestimonialsSection({ testimonials }: TestimonialsSectio
 /* ─────────────────────────────────────────────────
    Testimonial Card Component
    ───────────────────────────────────────────────── */
-function TestimonialCard({ item, colorIndex }: { item: any; colorIndex: number }) {
+function TestimonialCard({ item, colorIndex }: { item: Testimonial; colorIndex: number }) {
   const initial = item.initial || item.name.charAt(0).toUpperCase();
   const bgColor = item.color || avatarColors[colorIndex % avatarColors.length];
 

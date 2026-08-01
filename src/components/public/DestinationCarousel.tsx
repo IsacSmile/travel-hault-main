@@ -5,8 +5,18 @@ import Link from 'next/link';
 import { Heart, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useWishlist } from '@/context/WishlistContext';
 
+interface DestinationItem {
+  id: string;
+  name: string;
+  slug: string;
+  heroImage: string;
+  categoryBadge: string;
+  stateOrCountry: string;
+  aboutText: string;
+}
+
 interface DestinationCarouselProps {
-  destinations: any[];
+  destinations: DestinationItem[];
 }
 
 export default function DestinationCarousel({ destinations }: DestinationCarouselProps) {
@@ -103,7 +113,7 @@ export default function DestinationCarousel({ destinations }: DestinationCarouse
           className="flex gap-4 overflow-x-auto snap-x snap-mandatory px-4 -mx-4 pb-2"
           style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
         >
-          {destinations.map((dest, idx) => (
+          {destinations.map((dest) => (
             <div key={dest.id} className="shrink-0 snap-center w-[250px] space-y-2.5">
               <Link
                 href={`/destinations/${dest.slug}`}
@@ -186,7 +196,7 @@ function CoverflowCardItem({
   isActive,
   style,
 }: {
-  dest: any;
+  dest: DestinationItem;
   isActive: boolean;
   style: React.CSSProperties;
 }) {
@@ -205,7 +215,7 @@ function CoverflowCardItem({
       <Link
         href={`/destinations/${dest.slug}`}
         className="relative block w-full overflow-hidden rounded-[32px] shadow-xl hover:shadow-2xl transition-shadow duration-300 group bg-gray-100"
-        style={{ height: (style as any).height || 440 }}
+        style={{ height: style.height || 440 }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img

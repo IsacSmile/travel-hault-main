@@ -8,9 +8,6 @@ import {
   Globe,
   Shield,
   Phone,
-  Mail,
-  MapPin,
-  Clock,
   FileText,
   AlertCircle,
   Check,
@@ -91,8 +88,8 @@ export default function SiteSettingsPage() {
             if (Array.isArray(parsedSocial)) {
               setSocialLinks(parsedSocial);
             } else if (typeof parsedSocial === 'object' && parsedSocial !== null) {
-              const converted: SocialLinkItem[] = Object.entries(parsedSocial)
-                .filter(([_, val]) => typeof val === 'string' && val.trim() !== '')
+                const converted: SocialLinkItem[] = Object.entries(parsedSocial)
+                .filter(([, val]) => typeof val === 'string' && val.trim() !== '')
                 .map(([key, val], idx) => ({
                   id: String(idx + 1),
                   platform: key.charAt(0).toUpperCase() + key.slice(1),
@@ -101,7 +98,7 @@ export default function SiteSettingsPage() {
                 }));
               setSocialLinks(converted);
             }
-          } catch (e) {
+          } catch {
             setSocialLinks([]);
           }
 
@@ -143,8 +140,9 @@ export default function SiteSettingsPage() {
 
       if (!res.ok) throw new Error('Failed to save settings');
       alert('Site settings updated successfully!');
-    } catch (err: any) {
-      alert(err.message || 'Save error');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Save error';
+      alert(msg);
     } finally {
       setSaving(false);
     }

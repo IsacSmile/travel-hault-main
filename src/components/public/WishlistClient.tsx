@@ -8,9 +8,40 @@ import DestinationCard from '@/components/public/DestinationCard';
 import EnquiryModal from '@/components/public/EnquiryModal';
 import { Heart, Trash2, Send, ArrowRight, X } from 'lucide-react';
 
+interface PackageItem {
+  id: string;
+  title: string;
+  tripCode: string;
+  shortDescription: string;
+  type: string;
+  slug: string;
+  imagesJson: string;
+  featured?: boolean;
+  variants?: Array<{
+    label: string;
+    price: string;
+    priceUnit?: string;
+    originalPrice?: string;
+  }>;
+  price?: string;
+  priceUnit?: string;
+  originalPrice?: string;
+  destinationsCount?: number;
+}
+
+interface DestinationItem {
+  id: string;
+  name: string;
+  slug: string;
+  heroImage: string;
+  categoryBadge: string;
+  stateOrCountry: string;
+  aboutText: string;
+}
+
 interface WishlistClientProps {
-  allPackages: any[];
-  allDestinations: any[];
+  allPackages: PackageItem[];
+  allDestinations: DestinationItem[];
 }
 
 export default function WishlistClient({ allPackages, allDestinations }: WishlistClientProps) {

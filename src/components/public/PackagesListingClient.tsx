@@ -1,14 +1,64 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import PackageCard from '@/components/public/PackageCard';
-import { Search, Filter, Compass, X, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from 'lucide-react';
+import { Search, Compass, X, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from 'lucide-react';
 import PageHeader from '@/components/public/PageHeader';
 
+interface ThemeItem {
+  id: string;
+  slug: string;
+  name: string;
+}
+
+interface DestinationItem {
+  id: string;
+  slug: string;
+  name: string;
+  stateOrCountry: string;
+}
+
+interface PackageThemeRelation {
+  theme: {
+    slug: string;
+  };
+  themeId: string;
+}
+
+interface PackageDestinationRelation {
+  destination: {
+    slug: string;
+  };
+  destinationId: string;
+}
+
+interface PackageItem {
+  id: string;
+  title: string;
+  tripCode: string;
+  shortDescription: string;
+  type: string;
+  slug: string;
+  imagesJson: string;
+  featured?: boolean;
+  variants?: Array<{
+    label: string;
+    price: string;
+    priceUnit?: string;
+    originalPrice?: string;
+  }>;
+  price?: string;
+  priceUnit?: string;
+  originalPrice?: string;
+  destinationsCount?: number;
+  themes?: PackageThemeRelation[];
+  destinations?: PackageDestinationRelation[];
+}
+
 interface PackagesListingClientProps {
-  initialPackages: any[];
-  themes: any[];
-  destinations: any[];
+  initialPackages: PackageItem[];
+  themes: ThemeItem[];
+  destinations: DestinationItem[];
   perPage?: number;
 }
 
@@ -30,11 +80,13 @@ export default function PackagesListingClient({
     const matchesType = typeFilter === 'All' || pkg.type === typeFilter;
     const matchesTheme =
       selectedTheme === 'All' ||
-      pkg.themes?.some((t: any) => t.theme.slug === selectedTheme || t.themeId === selectedTheme);
+      pkg.themes?.some(
+        (t: PackageThemeRelation) => t.theme.slug === selectedTheme || t.themeId === selectedTheme
+      );
     const matchesDest =
       selectedDestination === 'All' ||
       pkg.destinations?.some(
-        (d: any) => d.destination.slug === selectedDestination || d.destinationId === selectedDestination
+        (d: PackageDestinationRelation) => d.destination.slug === selectedDestination || d.destinationId === selectedDestination
       );
 
     const q = searchTerm.toLowerCase();
@@ -53,10 +105,25 @@ export default function PackagesListingClient({
   const startIdx = (safeCurrentPage - 1) * perPage;
   const paginatedPackages = filtered.slice(startIdx, startIdx + perPage);
 
-  // Reset to page 1 when filters change
-  useEffect(() => {
+  const handleSearchChange = (val: string) => {
+    setSearchTerm(val);
     setCurrentPage(1);
-  }, [searchTerm, typeFilter, selectedTheme, selectedDestination]);
+  };
+
+  const handleTypeChange = (val: string) => {
+    setTypeFilter(val);
+    setCurrentPage(1);
+  };
+
+  const handleThemeChange = (val: string) => {
+    setSelectedTheme(val);
+    setCurrentPage(1);
+  };
+
+  const handleDestinationChange = (val: string) => {
+    setSelectedDestination(val);
+    setCurrentPage(1);
+  };
 
   const goToPage = (page: number) => {
     const target = Math.max(1, Math.min(page, totalPages));
@@ -124,7 +191,7 @@ export default function PackagesListingClient({
             <input
               type="text"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
               placeholder="Search packages by keyword, city..."
               className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#c9a15a]"
             />
@@ -135,7 +202,7 @@ export default function PackagesListingClient({
             {/* Type Filter */}
             <select
               value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
+              onChange={(e) => handleTypeChange(e.target.value)}
               className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-700 outline-none focus:border-[#c9a15a]"
             >
               <option value="All">All Types (Domestic &amp; Int&apos;l)</option>
@@ -146,7 +213,7 @@ export default function PackagesListingClient({
             {/* Theme Filter */}
             <select
               value={selectedTheme}
-              onChange={(e) => setSelectedTheme(e.target.value)}
+              onChange={(e) => handleThemeChange(e.target.value)}
               className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-700 outline-none focus:border-[#c9a15a]"
             >
               <option value="All">All Trip Themes</option>
@@ -160,7 +227,7 @@ export default function PackagesListingClient({
             {/* Destination Filter */}
             <select
               value={selectedDestination}
-              onChange={(e) => setSelectedDestination(e.target.value)}
+              onChange={(e) => handleDestinationChange(e.target.value)}
               className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-700 outline-none focus:border-[#c9a15a]"
             >
               <option value="All">All Destinations</option>

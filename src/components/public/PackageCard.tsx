@@ -2,11 +2,32 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Heart, MapPin, Clock, ArrowRight, Star } from 'lucide-react';
+import { Heart, Clock, ArrowRight, Star } from 'lucide-react';
 import { useWishlist } from '@/context/WishlistContext';
 
+interface PackageItem {
+  id: string;
+  title: string;
+  tripCode: string;
+  shortDescription: string;
+  type: string;
+  slug: string;
+  imagesJson: string;
+  featured?: boolean;
+  variants?: Array<{
+    label: string;
+    price: string;
+    priceUnit?: string;
+    originalPrice?: string;
+  }>;
+  price?: string;
+  priceUnit?: string;
+  originalPrice?: string;
+  destinationsCount?: number;
+}
+
 interface PackageCardProps {
-  pkg: any;
+  pkg: PackageItem;
 }
 
 export default function PackageCard({ pkg }: PackageCardProps) {
@@ -92,10 +113,10 @@ export default function PackageCard({ pkg }: PackageCardProps) {
           <div>
             {(() => {
               const variantPrices = (pkg.variants || [])
-                .map((v: any) => Number(v.price))
+                .map((v) => Number(v.price))
                 .filter((p: number) => p > 0);
               const minPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : Number(pkg.price || 0);
-              const minVariant = (pkg.variants || []).find((v: any) => Number(v.price) === minPrice);
+              const minVariant = (pkg.variants || []).find((v) => Number(v.price) === minPrice);
               const activeUnit = minVariant?.priceUnit || pkg.priceUnit || 'per person';
               const originalVal = minVariant?.originalPrice || pkg.originalPrice;
 

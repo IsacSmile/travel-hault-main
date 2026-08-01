@@ -4,8 +4,19 @@ import React, { useState, useEffect } from 'react';
 import ImageUploader from '@/components/admin/ImageUploader';
 import { MapPin, Plus, Edit2, Trash2, CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react';
 
+interface RegionItem {
+  id: string;
+  name: string;
+  slug: string;
+  badgesJson?: string;
+  states: string;
+  destinationCount: string;
+  image: string;
+  order: number;
+}
+
 export default function AdminRegionsPage() {
-  const [regions, setRegions] = useState<any[]>([]);
+  const [regions, setRegions] = useState<RegionItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Modal State
@@ -25,7 +36,6 @@ export default function AdminRegionsPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const fetchRegions = async () => {
-    setLoading(true);
     try {
       const res = await fetch('/api/manage/regions');
       const data = await res.json();
@@ -40,7 +50,24 @@ export default function AdminRegionsPage() {
   };
 
   useEffect(() => {
-    fetchRegions();
+    let active = true;
+    const load = async () => {
+      try {
+        const res = await fetch('/api/manage/regions');
+        const data = await res.json();
+        if (data.success && active) {
+          setRegions(data.data);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      active = false;
+    };
   }, []);
 
   const openAddModal = () => {
@@ -55,7 +82,7 @@ export default function AdminRegionsPage() {
     setIsModalOpen(true);
   };
 
-  const openEditModal = (region: any) => {
+  const openEditModal = (region: RegionItem) => {
     setEditingId(region.id);
     setName(region.name);
     setSlug(region.slug);
@@ -109,8 +136,9 @@ export default function AdminRegionsPage() {
       } else {
         setMessage({ type: 'error', text: data.error || 'Failed to save region' });
       }
-    } catch (e: any) {
-      setMessage({ type: 'error', text: e.message || 'Error occurred while saving' });
+    } catch (e) {
+      const errorMsg = e instanceof Error ? e.message : 'Error occurred while saving';
+      setMessage({ type: 'error', text: errorMsg });
     } finally {
       setSaving(false);
     }
@@ -130,8 +158,9 @@ export default function AdminRegionsPage() {
       } else {
         setMessage({ type: 'error', text: data.error || 'Failed to delete' });
       }
-    } catch (e: any) {
-      setMessage({ type: 'error', text: e.message || 'Error deleting region' });
+    } catch (e) {
+      const errorMsg = e instanceof Error ? e.message : 'Error deleting region';
+      setMessage({ type: 'error', text: errorMsg });
     }
   };
 

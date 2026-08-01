@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import ImageUploader from '@/components/admin/ImageUploader';
-import { Save, Info, Sparkles, Target, Eye, Shield, Play, Plus, Trash2, Upload, Video } from 'lucide-react';
+import { Save, Info, Sparkles, Target, Eye, Shield, Play, Video } from 'lucide-react';
 
 interface StatItem {
   number: string;
@@ -162,8 +162,9 @@ export default function AboutPageManager() {
 
       if (!res.ok) throw new Error('Failed to update About Page Customizations');
       alert('About Page settings updated successfully!');
-    } catch (err: any) {
-      alert(err.message || 'Error updating settings');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Error updating settings';
+      alert(msg);
     } finally {
       setSaving(false);
     }
@@ -242,7 +243,7 @@ export default function AboutPageManager() {
           <button
             key={sec.key}
             type="button"
-            onClick={() => setActiveSection(sec.key as any)}
+            onClick={() => setActiveSection(sec.key as 'hero' | 'stats' | 'mission' | 'vision' | 'strength' | 'video')}
             className={`pb-3 flex items-center gap-2 border-b-2 transition ${
               activeSection === sec.key ? 'border-[#c9a15a] text-[#051b2e]' : 'border-transparent hover:text-gray-900'
             }`}
@@ -588,7 +589,7 @@ export default function AboutPageManager() {
                             if (!res.ok) throw new Error('Upload failed');
                             const val = await res.json();
                             setVideoUrl(val.url);
-                          } catch (err) {
+                          } catch {
                             alert('Failed to upload video file.');
                           } finally {
                             setUploadingVideo(false);

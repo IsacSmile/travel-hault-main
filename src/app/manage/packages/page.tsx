@@ -4,29 +4,41 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Package, Plus, Search, Filter, Edit, Trash2, Star, Eye } from 'lucide-react';
 
+interface PackageItem {
+  id: string;
+  title: string;
+  tripCode: string;
+  type: string;
+  slug: string;
+  price?: string;
+  featured?: boolean;
+}
+
 export default function PackagesListPage() {
-  const [packages, setPackages] = useState<any[]>([]);
+  const [packages, setPackages] = useState<PackageItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('All');
 
-  const fetchPackages = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch('/api/manage/packages');
-      if (res.ok) {
-        const data = await res.json();
-        setPackages(data);
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchPackages();
+    let active = true;
+    const load = async () => {
+      try {
+        const res = await fetch('/api/manage/packages');
+        if (res.ok && active) {
+          const data = await res.json();
+          setPackages(data);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      active = false;
+    };
   }, []);
 
   const handleDelete = async (id: string, title: string) => {

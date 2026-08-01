@@ -3,24 +3,34 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Download, Trash2 } from 'lucide-react';
 
+interface SubscriberItem {
+  id: string;
+  email: string;
+  createdAt: string;
+}
+
 export default function SubscribersPage() {
-  const [subscribers, setSubscribers] = useState<any[]>([]);
+  const [subscribers, setSubscribers] = useState<SubscriberItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchSubscribers = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch('/api/manage/subscribers');
-      if (res.ok) setSubscribers(await res.json());
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchSubscribers();
+    let active = true;
+    const load = async () => {
+      try {
+        const res = await fetch('/api/manage/subscribers');
+        if (res.ok && active) {
+          setSubscribers(await res.json());
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      active = false;
+    };
   }, []);
 
   const handleDelete = async (id: string) => {

@@ -10,9 +10,93 @@ import {
   Star, CheckCircle2, XCircle, AlertCircle, ZoomIn, Shield, Phone, Building, Sparkles, X
 } from 'lucide-react';
 
+interface AttractionItem {
+  id: string;
+  name: string;
+  image: string;
+  description: string;
+}
+
+interface DestinationItem {
+  id: string;
+  name: string;
+  slug: string;
+  heroImage: string;
+  categoryBadge: string;
+  stateOrCountry: string;
+  aboutText: string;
+  bestTimeToVisit?: string;
+  idealDuration?: string;
+  weatherInfo?: string;
+  attractions?: AttractionItem[];
+}
+
+interface PackageVariantItem {
+  id?: string;
+  label: string;
+  price: string;
+  priceUnit?: string;
+  originalPrice?: string;
+  itineraryDays: Array<{
+    id?: string;
+    dayNumber: number;
+    title: string;
+    description: string;
+    imagesJson?: string;
+  }>;
+}
+
+interface PackageDetailItem {
+  id: string;
+  title: string;
+  tripCode: string;
+  type: string;
+  shortDescription: string;
+  imagesJson: string;
+  highlightsJson: string;
+  inclusionsJson: string;
+  exclusionsJson: string;
+  importantNotesJson: string;
+  themes?: Array<{
+    theme: {
+      slug: string;
+      name: string;
+    };
+    themeId: string;
+  }>;
+  destinations?: Array<{
+    destination: DestinationItem;
+  }>;
+  variants?: PackageVariantItem[];
+  price?: string;
+  priceUnit?: string;
+  originalPrice?: string;
+}
+
+interface PackageItem {
+  id: string;
+  title: string;
+  tripCode: string;
+  shortDescription: string;
+  type: string;
+  slug: string;
+  imagesJson: string;
+  featured?: boolean;
+  variants?: Array<{
+    label: string;
+    price: string;
+    priceUnit?: string;
+    originalPrice?: string;
+  }>;
+  price?: string;
+  priceUnit?: string;
+  originalPrice?: string;
+  destinationsCount?: number;
+}
+
 interface PackageDetailViewProps {
-  pkg: any;
-  relatedPackages?: any[];
+  pkg: PackageDetailItem;
+  relatedPackages?: PackageItem[];
 }
 
 export default function PackageDetailView({ pkg, relatedPackages = [] }: PackageDetailViewProps) {
@@ -41,8 +125,13 @@ export default function PackageDetailView({ pkg, relatedPackages = [] }: Package
   const [lightboxIdx, setLightboxIdx] = useState(0);
   const openLightbox = (idx: number) => { setLightboxIdx(idx); setLightboxOpen(true); };
   const closeLightbox = () => setLightboxOpen(false);
-  const prevImg = () => setLightboxIdx(i => (i - 1 + galleryImages.length) % galleryImages.length);
-  const nextImg = () => setLightboxIdx(i => (i + 1) % galleryImages.length);
+  const prevImg = useCallback(() => {
+    setLightboxIdx(i => (i - 1 + galleryImages.length) % galleryImages.length);
+  }, [galleryImages.length, setLightboxIdx]);
+
+  const nextImg = useCallback(() => {
+    setLightboxIdx(i => (i + 1) % galleryImages.length);
+  }, [galleryImages.length, setLightboxIdx]);
 
   // Keyboard nav for lightbox
   useEffect(() => {
@@ -54,16 +143,16 @@ export default function PackageDetailView({ pkg, relatedPackages = [] }: Package
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [lightboxOpen]);
+  }, [lightboxOpen, prevImg, nextImg]);
 
   // Mobile carousel state
   const [carouselIdx, setCarouselIdx] = useState(0);
 
-  const variants: any[] = pkg.variants || [];
+  const variants = pkg.variants || [];
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const activeVariant = variants[selectedVariantIndex] || { itineraryDays: [], label: '' };
 
-  const destinations: any[] = (pkg.destinations || []).map((d: any) => d.destination).filter(Boolean);
+  const destinations = (pkg.destinations || []).map((d) => d.destination).filter(Boolean);
 
   const [openDay, setOpenDay] = useState<number | null>(1);
   const [enquiryModalOpen, setEnquiryModalOpen] = useState(false);
@@ -210,7 +299,7 @@ export default function PackageDetailView({ pkg, relatedPackages = [] }: Package
           <span className="font-mono text-[11px] font-bold text-gray-600 bg-[#f4efe6] px-3 py-1 rounded-full border border-[#b8934b]/20">
             {pkg.tripCode}
           </span>
-          {pkg.themes?.map((t: any) => (
+          {pkg.themes?.map((t) => (
             <Link key={t.themeId} href={`/trip-themes/${t.theme?.slug}`}
               className="text-[11px] font-semibold text-[#b8934b] bg-amber-50 hover:bg-amber-100 border border-amber-200 px-3 py-1 rounded-full transition">
               {t.theme?.name}
@@ -224,7 +313,7 @@ export default function PackageDetailView({ pkg, relatedPackages = [] }: Package
 
         {destinations.length > 0 && (
           <p className="text-xs font-extrabold uppercase tracking-widest text-gray-400">
-            {destinations.map((d: any) => d.name).join(' · ')}
+            {destinations.map((d) => d.name).join(' · ')}
           </p>
         )}
 
@@ -353,7 +442,7 @@ export default function PackageDetailView({ pkg, relatedPackages = [] }: Package
 
             {activeVariant.itineraryDays?.length > 0 ? (
               <div className="space-y-2">
-                {activeVariant.itineraryDays.map((day: any) => {
+                {activeVariant.itineraryDays.map((day) => {
                   const isOpen = openDay === day.dayNumber;
                   const dayImgs: string[] = JSON.parse(day.imagesJson || '[]');
                   return (
@@ -404,7 +493,7 @@ export default function PackageDetailView({ pkg, relatedPackages = [] }: Package
               <div className="px-6 pt-5 pb-4 border-b border-gray-100">
                 <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 block mb-2">Destinations Covered</span>
                 <div className="flex flex-wrap gap-1.5">
-                  {destinations.map((d: any, i: number) => (
+                  {destinations.map((d, i: number) => (
                     <span key={i} className="inline-flex items-center gap-1 text-xs font-semibold text-[#1a1815] bg-[#f4efe6] border border-[#b8934b]/20 px-2.5 py-1 rounded-full">
                       <MapPin className="w-3 h-3 text-[#b8934b]" /> {d.name}
                     </span>
@@ -418,7 +507,7 @@ export default function PackageDetailView({ pkg, relatedPackages = [] }: Package
               <div className="px-6 py-4 border-b border-gray-100">
                 <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 block mb-2">Choose Duration</span>
                 <div className="flex flex-wrap gap-2">
-                  {variants.map((v: any, idx: number) => (
+                  {variants.map((v, idx: number) => (
                     <button
                       key={v.id || idx}
                       onClick={() => { setSelectedVariantIndex(idx); setOpenDay(1); }}

@@ -4,25 +4,38 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { MapPin, Plus, Search, Edit, Trash2, Eye } from 'lucide-react';
 
+interface DestinationItem {
+  id: string;
+  name: string;
+  slug: string;
+  stateOrCountry: string;
+  categoryBadge: string;
+  heroImage: string;
+}
+
 export default function DestinationsListPage() {
-  const [destinations, setDestinations] = useState<any[]>([]);
+  const [destinations, setDestinations] = useState<DestinationItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const fetchDestinations = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch('/api/manage/destinations');
-      if (res.ok) setDestinations(await res.json());
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchDestinations();
+    let active = true;
+    const load = async () => {
+      try {
+        const res = await fetch('/api/manage/destinations');
+        if (res.ok && active) {
+          setDestinations(await res.json());
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      active = false;
+    };
   }, []);
 
   const handleDelete = async (id: string, name: string) => {

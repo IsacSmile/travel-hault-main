@@ -1,13 +1,20 @@
 'use client';
 
 import React from 'react';
-import { Compass, ShieldCheck, Headphones, Award, Sparkles } from 'lucide-react';
+import { Compass, ShieldCheck, Headphones, Award, Sparkles, LucideIcon } from 'lucide-react';
 
-interface TrustBadgesSectionProps {
-  badges: any[];
+interface TrustBadge {
+  id: string;
+  icon: string;
+  title: string;
+  description: string;
 }
 
-const iconMap: Record<string, any> = {
+interface TrustBadgesSectionProps {
+  badges: TrustBadge[];
+}
+
+const iconMap: Record<string, LucideIcon> = {
   Compass,
   ShieldCheck,
   Headphones,

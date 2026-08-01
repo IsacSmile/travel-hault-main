@@ -3,8 +3,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 
+interface HeroSlide {
+  id: string;
+  image: string;
+  headline: string;
+  locationTag: string;
+  subtext: string;
+}
+
 interface HeroSliderProps {
-  slides: any[];
+  slides: HeroSlide[];
 }
 
 export default function HeroSlider({ slides }: HeroSliderProps) {

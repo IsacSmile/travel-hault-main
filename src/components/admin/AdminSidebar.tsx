@@ -5,7 +5,6 @@ import Link from 'next/link';
 import Logo from '@/components/layout/Logo';
 import { usePathname, useRouter } from 'next/navigation';
 import {
-  Compass,
   LayoutDashboard,
   Package,
   MapPin,

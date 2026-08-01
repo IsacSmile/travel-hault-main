@@ -24,9 +24,13 @@ function DestinationFormContent() {
   const [aboutText, setAboutText] = useState('');
   const [bestTimeToVisit, setBestTimeToVisit] = useState('');
   const [climate, setClimate] = useState('');
-  const [attractions, setAttractions] = useState<
-    { name: string; image: string; description: string }[]
-  >([{ name: '', image: '', description: '' }]);
+interface AttractionItem {
+  name: string;
+  image: string;
+  description: string;
+}
+
+  const [attractions, setAttractions] = useState<AttractionItem[]>([{ name: '', image: '', description: '' }]);
 
   useEffect(() => {
     if (editId) {
@@ -45,7 +49,7 @@ function DestinationFormContent() {
             setClimate(data.climate || '');
             if (data.attractions && data.attractions.length > 0) {
               setAttractions(
-                data.attractions.map((a: any) => ({
+                ((data.attractions || []) as AttractionItem[]).map((a) => ({
                   name: a.name || '',
                   image: a.image || '',
                   description: a.description || '',
@@ -106,8 +110,9 @@ function DestinationFormContent() {
 
       router.push('/manage/destinations');
       router.refresh();
-    } catch (err: any) {
-      alert(err.message || 'Save error');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Save error';
+      alert(msg);
     } finally {
       setLoading(false);
     }

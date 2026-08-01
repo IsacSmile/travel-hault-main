@@ -9,12 +9,45 @@ import {
   Save,
   Plus,
   Trash2,
-  Calendar,
-  Image as ImageIcon,
   Check,
-  ChevronDown,
-  ChevronUp,
 } from 'lucide-react';
+
+interface ThemeItem {
+  id: string;
+  name: string;
+}
+
+interface DestinationItem {
+  id: string;
+  name: string;
+  stateOrCountry: string;
+}
+
+interface PackageTheme {
+  themeId: string;
+}
+
+interface PackageDestination {
+  destinationId: string;
+}
+
+interface ItineraryDay {
+  dayNumber: number;
+  title: string;
+  description: string;
+  imagesJson?: string;
+}
+
+interface Variant {
+  id?: string;
+  label?: string;
+  subtitle?: string;
+  slug?: string;
+  price?: string | number;
+  originalPrice?: string | number | null;
+  priceUnit?: string;
+  itineraryDays?: ItineraryDay[];
+}
 
 export const dynamic = 'force-dynamic';
 
@@ -27,8 +60,8 @@ function PackageFormContent() {
   const [fetching, setFetching] = useState(!!editId);
 
   // Available Destinations & Themes for selector
-  const [availableThemes, setAvailableThemes] = useState<any[]>([]);
-  const [availableDestinations, setAvailableDestinations] = useState<any[]>([]);
+  const [availableThemes, setAvailableThemes] = useState<ThemeItem[]>([]);
+  const [availableDestinations, setAvailableDestinations] = useState<DestinationItem[]>([]);
 
   // Form State
   const [title, setTitle] = useState('');
@@ -115,12 +148,12 @@ function PackageFormContent() {
             setPrice(data.price !== undefined ? data.price : '');
             setOriginalPrice(data.originalPrice !== undefined && data.originalPrice !== null ? data.originalPrice : '');
             setPriceUnit(data.priceUnit || 'per person');
-            setSelectedThemeIds((data.themes || []).map((t: any) => t.themeId));
-            setSelectedDestinationIds((data.destinations || []).map((d: any) => d.destinationId));
+            setSelectedThemeIds(((data.themes || []) as PackageTheme[]).map((t) => t.themeId));
+            setSelectedDestinationIds(((data.destinations || []) as PackageDestination[]).map((d) => d.destinationId));
 
             if (data.variants && data.variants.length > 0) {
               setVariants(
-                data.variants.map((v: any) => ({
+                ((data.variants || []) as Variant[]).map((v) => ({
                   id: v.id,
                   label: v.label || '',
                   subtitle: v.subtitle || '',
@@ -128,7 +161,7 @@ function PackageFormContent() {
                   price: v.price !== undefined ? v.price : '',
                   originalPrice: v.originalPrice !== undefined && v.originalPrice !== null ? v.originalPrice : '',
                   priceUnit: v.priceUnit || 'per person',
-                  itineraryDays: (v.itineraryDays || []).map((day: any) => ({
+                  itineraryDays: ((v.itineraryDays || []) as ItineraryDay[]).map((day) => ({
                     dayNumber: day.dayNumber,
                     title: day.title || '',
                     description: day.description || '',
@@ -235,8 +268,9 @@ function PackageFormContent() {
 
       router.push('/manage/packages');
       router.refresh();
-    } catch (err: any) {
-      alert(err.message || 'Save error');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Save error';
+      alert(msg);
     } finally {
       setLoading(false);
     }
@@ -429,7 +463,7 @@ function PackageFormContent() {
               className="w-5 h-5 accent-[#c9a15a] rounded"
             />
             <label htmlFor="featuredCheck" className="text-sm font-semibold text-gray-800 cursor-pointer">
-              Feature on Homepage "Explore Trips" section
+              Feature on Homepage &quot;Explore Trips&quot; section
             </label>
           </div>
         </div>
@@ -622,7 +656,7 @@ function PackageFormContent() {
           {/* Inclusions */}
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
             <div className="flex items-center justify-between border-b pb-2">
-              <h3 className="text-sm font-bold text-gray-900">What's Included</h3>
+              <h3 className="text-sm font-bold text-gray-900">What&apos;s Included</h3>
               <button
                 type="button"
                 onClick={() => handleAddListItem(setInclusions)}

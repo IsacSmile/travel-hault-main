@@ -3,13 +3,22 @@
 import React, { useState } from 'react';
 import { X, MapPin, ZoomIn } from 'lucide-react';
 
+interface GalleryImage {
+  id: string;
+  url: string;
+  caption?: string;
+  category?: string;
+  categoryBadge?: string;
+  location?: string;
+}
+
 interface GalleryClientProps {
-  images: any[];
+  images: GalleryImage[];
 }
 
 export default function GalleryClient({ images }: GalleryClientProps) {
   const [activeCategory, setActiveCategory] = useState<string>('All');
-  const [lightboxImg, setLightboxImg] = useState<any | null>(null);
+  const [lightboxImg, setLightboxImg] = useState<GalleryImage | null>(null);
 
   // Extract unique categories safely
   const rawCategories = (images || []).map((img) => img.categoryBadge || img.category || 'General').filter(Boolean);

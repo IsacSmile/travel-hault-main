@@ -4,12 +4,54 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import PackageCard from '@/components/public/PackageCard';
 import EnquiryModal from '@/components/public/EnquiryModal';
-import { MapPin, Calendar, Thermometer, Sparkles, Compass, Send, Heart } from 'lucide-react';
+import { MapPin, Calendar, Thermometer, Send, Heart } from 'lucide-react';
 import { useWishlist } from '@/context/WishlistContext';
 
+interface AttractionItem {
+  id: string;
+  name: string;
+  image: string;
+  description: string;
+}
+
+interface DestinationDetailItem {
+  id: string;
+  name: string;
+  slug: string;
+  heroImage: string;
+  categoryBadge: string;
+  stateOrCountry: string;
+  aboutText: string;
+  bestTimeToVisit: string;
+  idealDuration: string;
+  weatherInfo: string;
+  attractions: AttractionItem[];
+}
+
+interface PackageItem {
+  id: string;
+  title: string;
+  tripCode: string;
+  shortDescription: string;
+  type: string;
+  slug: string;
+  imagesJson: string;
+  featured?: boolean;
+  variants?: Array<{
+    label: string;
+    price: string;
+    priceUnit?: string;
+    originalPrice?: string;
+  }>;
+  price?: string;
+  priceUnit?: string;
+  originalPrice?: string;
+  destinationsCount?: number;
+}
+
 interface DestinationDetailViewProps {
-  dest: any;
-  relatedPackages: any[];
+  dest: DestinationDetailItem;
+  relatedPackages: PackageItem[];
 }
 
 export default function DestinationDetailView({ dest, relatedPackages }: DestinationDetailViewProps) {
@@ -120,7 +162,7 @@ export default function DestinationDetailView({ dest, relatedPackages }: Destina
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {dest.attractions.map((att: any) => (
+            {dest.attractions.map((att: AttractionItem) => (
               <div
                 key={att.id}
                 className="bg-white rounded-3xl border border border-[#b8934b]/20 overflow-hidden shadow-sm hover:shadow-lg transition space-y-3 p-4"

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Upload, X, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
+import { Upload, X, Link as LinkIcon } from 'lucide-react';
 
 interface ImageUploaderProps {
   value: string;
@@ -33,7 +33,7 @@ export default function ImageUploader({
       if (!res.ok) throw new Error('Upload failed');
       const data = await res.json();
       onChange(data.url);
-    } catch (err) {
+    } catch {
       alert('Failed to upload image. Please try again.');
     } finally {
       setUploading(false);

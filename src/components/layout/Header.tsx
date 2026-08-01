@@ -7,7 +7,6 @@ import { useWishlist } from '@/context/WishlistContext';
 import SearchModal from '@/components/public/SearchModal';
 import Logo from '@/components/layout/Logo';
 import {
-  Compass,
   Heart,
   Search,
   ChevronDown,

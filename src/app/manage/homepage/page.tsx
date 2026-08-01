@@ -2,24 +2,53 @@
 
 import React, { useState, useEffect } from 'react';
 import ImageUploader from '@/components/admin/ImageUploader';
-import { Home, Plus, Edit, Trash2, ShieldCheck, HelpCircle, Star, Sliders } from 'lucide-react';
+import { Plus, Edit, Trash2, ShieldCheck, HelpCircle, Star, Sliders } from 'lucide-react';
+
+interface SlideItem {
+  id: string;
+  image: string;
+  headline: string;
+  locationTag?: string;
+  subtext?: string;
+}
+
+interface TrustBadgeItem {
+  id: string;
+  title: string;
+  icon: string;
+  description: string;
+}
+
+interface FAQItem {
+  id: string;
+  question: string;
+  answer: string;
+  showOnHomepage?: boolean;
+}
+
+interface TestimonialItem {
+  id: string;
+  name: string;
+  reviewText: string;
+  rating?: number;
+  sourceLabel?: string;
+}
 
 export default function HomepageManagerPage() {
   const [activeTab, setActiveTab] = useState<'slides' | 'trust' | 'faqs' | 'testimonials'>('slides');
   const [loading, setLoading] = useState(true);
 
-  const [slides, setSlides] = useState<any[]>([]);
-  const [trustBadges, setTrustBadges] = useState<any[]>([]);
-  const [faqs, setFaqs] = useState<any[]>([]);
-  const [testimonials, setTestimonials] = useState<any[]>([]);
+  const [slides, setSlides] = useState<SlideItem[]>([]);
+  const [trustBadges, setTrustBadges] = useState<TrustBadgeItem[]>([]);
+  const [faqs, setFaqs] = useState<FAQItem[]>([]);
+  const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
 
   // Item Form State
   const [modalOpen, setModalOpen] = useState(false);
-  const [editItem, setEditItem] = useState<any | null>(null);
+  const [editItem, setEditItem] = useState<SlideItem | TrustBadgeItem | FAQItem | TestimonialItem | Record<string, unknown> | null>(null);
 
   const fetchContent = async () => {
     try {
-      setLoading(true);
       const res = await fetch('/api/manage/homepage');
       if (res.ok) {
         const data = await res.json();
@@ -36,10 +65,30 @@ export default function HomepageManagerPage() {
   };
 
   useEffect(() => {
-    fetchContent();
+    let active = true;
+    const load = async () => {
+      try {
+        const res = await fetch('/api/manage/homepage');
+        if (res.ok && active) {
+          const data = await res.json();
+          setSlides(data.slides || []);
+          setTrustBadges(data.trustBadges || []);
+          setFaqs(data.faqs || []);
+          setTestimonials(data.testimonials || []);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      active = false;
+    };
   }, []);
 
-  const handleSave = async (section: string, action: string, data: any) => {
+  const handleSave = async (section: string, action: string, data: unknown) => {
     try {
       const res = await fetch('/api/manage/homepage', {
         method: 'POST',
@@ -55,6 +104,15 @@ export default function HomepageManagerPage() {
       console.error(e);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="p-12 text-center text-gray-500 font-sans">
+        <div className="w-8 h-8 border-2 border-[#c9a15a] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+        Loading homepage editor...
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -280,7 +338,7 @@ export default function HomepageManagerPage() {
                       <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
                     ))}
                   </div>
-                  <p className="text-xs text-gray-700 italic">"{t.reviewText}"</p>
+                  <p className="text-xs text-gray-700 italic">&quot;{t.reviewText}&quot;</p>
                   <div className="pt-2">
                     <div className="font-bold text-xs text-gray-900">{t.name}</div>
                     <div className="text-[10px] text-gray-400">{t.sourceLabel}</div>

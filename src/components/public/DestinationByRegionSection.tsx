@@ -3,8 +3,19 @@
 import React, { useRef, useState } from 'react';
 import Link from 'next/link';
 
+interface RegionItem {
+  id: string;
+  name: string;
+  badgesJson?: string;
+  badges?: string[];
+  states: string;
+  destinationCount: string;
+  slug: string;
+  image: string;
+}
+
 interface DestinationByRegionSectionProps {
-  initialRegions?: any[];
+  initialRegions?: RegionItem[];
 }
 
 const fallbackRegions = [
@@ -147,7 +158,7 @@ export default function DestinationByRegionSection({ initialRegions }: Destinati
 /* ─────────────────────────────────────────────────
    Region Card Item
    ───────────────────────────────────────────────── */
-function RegionCard({ region }: { region: any }) {
+function RegionCard({ region }: { region: RegionItem }) {
   let badges: string[] = [];
   try {
     badges = typeof region.badgesJson === 'string' ? JSON.parse(region.badgesJson) : region.badges || [];

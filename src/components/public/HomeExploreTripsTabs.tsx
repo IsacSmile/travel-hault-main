@@ -5,8 +5,29 @@ import Link from 'next/link';
 import PackageCard from '@/components/public/PackageCard';
 import { Compass, ArrowRight } from 'lucide-react';
 
+interface PackageItem {
+  id: string;
+  title: string;
+  tripCode: string;
+  shortDescription: string;
+  type: string;
+  slug: string;
+  imagesJson: string;
+  featured?: boolean;
+  variants?: Array<{
+    label: string;
+    price: string;
+    priceUnit?: string;
+    originalPrice?: string;
+  }>;
+  price?: string;
+  priceUnit?: string;
+  originalPrice?: string;
+  destinationsCount?: number;
+}
+
 interface HomeExploreTripsTabsProps {
-  initialPackages: any[];
+  initialPackages: PackageItem[];
 }
 
 export default function HomeExploreTripsTabs({ initialPackages }: HomeExploreTripsTabsProps) {

@@ -36,8 +36,9 @@ function LoginForm() {
 
       router.push(redirect);
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || 'Failed to login');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to login';
+      setError(msg);
     } finally {
       setLoading(false);
     }

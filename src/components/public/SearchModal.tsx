@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Search, X, MapPin, Package, ArrowRight } from 'lucide-react';
@@ -9,17 +8,43 @@ interface SearchModalProps {
   onClose: () => void;
 }
 
+interface SearchResultPackage {
+  id: string;
+  title: string;
+  tripCode: string;
+  shortDescription: string;
+  slug: string;
+  imagesJson: string;
+  type: string;
+}
+
+interface SearchResultDestination {
+  id: string;
+  name: string;
+  stateOrCountry: string;
+  slug: string;
+  aboutText: string;
+  heroImage: string;
+  categoryBadge: string;
+}
+
 export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<{ packages: any[]; destinations: any[] }>({
+  const [results, setResults] = useState<{ packages: SearchResultPackage[]; destinations: SearchResultDestination[] }>({
     packages: [],
     destinations: [],
   });
   const [loading, setLoading] = useState(false);
 
+  const handleQueryChange = (val: string) => {
+    setQuery(val);
+    if (!val.trim()) {
+      setResults({ packages: [], destinations: [] });
+    }
+  };
+
   useEffect(() => {
     if (!query.trim()) {
-      setResults({ packages: [], destinations: [] });
       return;
     }
 
@@ -31,20 +56,20 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
           fetch('/api/manage/destinations'),
         ]);
 
-        const packages = pRes.ok ? await pRes.json() : [];
-        const destinations = dRes.ok ? await dRes.json() : [];
+        const packages: SearchResultPackage[] = pRes.ok ? await pRes.json() : [];
+        const destinations: SearchResultDestination[] = dRes.ok ? await dRes.json() : [];
 
         const q = query.toLowerCase();
 
         const filteredPackages = packages.filter(
-          (p: any) =>
+          (p) =>
             p.title.toLowerCase().includes(q) ||
             p.tripCode.toLowerCase().includes(q) ||
             p.shortDescription.toLowerCase().includes(q)
         );
 
         const filteredDestinations = destinations.filter(
-          (d: any) =>
+          (d) =>
             d.name.toLowerCase().includes(q) ||
             d.stateOrCountry.toLowerCase().includes(q) ||
             d.aboutText.toLowerCase().includes(q)
@@ -73,7 +98,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
             type="text"
             autoFocus
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => handleQueryChange(e.target.value)}
             placeholder="Search Kashmir, Bali, Honeymoon, Luxury tours..."
             className="w-full bg-transparent text-gray-900 placeholder-gray-400 font-medium text-base outline-none"
           />
@@ -90,7 +115,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
 
           {!loading && query && results.packages.length === 0 && results.destinations.length === 0 && (
             <div className="p-8 text-center text-gray-500 text-sm">
-              No results found matching "<span className="font-semibold text-gray-900">{query}</span>".
+                No results found matching &quot;{query}&quot;.
             </div>
           )}
 

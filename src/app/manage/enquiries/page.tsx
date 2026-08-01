@@ -12,54 +12,101 @@ import {
   AlertCircle,
   X,
   Trash2,
-  Calendar,
   User,
   Mail,
   Phone,
-  MessageSquare,
   Package as PackageIcon,
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
+interface EnquiryItem {
+  id: string;
+  type: string;
+  name: string;
+  email: string;
+  phone: string;
+  message?: string;
+  status: string;
+  createdAt: string;
+  internalNotes?: string;
+  numTravelers?: string;
+  budgetRange?: string;
+  preferredDate?: string;
+  destinationsOfInterest?: string;
+  package?: {
+    id: string;
+    title: string;
+  } | null;
+}
+
+const exportCSV = (dataList: EnquiryItem[]) => {
+  const headers = ['ID', 'Type', 'Name', 'Email', 'Phone', 'Package', 'Preferred Date', 'Travelers', 'Budget', 'Status', 'Submitted At'];
+  const rows = dataList.map((e) => [
+    e.id,
+    e.type,
+    `"${e.name.replace(/"/g, '""')}"`,
+    e.email,
+    e.phone,
+    `"${(e.package?.title || e.destinationsOfInterest || '').replace(/"/g, '""')}"`,
+    e.preferredDate || '',
+    e.numTravelers || '',
+    e.budgetRange || '',
+    e.status,
+    new Date(e.createdAt).toLocaleString(),
+  ]);
+
+  const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement('a');
+  link.setAttribute('href', encodedUri);
+  link.setAttribute('download', `enquiries_export_${Date.now()}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
 function EnquiriesInboxContent() {
   const searchParams = useSearchParams();
   const highlightedId = searchParams.get('id');
 
-  const [enquiries, setEnquiries] = useState<any[]>([]);
+  const [enquiries, setEnquiries] = useState<EnquiryItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedEnquiry, setSelectedEnquiry] = useState<any | null>(null);
+  const [selectedEnquiry, setSelectedEnquiry] = useState<EnquiryItem | null>(null);
   const [statusFilter, setStatusFilter] = useState('All');
   const [typeFilter, setTypeFilter] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [internalNotesInput, setInternalNotesInput] = useState('');
 
-  const fetchEnquiries = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch('/api/manage/enquiries');
-      if (res.ok) {
-        const data = await res.json();
-        setEnquiries(data);
 
-        if (highlightedId) {
-          const match = data.find((e: any) => e.id === highlightedId);
-          if (match) {
-            setSelectedEnquiry(match);
-            setInternalNotesInput(match.internalNotes || '');
-          }
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
-    fetchEnquiries();
-  }, []);
+    let active = true;
+    const load = async () => {
+      try {
+        const res = await fetch('/api/manage/enquiries');
+        if (res.ok && active) {
+          const data = await res.json() as EnquiryItem[];
+          setEnquiries(data);
+          if (highlightedId) {
+            const match = data.find((e) => e.id === highlightedId);
+            if (match) {
+              setSelectedEnquiry(match);
+              setInternalNotesInput(match.internalNotes || '');
+            }
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      active = false;
+    };
+  }, [highlightedId]);
 
   const handleUpdateStatus = async (id: string, status: string) => {
     try {
@@ -112,31 +159,7 @@ function EnquiriesInboxContent() {
     }
   };
 
-  const exportCSV = () => {
-    const headers = ['ID', 'Type', 'Name', 'Email', 'Phone', 'Package', 'Preferred Date', 'Travelers', 'Budget', 'Status', 'Submitted At'];
-    const rows = filteredEnquiries.map((e) => [
-      e.id,
-      e.type,
-      `"${e.name.replace(/"/g, '""')}"`,
-      e.email,
-      e.phone,
-      `"${(e.package?.title || e.destinationsOfInterest || '').replace(/"/g, '""')}"`,
-      e.preferredDate || '',
-      e.numTravelers || '',
-      e.budgetRange || '',
-      e.status,
-      new Date(e.createdAt).toLocaleString(),
-    ]);
 
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `enquiries_export_${Date.now()}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
 
   const filteredEnquiries = enquiries.filter((item) => {
     const matchesStatus = statusFilter === 'All' || item.status === statusFilter;
@@ -160,7 +183,7 @@ function EnquiriesInboxContent() {
         </div>
 
         <button
-          onClick={exportCSV}
+          onClick={() => exportCSV(filteredEnquiries)}
           className="px-4 py-2.5 bg-white border border-gray-300 hover:border-gray-400 text-gray-700 font-semibold rounded-xl text-sm transition flex items-center gap-2 shadow-sm shrink-0"
         >
           <Download className="w-4 h-4 text-[#c9a15a]" /> Export to CSV
