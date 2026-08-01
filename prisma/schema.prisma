@@ -205,7 +205,8 @@ model SiteSettings {
   email              String
   address            String
   workingHours       String
-  socialLinksJson    String   // JSON string of object
+  gstinNumber        String?  // Optional GSTIN / Business Registration Number
+  socialLinksJson    String   // JSON string of object or SocialLinkItem[]
   legalPagesJson     String   // JSON string of object { privacy, terms, cancellation, cookie }
   trustTitle         String   @default("Why Travel & Hault?")
   trustSubtext       String   @default("We deliver peace of mind, seamless itineraries, and unforgettable handcrafted memories.")
