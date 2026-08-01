@@ -11,20 +11,23 @@ export default function GalleryClient({ images }: GalleryClientProps) {
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [lightboxImg, setLightboxImg] = useState<any | null>(null);
 
-  const categories = ['All', ...Array.from(new Set(images.map((img) => img.categoryBadge)))];
+  // Extract unique categories safely
+  const rawCategories = (images || []).map((img) => img.categoryBadge || img.category || 'General').filter(Boolean);
+  const categories = ['All', ...Array.from(new Set(rawCategories))];
 
-  const filteredImages = images.filter((img) => {
+  const filteredImages = (images || []).filter((img) => {
     if (activeCategory === 'All') return true;
-    return img.categoryBadge === activeCategory;
+    const cat = img.categoryBadge || img.category || 'General';
+    return cat === activeCategory;
   });
 
   return (
     <div className="space-y-8">
       {/* Category Filter Chips */}
       <div className="flex flex-wrap items-center justify-center gap-2">
-        {categories.map((cat) => (
+        {categories.map((cat, idx) => (
           <button
-            key={cat}
+            key={`cat-${cat}-${idx}`}
             onClick={() => setActiveCategory(cat)}
             className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all ${
               activeCategory === cat
@@ -44,16 +47,16 @@ export default function GalleryClient({ images }: GalleryClientProps) {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {filteredImages.map((g) => (
+          {filteredImages.map((g, idx) => (
             <div
-              key={g.id}
+              key={g.id || `img-${idx}`}
               onClick={() => setLightboxImg(g)}
               className="group relative rounded-3xl overflow-hidden h-72 bg-gray-900 border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-500 cursor-pointer"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={g.image}
-                alt={g.caption}
+                alt={g.caption || 'Gallery Image'}
                 className="w-full h-full object-cover group-hover:scale-110 transition duration-700 opacity-95"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 flex flex-col justify-between opacity-90 group-hover:opacity-100 transition">
@@ -65,7 +68,7 @@ export default function GalleryClient({ images }: GalleryClientProps) {
 
                 <div className="space-y-1">
                   <span className="text-[10px] font-extrabold text-[#c9a15a] uppercase tracking-widest flex items-center gap-1">
-                    <MapPin className="w-3 h-3" /> {g.locationTag}
+                    <MapPin className="w-3 h-3" /> {g.locationTag || 'Destination'}
                   </span>
                   <p className="text-xs text-white font-medium line-clamp-1">{g.caption}</p>
                 </div>
@@ -96,7 +99,7 @@ export default function GalleryClient({ images }: GalleryClientProps) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={lightboxImg.image}
-                alt={lightboxImg.caption}
+                alt={lightboxImg.caption || 'Gallery Zoom'}
                 className="max-h-[75vh] w-auto object-contain"
               />
             </div>
@@ -110,7 +113,7 @@ export default function GalleryClient({ images }: GalleryClientProps) {
               </div>
 
               <span className="text-xs bg-[#c9a15a] text-[#1a1815] font-extrabold px-3 py-1 rounded-full">
-                {lightboxImg.categoryBadge}
+                {lightboxImg.categoryBadge || lightboxImg.category || 'General'}
               </span>
             </div>
           </div>
