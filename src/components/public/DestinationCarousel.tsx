@@ -75,7 +75,8 @@ export default function DestinationCarousel({ destinations }: DestinationCarouse
     // Coverflow scale, height, spacing matching reference screenshot
     const scale = offset === 0 ? 1 : absOffset === 1 ? 0.84 : 0.72;
     const height = offset === 0 ? 440 : absOffset === 1 ? 360 : 300;
-    const cardGap = windowWidth < 1024 ? 240 : 290;
+    // Equal card spacing between images across laptop screens
+    const cardGap = windowWidth < 1024 ? 270 : 340;
     const spacing = offset * cardGap;
     const zIndex = 10 - absOffset;
     const opacity = offset === 0 ? 1 : absOffset === 1 ? 0.75 : 0.4;
