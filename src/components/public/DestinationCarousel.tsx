@@ -133,11 +133,11 @@ export default function DestinationCarousel({ destinations }: DestinationCarouse
      DESKTOP COVERFLOW CAROUSEL (>=640px)
      ───────────────────────────────────────────────── */
   return (
-    <div className="relative select-none py-6">
+    <div className="relative select-none py-0">
       {/* Coverflow Container */}
       <div
         className="relative flex items-center justify-center overflow-hidden"
-        style={{ minHeight: '520px' }}
+        style={{ minHeight: '460px' }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >

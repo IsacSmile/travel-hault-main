@@ -39,17 +39,17 @@ export default async function HomePage() {
       <HeroSlider slides={slides} />
 
       {/* Section 1: Explore Packages (WHITE background) */}
-      <section className="bg-white py-20 border-b border-gray-100">
+      <section className="bg-white py-12 sm:py-16 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <HomeExploreTripsTabs initialPackages={packages} />
         </div>
       </section>
 
       {/* Section 2: Explore Destinations — Coverflow (WHITE background) */}
-      <section className="bg-white py-16 sm:py-20 lg:py-24 border-b border-gray-100 overflow-hidden">
+      <section className="bg-white py-10 sm:py-14 border-b border-gray-100 overflow-hidden">
         <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
           {/* Section Header */}
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-8 sm:mb-12 gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-6 sm:mb-8 gap-4">
             <div className="max-w-2xl space-y-2">
               <h2 className="text-3xl sm:text-5xl font-extrabold text-black font-sans tracking-tight">
                 Explore Destinations
@@ -73,9 +73,9 @@ export default async function HomePage() {
       </section>
 
       {/* Section 3: Visual Travel Diary (WHITE background) */}
-      <section className="bg-white py-20 border-b border-gray-100">
+      <section className="bg-white py-12 sm:py-16 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
+          <div className="text-center max-w-2xl mx-auto mb-10 space-y-3">
             <span className="text-xs font-extrabold uppercase tracking-widest text-[#b8934b] inline-flex items-center gap-1.5">
               <Camera className="w-4 h-4 text-[#b8934b]" /> Captured Moments
             </span>
@@ -121,21 +121,21 @@ export default async function HomePage() {
       </section>
 
       {/* Section 4: Guest Reviews (WHITE background) */}
-      <section className="bg-white py-20 border-b border-gray-100">
+      <section className="bg-white py-12 sm:py-16 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <TestimonialsSection testimonials={testimonials} />
         </div>
       </section>
 
       {/* Section 5: Trust Badges (WHITE background) */}
-      <section className="bg-white py-20 border-b border-gray-100">
+      <section className="bg-white py-12 sm:py-16 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <TrustBadgesSection badges={trustBadges} />
         </div>
       </section>
 
       {/* Section 6: FAQ Accordion (WHITE background) */}
-      <section className="bg-white py-20">
+      <section className="bg-white py-12 sm:py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <FAQAccordionSection faqs={faqs} />
         </div>
