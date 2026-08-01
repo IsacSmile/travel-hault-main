@@ -1,0 +1,198 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model AdminUser {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model Package {
+  id                 String   @id @default(uuid())
+  slug               String   @unique
+  title              String
+  type               String   // "Domestic" | "International"
+  tripCode           String
+  shortDescription   String
+  longDescription    String
+  imagesJson         String   // JSON string of string[]
+  destinationsCount  Int      @default(1)
+  groupSizeMax       Int      @default(12)
+  groupSizeAvg       Int      @default(6)
+  tourStyle          String   @default("Guided Tour")
+  accommodationType  String   @default("4 Star / Boutique")
+  highlightsJson     String   // JSON string of string[]
+  inclusionsJson     String   // JSON string of string[]
+  exclusionsJson     String   // JSON string of string[]
+  importantNotesJson String   // JSON string of string[]
+  featured           Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  variants     PackageVariant[]
+  themes       PackageTheme[]
+  destinations PackageDestination[]
+  enquiries    Enquiry[]
+}
+
+model PackageVariant {
+  id        String   @id @default(uuid())
+  packageId String
+  package   Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  label     String   // e.g. "5 Nights / 6 Days"
+  subtitle  String?  // e.g. "Standard Plan"
+  slug      String?
+
+  itineraryDays ItineraryDay[]
+}
+
+model ItineraryDay {
+  id          String         @id @default(uuid())
+  variantId   String
+  variant     PackageVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  dayNumber   Int
+  title       String
+  description String
+  imagesJson  String?        // JSON string of string[]
+}
+
+model Destination {
+  id               String   @id @default(uuid())
+  slug             String   @unique
+  name             String
+  stateOrCountry   String
+  categoryBadge    String   // e.g. "Heritage", "Beach", "Hills"
+  heroImage        String
+  aboutText        String
+  bestTimeToVisit  String
+  climate          String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  attractions AttractedItem[]
+  packages    PackageDestination[]
+}
+
+model AttractedItem {
+  id            String      @id @default(uuid())
+  destinationId String
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  name          String
+  image         String
+  description   String
+}
+
+model Theme {
+  id          String         @id @default(uuid())
+  slug        String         @unique
+  name        String
+  bannerImage String
+  description String
+  packages    PackageTheme[]
+}
+
+model PackageTheme {
+  packageId String
+  themeId   String
+  package   Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  theme     Theme   @relation(fields: [themeId], references: [id], onDelete: Cascade)
+
+  @@id([packageId, themeId])
+}
+
+model PackageDestination {
+  packageId     String
+  destinationId String
+  order         Int         @default(0)
+  package       Package     @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+
+  @@id([packageId, destinationId])
+}
+
+model GalleryImage {
+  id          String   @id @default(uuid())
+  image       String
+  locationTag String
+  caption     String
+  category    String   @default("General")
+  createdAt   DateTime @default(now())
+}
+
+model Testimonial {
+  id          String   @id @default(uuid())
+  name        String
+  reviewText  String
+  sourceLabel String   @default("Google Review")
+  sourceUrl   String?
+  rating      Int      @default(5)
+  createdAt   DateTime @default(now())
+}
+
+model FAQItem {
+  id       String @id @default(uuid())
+  question String
+  answer   String
+  order    Int    @default(0)
+}
+
+model TrustBadge {
+  id          String @id @default(uuid())
+  icon        String // Lucide icon name, e.g. "ShieldCheck", "Headphones", "Award", "Compass"
+  title       String
+  description String
+  order       Int    @default(0)
+}
+
+model HeroSlide {
+  id          String @id @default(uuid())
+  image       String
+  locationTag String
+  headline    String
+  subtext     String
+  order       Int    @default(0)
+}
+
+model Enquiry {
+  id                     String   @id @default(uuid())
+  type                   String   // "PackageBooking" | "CustomItinerary" | "Contact"
+  name                   String
+  email                  String
+  phone                  String
+  message                String
+  packageId              String?
+  package                Package? @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  preferredDate          String?
+  numTravelers           String?
+  budgetRange            String?
+  destinationsOfInterest String?
+  status                 String   @default("New") // "New" | "Contacted" | "Closed"
+  internalNotes          String?
+  createdAt              DateTime @default(now())
+}
+
+model Subscriber {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+model SiteSettings {
+  id                 String   @id @default("singleton")
+  phoneNumbersJson   String   // JSON string of string[]
+  email              String
+  address            String
+  workingHours       String
+  socialLinksJson    String   // JSON string of object
+  legalPagesJson     String   // JSON string of object { privacy, terms, cancellation, cookie }
+  trustTitle         String   @default("Why Travel & Hault?")
+  trustSubtext       String   @default("We deliver peace of mind, seamless itineraries, and unforgettable handcrafted memories.")
+  updatedAt          DateTime @updatedAt
+}
