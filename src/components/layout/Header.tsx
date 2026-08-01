@@ -34,6 +34,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileThemesOpen, setMobileThemesOpen] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const leaveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   const isHome = pathname === '/';
 
@@ -135,9 +136,16 @@ export default function Header() {
 
               {/* Trip Themes Mega-Menu */}
               <div
-                className="relative"
-                onMouseEnter={() => setMegaMenuOpen(true)}
-                onMouseLeave={() => setMegaMenuOpen(false)}
+                className="relative py-2"
+                onMouseEnter={() => {
+                  if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
+                  setMegaMenuOpen(true);
+                }}
+                onMouseLeave={() => {
+                  leaveTimeoutRef.current = setTimeout(() => {
+                    setMegaMenuOpen(false);
+                  }, 200);
+                }}
               >
                 <button
                   className={`text-xs uppercase font-extrabold tracking-wider flex items-center gap-1 py-1 transition-colors duration-300 ${
@@ -157,25 +165,38 @@ export default function Header() {
                 </button>
 
                 {megaMenuOpen && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[600px] bg-white border border-gray-200 rounded-2xl shadow-2xl p-6 grid grid-cols-2 gap-3 backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="col-span-2 pb-2 border-b border-gray-100 flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-[#b8934b] flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-[#b8934b]" /> Curated Theme Collections
-                      </span>
-                    </div>
-                    {tripThemesList.map((theme) => (
-                      <Link
-                        key={theme.slug}
-                        href={`/trip-themes/${theme.slug}`}
-                        onClick={() => setMegaMenuOpen(false)}
-                        className="p-3 rounded-xl hover:bg-gray-50 transition flex flex-col group border border-transparent hover:border-gray-200"
-                      >
-                        <span className="text-sm font-bold text-black group-hover:text-[#b8934b] transition">
-                          {theme.name}
+                  <div
+                    onMouseEnter={() => {
+                      if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
+                      setMegaMenuOpen(true);
+                    }}
+                    onMouseLeave={() => {
+                      leaveTimeoutRef.current = setTimeout(() => {
+                        setMegaMenuOpen(false);
+                      }, 200);
+                    }}
+                    className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[600px] z-50"
+                  >
+                    <div className="bg-white border border-gray-200 rounded-2xl shadow-2xl p-6 grid grid-cols-2 gap-3 backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="col-span-2 pb-2 border-b border-gray-100 flex items-center justify-between">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-[#b8934b] flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5 text-[#b8934b]" /> Curated Theme Collections
                         </span>
-                        <span className="text-xs text-gray-500 mt-0.5 line-clamp-1">{theme.desc}</span>
-                      </Link>
-                    ))}
+                      </div>
+                      {tripThemesList.map((theme) => (
+                        <Link
+                          key={theme.slug}
+                          href={`/trip-themes/${theme.slug}`}
+                          onClick={() => setMegaMenuOpen(false)}
+                          className="p-3 rounded-xl hover:bg-gray-50 transition flex flex-col group border border-transparent hover:border-gray-200"
+                        >
+                          <span className="text-sm font-bold text-black group-hover:text-[#b8934b] transition">
+                            {theme.name}
+                          </span>
+                          <span className="text-xs text-gray-500 mt-0.5 line-clamp-1">{theme.desc}</span>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
