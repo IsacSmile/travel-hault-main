@@ -93,7 +93,7 @@ export default function TestimonialsSection({ testimonials }: TestimonialsSectio
 
   return (
     <div className="space-y-8 font-sans">
-      {/* Section Header (1:1 matching reference image) */}
+      {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div className="space-y-1.5 max-w-xl">
           <h2 className="text-3xl sm:text-5xl font-extrabold text-black tracking-tight font-sans">
@@ -112,7 +112,7 @@ export default function TestimonialsSection({ testimonials }: TestimonialsSectio
         </Link>
       </div>
 
-      {/* Staggered Two-Row Infinite Horizontal Carousel Container with Side Fade */}
+      {/* Staggered Two-Row Faster Marquee Carousel Container */}
       <div
         className="relative overflow-hidden py-4 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 group"
         onMouseEnter={() => setIsPaused(true)}
@@ -123,13 +123,13 @@ export default function TestimonialsSection({ testimonials }: TestimonialsSectio
         <div className="absolute top-0 bottom-0 right-0 w-16 sm:w-28 bg-gradient-to-l from-white via-white/80 to-transparent z-20 pointer-events-none" />
 
         <div className="space-y-5">
-          {/* Row 1 (Drifts Left) */}
+          {/* Row 1 (Faster Marquee Left - 22s) */}
           <div
             className={`flex gap-5 transition-all duration-700 ${
               isPaused ? '[animation-play-state:paused]' : ''
             }`}
             style={{
-              animation: 'infiniteDriftLeft 45s linear infinite',
+              animation: 'infiniteDriftLeft 22s linear infinite',
             }}
           >
             {row1Extended.map((item, idx) => (
@@ -137,13 +137,13 @@ export default function TestimonialsSection({ testimonials }: TestimonialsSectio
             ))}
           </div>
 
-          {/* Row 2 (Staggered Shifted & Drifts Right) */}
+          {/* Row 2 (Faster Marquee Right - 25s) */}
           <div
             className={`flex gap-5 pl-12 transition-all duration-700 ${
               isPaused ? '[animation-play-state:paused]' : ''
             }`}
             style={{
-              animation: 'infiniteDriftRight 50s linear infinite',
+              animation: 'infiniteDriftRight 25s linear infinite',
             }}
           >
             {row2Extended.map((item, idx) => (
@@ -177,7 +177,7 @@ export default function TestimonialsSection({ testimonials }: TestimonialsSectio
 }
 
 /* ─────────────────────────────────────────────────
-   Testimonial Card Component (Matching Reference Image)
+   Testimonial Card Component
    ───────────────────────────────────────────────── */
 function TestimonialCard({ item, colorIndex }: { item: any; colorIndex: number }) {
   const initial = item.initial || item.name.charAt(0).toUpperCase();
