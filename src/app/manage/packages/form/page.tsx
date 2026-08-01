@@ -714,7 +714,7 @@ function PackageFormContent() {
                     <button
                       type="button"
                       onClick={() => setVariants((prev) => prev.filter((_, i) => i !== vIdx))}
-                      className="text-xs text-red-500 hover:underline flex items-center gap-1"
+                      className="text-xs text-[#dc2626] hover:underline flex items-center gap-1"
                     >
                       <Trash2 className="w-4 h-4" /> Remove Option
                     </button>
