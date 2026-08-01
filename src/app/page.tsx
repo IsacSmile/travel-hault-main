@@ -5,6 +5,7 @@ import HeroSlider from '@/components/public/HeroSlider';
 import DestinationCarousel from '@/components/public/DestinationCarousel';
 import TrustBadgesSection from '@/components/public/TrustBadgesSection';
 import TestimonialsSection from '@/components/public/TestimonialsSection';
+import DestinationByRegionSection from '@/components/public/DestinationByRegionSection';
 import FAQAccordionSection from '@/components/public/FAQAccordionSection';
 import HomeExploreTripsTabs from '@/components/public/HomeExploreTripsTabs';
 import { ArrowRight, Camera } from 'lucide-react';
@@ -120,21 +121,28 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Section 4: Guest Reviews (WHITE background) */}
+      {/* Section 4: What Our Customers Say / Guest Reviews (WHITE background) */}
       <section className="bg-white py-12 sm:py-16 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <TestimonialsSection testimonials={testimonials} />
         </div>
       </section>
 
-      {/* Section 5: Trust Badges (WHITE background) */}
+      {/* Section 5: Destination By Region (WHITE background — directly below What Our Customers Say) */}
+      <section className="bg-white py-12 sm:py-16 border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <DestinationByRegionSection />
+        </div>
+      </section>
+
+      {/* Section 6: Trust Badges (WHITE background) */}
       <section className="bg-white py-12 sm:py-16 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <TrustBadgesSection badges={trustBadges} />
         </div>
       </section>
 
-      {/* Section 6: FAQ Accordion (WHITE background) */}
+      {/* Section 7: FAQ Accordion (WHITE background) */}
       <section className="bg-white py-12 sm:py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <FAQAccordionSection faqs={faqs} />
