@@ -34,21 +34,21 @@ export default async function HomePage() {
     ]);
 
   return (
-    <div className="space-y-0 font-sans">
+    <div className="space-y-0 font-sans bg-white">
       {/* Hero Photo Section */}
       <HeroSlider slides={slides} />
 
-      {/* Section 1: Explore Packages (BEIGE background #F5F0E6) */}
-      <section className="bg-[#F5F0E6] py-20 border-b border-gray-200/60">
+      {/* Section 1: Explore Packages (WHITE background) */}
+      <section className="bg-white py-20 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <HomeExploreTripsTabs initialPackages={packages} />
         </div>
       </section>
 
-      {/* Section 2: Explore Destinations — Coverflow (PURE WHITE background #FFFFFF) */}
+      {/* Section 2: Explore Destinations — Coverflow (WHITE background) */}
       <section className="bg-white py-16 sm:py-20 lg:py-24 border-b border-gray-100 overflow-hidden">
         <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
-          {/* Section Header (Matching Screenshot) */}
+          {/* Section Header */}
           <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-8 sm:mb-12 gap-4">
             <div className="max-w-2xl space-y-2">
               <h2 className="text-3xl sm:text-5xl font-extrabold text-black font-sans tracking-tight">
@@ -72,8 +72,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Section 3: Visual Travel Diary (BEIGE background #F5F0E6) */}
-      <section className="bg-[#F5F0E6] py-20 border-b border-gray-200/60">
+      {/* Section 3: Visual Travel Diary (WHITE background) */}
+      <section className="bg-white py-20 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
             <span className="text-xs font-extrabold uppercase tracking-widest text-[#b8934b] inline-flex items-center gap-1.5">
@@ -127,8 +127,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Section 5: Trust Badges (BEIGE background #F5F0E6) */}
-      <section className="bg-[#F5F0E6] py-20 border-b border-gray-200/60">
+      {/* Section 5: Trust Badges (WHITE background) */}
+      <section className="bg-white py-20 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <TrustBadgesSection badges={trustBadges} />
         </div>
