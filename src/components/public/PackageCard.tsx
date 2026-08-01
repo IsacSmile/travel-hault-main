@@ -90,8 +90,42 @@ export default function PackageCard({ pkg }: PackageCardProps) {
         {/* Card Footer */}
         <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
           <div>
-            <span className="text-[10px] uppercase font-bold text-gray-400 block">Pricing</span>
-            <span className="text-sm font-bold text-[#1a1815]">Price On Request</span>
+            {(() => {
+              const variantPrices = (pkg.variants || [])
+                .map((v: any) => Number(v.price))
+                .filter((p: number) => p > 0);
+              const minPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : Number(pkg.price || 0);
+              const minVariant = (pkg.variants || []).find((v: any) => Number(v.price) === minPrice);
+              const activeUnit = minVariant?.priceUnit || pkg.priceUnit || 'per person';
+              const originalVal = minVariant?.originalPrice || pkg.originalPrice;
+
+              if (minPrice > 0) {
+                return (
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-gray-400 block">
+                      {variantPrices.length > 0 ? 'Starting from' : 'Pricing'}
+                    </span>
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-sm font-extrabold text-[#1a1815]">
+                        ₹{minPrice.toLocaleString('en-IN')}
+                      </span>
+                      <span className="text-[10px] text-gray-400 font-bold">/ {activeUnit}</span>
+                      {originalVal && (
+                        <span className="text-[10px] text-gray-400 line-through">
+                          ₹{Number(originalVal).toLocaleString('en-IN')}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              }
+              return (
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-gray-400 block">Pricing</span>
+                  <span className="text-sm font-bold text-[#1a1815]">Price On Request</span>
+                </div>
+              );
+            })()}
           </div>
 
           <Link

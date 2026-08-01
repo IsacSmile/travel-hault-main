@@ -926,12 +926,62 @@ async function main() {
     },
   ];
 
+  const packagePriceMap: Record<string, { price: number, originalPrice?: number, variants: Record<string, { price: number, originalPrice?: number }> }> = {
+    'magical-kashmir-paradise': {
+      price: 24999,
+      originalPrice: 29999,
+      variants: {
+        '4n-5d': { price: 24999, originalPrice: 29999 },
+        '6n-7d': { price: 32499, originalPrice: 39999 }
+      }
+    },
+    'exotic-bali-tropical-escape': {
+      price: 48999,
+      originalPrice: 59999,
+      variants: {
+        '5n-6d': { price: 48999, originalPrice: 59999 }
+      }
+    },
+    'kerala-backwaters-and-misty-hills': {
+      price: 18999,
+      originalPrice: 22999,
+      variants: {
+        '5n-6d': { price: 18999, originalPrice: 22999 }
+      }
+    },
+    'royal-rajasthan-forts-and-desert-dunes': {
+      price: 28999,
+      originalPrice: 34999,
+      variants: {
+        '6n-7d': { price: 28999, originalPrice: 34999 }
+      }
+    },
+    'futuristic-dubai-skylines-and-safari': {
+      price: 38999,
+      originalPrice: 45999,
+      variants: {
+        '4n-5d': { price: 38999, originalPrice: 45999 }
+      }
+    },
+    'switzerland-alpine-dream-and-lakes': {
+      price: 124999,
+      originalPrice: 145000,
+      variants: {
+        '6n-7d': { price: 124999, originalPrice: 145000 }
+      }
+    }
+  };
+
   for (const pkg of packagesData) {
     const { destinations, themes, variants, ...pkgDetails } = pkg;
+    const priceInfo = packagePriceMap[pkg.slug] || { price: 0, priceUnit: 'per person' };
 
     const createdPkg = await prisma.package.create({
       data: {
         ...pkgDetails,
+        price: priceInfo.price,
+        originalPrice: priceInfo.originalPrice || null,
+        priceUnit: 'per person',
         themes: {
           create: themes.map((tSlug) => ({
             theme: { connect: { id: createdThemes[tSlug].id } },
@@ -948,10 +998,14 @@ async function main() {
 
     for (const v of variants) {
       const { itinerary, ...variantDetails } = v;
+      const vPriceInfo = priceInfo.variants?.[v.slug || ''] || { price: 0 };
       const createdVariant = await prisma.packageVariant.create({
         data: {
           ...variantDetails,
           packageId: createdPkg.id,
+          price: vPriceInfo.price,
+          originalPrice: vPriceInfo.originalPrice || null,
+          priceUnit: 'per person',
         },
       });
 

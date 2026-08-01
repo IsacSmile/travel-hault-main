@@ -48,6 +48,9 @@ function PackageFormContent() {
   const [exclusions, setExclusions] = useState<string[]>(['']);
   const [importantNotes, setImportantNotes] = useState<string[]>(['']);
   const [featured, setFeatured] = useState(false);
+  const [price, setPrice] = useState<string | number>('');
+  const [originalPrice, setOriginalPrice] = useState<string | number>('');
+  const [priceUnit, setPriceUnit] = useState('per person');
   const [selectedThemeIds, setSelectedThemeIds] = useState<string[]>([]);
   const [selectedDestinationIds, setSelectedDestinationIds] = useState<string[]>([]);
 
@@ -58,6 +61,9 @@ function PackageFormContent() {
       label: string;
       subtitle: string;
       slug: string;
+      price: string | number;
+      originalPrice: string | number;
+      priceUnit: string;
       itineraryDays: { dayNumber: number; title: string; description: string; images: string[] }[];
     }[]
   >([
@@ -65,6 +71,9 @@ function PackageFormContent() {
       label: '4 Nights / 5 Days',
       subtitle: 'Standard Package',
       slug: '4n-5d',
+      price: '',
+      originalPrice: '',
+      priceUnit: 'per person',
       itineraryDays: [
         { dayNumber: 1, title: 'Day 1 Arrival', description: 'Arrival and check in.', images: [] },
       ],
@@ -103,6 +112,9 @@ function PackageFormContent() {
             setExclusions(JSON.parse(data.exclusionsJson || '[]'));
             setImportantNotes(JSON.parse(data.importantNotesJson || '[]'));
             setFeatured(data.featured || false);
+            setPrice(data.price !== undefined ? data.price : '');
+            setOriginalPrice(data.originalPrice !== undefined && data.originalPrice !== null ? data.originalPrice : '');
+            setPriceUnit(data.priceUnit || 'per person');
             setSelectedThemeIds((data.themes || []).map((t: any) => t.themeId));
             setSelectedDestinationIds((data.destinations || []).map((d: any) => d.destinationId));
 
@@ -113,6 +125,9 @@ function PackageFormContent() {
                   label: v.label || '',
                   subtitle: v.subtitle || '',
                   slug: v.slug || '',
+                  price: v.price !== undefined ? v.price : '',
+                  originalPrice: v.originalPrice !== undefined && v.originalPrice !== null ? v.originalPrice : '',
+                  priceUnit: v.priceUnit || 'per person',
                   itineraryDays: (v.itineraryDays || []).map((day: any) => ({
                     dayNumber: day.dayNumber,
                     title: day.title || '',
@@ -195,9 +210,16 @@ function PackageFormContent() {
         exclusions: exclusions.filter((e) => e.trim() !== ''),
         importantNotes: importantNotes.filter((n) => n.trim() !== ''),
         featured,
+        price: price ? Number(price) : 0,
+        originalPrice: originalPrice ? Number(originalPrice) : null,
+        priceUnit,
         themeIds: selectedThemeIds,
         destinationIds: selectedDestinationIds,
-        variants,
+        variants: variants.map((v) => ({
+          ...v,
+          price: v.price ? Number(v.price) : 0,
+          originalPrice: v.originalPrice ? Number(v.originalPrice) : null,
+        })),
       };
 
       const res = await fetch('/api/manage/packages', {
@@ -325,6 +347,50 @@ function PackageFormContent() {
                 placeholder="TH-KAS-01"
                 className="w-full px-4 py-2.5 bg-gray-50 border rounded-xl text-sm font-mono focus:outline-none focus:border-[#c9a15a]"
               />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold uppercase text-gray-600 mb-1">
+                Default Price (₹) *
+              </label>
+              <input
+                type="number"
+                required
+                min={0}
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="e.g. 24999"
+                className="w-full px-4 py-2.5 bg-gray-50 border rounded-xl text-sm font-mono focus:outline-none focus:border-[#c9a15a]"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold uppercase text-gray-600 mb-1">
+                Original Price (₹) (Optional - Struck through)
+              </label>
+              <input
+                type="number"
+                min={0}
+                value={originalPrice}
+                onChange={(e) => setOriginalPrice(e.target.value)}
+                placeholder="e.g. 29999"
+                className="w-full px-4 py-2.5 bg-gray-50 border rounded-xl text-sm font-mono focus:outline-none focus:border-[#c9a15a]"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold uppercase text-gray-600 mb-1">
+                Price Unit
+              </label>
+              <select
+                value={priceUnit}
+                onChange={(e) => setPriceUnit(e.target.value)}
+                className="w-full px-4 py-2.5 bg-gray-50 border rounded-xl text-sm font-semibold focus:outline-none focus:border-[#c9a15a]"
+              >
+                <option value="per person">per person</option>
+                <option value="per couple">per couple</option>
+                <option value="per group">per group</option>
+              </select>
             </div>
           </div>
 
@@ -671,6 +737,9 @@ function PackageFormContent() {
                     label: '6 Nights / 7 Days',
                     subtitle: 'Extended Explorer',
                     slug: `variant-${prev.length + 1}`,
+                    price: '',
+                    originalPrice: '',
+                    priceUnit: 'per person',
                     itineraryDays: [
                       { dayNumber: 1, title: 'Day 1 Arrival', description: 'Arrival', images: [] },
                     ],
@@ -719,6 +788,104 @@ function PackageFormContent() {
                       <Trash2 className="w-4 h-4" /> Remove Option
                     </button>
                   )}
+                </div>
+
+                {/* Variant Specs & Pricing Row */}
+                <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 bg-white p-4 rounded-xl border border-gray-200/60 shadow-2xs">
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-600 uppercase mb-0.5">Subtitle</label>
+                    <input
+                      type="text"
+                      value={variant.subtitle}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setVariants((prev) => {
+                          const next = [...prev];
+                          next[vIdx].subtitle = val;
+                          return next;
+                        });
+                      }}
+                      placeholder="Standard Plan"
+                      className="w-full px-3 py-1.5 bg-gray-50 border rounded-lg text-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-600 uppercase mb-0.5">Slug Override</label>
+                    <input
+                      type="text"
+                      value={variant.slug}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setVariants((prev) => {
+                          const next = [...prev];
+                          next[vIdx].slug = val;
+                          return next;
+                        });
+                      }}
+                      placeholder="e.g. 4n-5d"
+                      className="w-full px-3 py-1.5 bg-gray-50 border rounded-lg text-xs font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-600 uppercase mb-0.5">Price (₹) *</label>
+                    <input
+                      type="number"
+                      required
+                      min={0}
+                      value={variant.price}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setVariants((prev) => {
+                          const next = [...prev];
+                          next[vIdx].price = val;
+                          return next;
+                        });
+                      }}
+                      placeholder="e.g. 24999"
+                      className="w-full px-3 py-1.5 bg-gray-50 border rounded-lg text-xs font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-600 uppercase mb-0.5">Original Price (₹)</label>
+                    <input
+                      type="number"
+                      min={0}
+                      value={variant.originalPrice}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setVariants((prev) => {
+                          const next = [...prev];
+                          next[vIdx].originalPrice = val;
+                          return next;
+                        });
+                      }}
+                      placeholder="e.g. 29999"
+                      className="w-full px-3 py-1.5 bg-gray-50 border rounded-lg text-xs font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold text-gray-600 uppercase mb-0.5">Price Unit</label>
+                    <select
+                      value={variant.priceUnit}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setVariants((prev) => {
+                          const next = [...prev];
+                          next[vIdx].priceUnit = val;
+                          return next;
+                        });
+                      }}
+                      className="w-full px-3 py-1.5 bg-gray-50 border rounded-lg text-xs font-semibold focus:outline-none"
+                    >
+                      <option value="per person">per person</option>
+                      <option value="per couple">per couple</option>
+                      <option value="per group">per group</option>
+                    </select>
+                  </div>
                 </div>
 
                 {/* Day by Day Items */}

@@ -33,6 +33,9 @@ model Package {
   exclusionsJson     String   // JSON string of string[]
   importantNotesJson String   // JSON string of string[]
   featured           Boolean  @default(false)
+  price              Float    @default(0.0)
+  originalPrice      Float?
+  priceUnit          String   @default("per person")
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
@@ -49,6 +52,9 @@ model PackageVariant {
   label     String   // e.g. "5 Nights / 6 Days"
   subtitle  String?  // e.g. "Standard Plan"
   slug      String?
+  price              Float    @default(0.0)
+  originalPrice      Float?
+  priceUnit          String   @default("per person")
 
   itineraryDays ItineraryDay[]
 }

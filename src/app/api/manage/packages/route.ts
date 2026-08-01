@@ -54,6 +54,9 @@ export async function POST(request: Request) {
       exclusions,
       importantNotes,
       featured,
+      price,
+      originalPrice,
+      priceUnit,
       themeIds,
       destinationIds,
       variants,
@@ -82,6 +85,9 @@ export async function POST(request: Request) {
         exclusionsJson: JSON.stringify(exclusions || []),
         importantNotesJson: JSON.stringify(importantNotes || []),
         featured: featured || false,
+        price: price ? Number(price) : 0,
+        originalPrice: originalPrice ? Number(originalPrice) : null,
+        priceUnit: priceUnit || 'per person',
         themes: {
           create: (themeIds || []).map((tId: string) => ({
             theme: { connect: { id: tId } },
@@ -105,6 +111,9 @@ export async function POST(request: Request) {
             label: v.label || 'Default Duration',
             subtitle: v.subtitle || '',
             slug: v.slug || '',
+            price: v.price ? Number(v.price) : 0,
+            originalPrice: v.originalPrice ? Number(v.originalPrice) : null,
+            priceUnit: v.priceUnit || 'per person',
           },
         });
 
@@ -156,6 +165,9 @@ export async function PUT(request: Request) {
       exclusions,
       importantNotes,
       featured,
+      price,
+      originalPrice,
+      priceUnit,
       themeIds,
       destinationIds,
       variants,
@@ -188,6 +200,9 @@ export async function PUT(request: Request) {
         exclusionsJson: JSON.stringify(exclusions || []),
         importantNotesJson: JSON.stringify(importantNotes || []),
         featured,
+        price: price ? Number(price) : 0,
+        originalPrice: originalPrice ? Number(originalPrice) : null,
+        priceUnit: priceUnit || 'per person',
         themes: {
           create: (themeIds || []).map((tId: string) => ({
             theme: { connect: { id: tId } },
@@ -211,6 +226,9 @@ export async function PUT(request: Request) {
             label: v.label || 'Default Duration',
             subtitle: v.subtitle || '',
             slug: v.slug || '',
+            price: v.price ? Number(v.price) : 0,
+            originalPrice: v.originalPrice ? Number(v.originalPrice) : null,
+            priceUnit: v.priceUnit || 'per person',
           },
         });
 

@@ -438,9 +438,38 @@ export default function PackageDetailView({ pkg, relatedPackages = [] }: Package
             {/* Price + CTA */}
             <div className="px-6 py-5 space-y-4">
               <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 block">Quote & Booking</span>
-                <div className="font-serif font-bold text-3xl text-[#1a1815] mt-1">Price On Request</div>
-                <p className="text-xs text-gray-500 mt-1">Custom quote based on your dates, travelers & preferences.</p>
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 block">Quote &amp; Booking</span>
+                {(() => {
+                  const currentVariantPrice = Number(activeVariant.price || 0);
+                  const currentVariantOriginal = activeVariant.originalPrice ? Number(activeVariant.originalPrice) : null;
+                  const currentVariantUnit = activeVariant.priceUnit || pkg.priceUnit || 'per person';
+
+                  const displayPrice = currentVariantPrice > 0 ? currentVariantPrice : Number(pkg.price || 0);
+                  const displayOriginal = currentVariantPrice > 0 ? currentVariantOriginal : (pkg.originalPrice ? Number(pkg.originalPrice) : null);
+                  const displayUnit = currentVariantPrice > 0 ? currentVariantUnit : (pkg.priceUnit || 'per person');
+
+                  if (displayPrice > 0) {
+                    return (
+                      <div className="mt-1">
+                        <div className="flex items-baseline gap-2">
+                          <span className="font-serif font-bold text-3xl text-[#1a1815]">
+                            ₹{displayPrice.toLocaleString('en-IN')}
+                          </span>
+                          <span className="text-xs text-gray-400 font-bold">/ {displayUnit}</span>
+                        </div>
+                        {displayOriginal && (
+                          <div className="text-sm text-gray-400 line-through">
+                            ₹{displayOriginal.toLocaleString('en-IN')}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+                  return (
+                    <div className="font-serif font-bold text-3xl text-[#1a1815] mt-1">Price On Request</div>
+                  );
+                })()}
+                <p className="text-xs text-gray-500 mt-1">Custom quote based on your dates, travelers &amp; preferences.</p>
               </div>
 
               <div className="space-y-2.5">
@@ -512,7 +541,25 @@ export default function PackageDetailView({ pkg, relatedPackages = [] }: Package
       <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-[#1a1815] border-t border-[#c9a15a]/30 px-4 py-3 flex items-center justify-between shadow-2xl">
         <div>
           <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold block">Quote</span>
-          <span className="font-serif font-bold text-white text-base">Price On Request</span>
+          {(() => {
+            const currentVariantPrice = Number(activeVariant.price || 0);
+            const currentVariantUnit = activeVariant.priceUnit || pkg.priceUnit || 'per person';
+            const displayPrice = currentVariantPrice > 0 ? currentVariantPrice : Number(pkg.price || 0);
+
+            if (displayPrice > 0) {
+              return (
+                <div className="flex items-baseline gap-1">
+                  <span className="font-serif font-bold text-white text-base">
+                    ₹{displayPrice.toLocaleString('en-IN')}
+                  </span>
+                  <span className="text-[9px] text-gray-400 font-semibold">/ {currentVariantUnit}</span>
+                </div>
+              );
+            }
+            return (
+              <span className="font-serif font-bold text-white text-base">Price On Request</span>
+            );
+          })()}
         </div>
         <button
           onClick={() => setEnquiryModalOpen(true)}
