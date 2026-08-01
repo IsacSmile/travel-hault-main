@@ -13,8 +13,17 @@ export default function DestinationCarousel({ destinations }: DestinationCarouse
   const [activeIndex, setActiveIndex] = useState(2);
   const [touchStartX, setTouchStartX] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(1200);
 
   const total = destinations.length;
+
+  // Track window resize for responsive card spacing
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const goNext = useCallback(() => {
     setActiveIndex((prev) => (prev + 1) % total);
@@ -65,20 +74,21 @@ export default function DestinationCarousel({ destinations }: DestinationCarouse
       return { visible: false, style: {} };
     }
 
-    // Scale: center = 1, adjacent = 0.85, outer = 0.7
+    // Scale: center = 1, adjacent = 0.85, outer = 0.72
     const scale = offset === 0 ? 1 : absOffset === 1 ? 0.85 : 0.72;
 
     // Height: center is tallest, sides progressively shorter
     const height = offset === 0 ? 420 : absOffset === 1 ? 360 : 300;
 
-    // Horizontal translate: spread cards out from center
-    const spacing = offset === 0 ? 0 : offset * 240;
+    // Horizontal translate: generous card spacing matching uploaded screenshot (320px on desktop)
+    const cardGap = windowWidth < 640 ? 200 : windowWidth < 1024 ? 260 : 320;
+    const spacing = offset * cardGap;
 
     // Z-index: center on top
     const zIndex = 10 - absOffset;
 
     // Opacity: edges fade slightly
-    const opacity = offset === 0 ? 1 : absOffset === 1 ? 0.75 : 0.5;
+    const opacity = offset === 0 ? 1 : absOffset === 1 ? 0.75 : 0.45;
 
     return {
       visible: true,
@@ -96,7 +106,7 @@ export default function DestinationCarousel({ destinations }: DestinationCarouse
       {/* Carousel Container — generous height for card breathing room */}
       <div
         className="relative flex items-center justify-center overflow-hidden"
-        style={{ minHeight: '480px' }}
+        style={{ minHeight: '500px' }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
