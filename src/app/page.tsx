@@ -129,7 +129,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Section 5: Destination By Region (WHITE background — fetched from backend database) */}
+      {/* Section 5: Destination By Region (WHITE background) */}
       <section className="bg-white py-12 sm:py-16 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <DestinationByRegionSection initialRegions={regions} />
