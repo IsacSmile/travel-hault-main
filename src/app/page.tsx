@@ -38,18 +38,18 @@ export default async function HomePage() {
       {/* Hero Photo Section */}
       <HeroSlider slides={slides} />
 
-      {/* Section 1: Explore Packages (WHITE background) */}
-      <section className="bg-white py-20 border-b border-gray-100">
+      {/* Section 1: Explore Packages (BEIGE background #F5F0E6) */}
+      <section className="bg-[#F5F0E6] py-20 border-b border-gray-200/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <HomeExploreTripsTabs initialPackages={packages} />
         </div>
       </section>
 
-      {/* Section 2: Explore Iconic Destinations — Coverflow Carousel (BEIGE background #F5F0E6) */}
-      <section className="bg-[#F5F0E6] py-10 sm:py-14 lg:py-24 border-b border-gray-200/60 overflow-hidden">
+      {/* Section 2: Explore Iconic Destinations — Equal Spaced Carousel (WHITE background #FFFFFF) */}
+      <section className="bg-white py-16 sm:py-20 lg:py-24 border-b border-gray-100 overflow-hidden">
         <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
-          {/* Section Header — generous gap below before cards start */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 sm:mb-8 lg:mb-10 gap-4">
+          {/* Section Header */}
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 lg:mb-12 gap-4">
             <div className="max-w-xl">
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#051b2e]">
                 Explore Iconic Destinations
@@ -67,13 +67,13 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          {/* Coverflow Card Carousel */}
+          {/* Equal Spaced Destination Carousel */}
           <DestinationCarousel destinations={destinations} />
         </div>
       </section>
 
-      {/* Section 3: Visual Travel Diary (WHITE background) */}
-      <section className="bg-white py-20 border-b border-gray-100">
+      {/* Section 3: Visual Travel Diary (BEIGE background #F5F0E6) */}
+      <section className="bg-[#F5F0E6] py-20 border-b border-gray-200/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
             <span className="text-xs font-extrabold uppercase tracking-widest text-[#b8934b] inline-flex items-center gap-1.5">
@@ -120,22 +120,22 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Section 4: Guest Reviews (BEIGE background #F5F0E6) */}
-      <section className="bg-[#F5F0E6] py-20 border-b border-gray-200/60">
+      {/* Section 4: Guest Reviews (WHITE background) */}
+      <section className="bg-white py-20 border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <TestimonialsSection testimonials={testimonials} />
         </div>
       </section>
 
-      {/* Section 5: Trust Badges (WHITE background) */}
-      <section className="bg-white py-20 border-b border-gray-100">
+      {/* Section 5: Trust Badges (BEIGE background #F5F0E6) */}
+      <section className="bg-[#F5F0E6] py-20 border-b border-gray-200/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <TrustBadgesSection badges={trustBadges} />
         </div>
       </section>
 
-      {/* Section 6: FAQ Accordion (BEIGE background #F5F0E6) */}
-      <section className="bg-[#F5F0E6] py-20">
+      {/* Section 6: FAQ Accordion (WHITE background) */}
+      <section className="bg-white py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <FAQAccordionSection faqs={faqs} />
         </div>
