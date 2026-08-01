@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import ImageUploader from '@/components/admin/ImageUploader';
-import { Save, Info, Sparkles, Target, Eye, Shield, Play, Plus, Trash2 } from 'lucide-react';
+import { Save, Info, Sparkles, Target, Eye, Shield, Play, Plus, Trash2, Upload, Video } from 'lucide-react';
 
 interface StatItem {
   number: string;
@@ -13,6 +13,7 @@ export default function AboutPageManager() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeSection, setActiveSection] = useState<'hero' | 'stats' | 'mission' | 'vision' | 'strength' | 'video'>('hero');
+  const [uploadingVideo, setUploadingVideo] = useState(false);
 
   // Hero Section
   const [heroHeading, setHeroHeading] = useState('');
@@ -544,14 +545,78 @@ export default function AboutPageManager() {
               />
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Video URL (YouTube/Vimeo Embed or Share link)</label>
-                <input
-                  type="url"
-                  value={videoUrl}
-                  onChange={(e) => setVideoUrl(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-gray-50 border rounded-xl text-sm font-mono"
-                  placeholder="e.g. https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                />
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-bold text-gray-700 uppercase">Video Source</label>
+                  {videoUrl && (
+                    <button
+                      type="button"
+                      onClick={() => setVideoUrl('')}
+                      className="text-xs text-red-500 hover:underline"
+                    >
+                      Clear Video
+                    </button>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-[10px] text-gray-500 mb-1">Option 1: Paste Video Link (YouTube, Vimeo, or Direct Video URL)</label>
+                    <input
+                      type="url"
+                      value={videoUrl}
+                      onChange={(e) => setVideoUrl(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-gray-50 border rounded-xl text-sm font-mono focus:outline-none focus:border-[#c9a15a]"
+                      placeholder="e.g. https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                    />
+                  </div>
+
+                  <div className="border-2 border-dashed border-gray-200 rounded-2xl p-6 bg-gray-50/50 flex flex-col items-center justify-center gap-2 relative">
+                    <input
+                      type="file"
+                      accept="video/*"
+                      onChange={async (e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          try {
+                            setUploadingVideo(true);
+                            const file = e.target.files[0];
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            const res = await fetch('/api/upload', {
+                              method: 'POST',
+                              body: formData,
+                            });
+                            if (!res.ok) throw new Error('Upload failed');
+                            const val = await res.json();
+                            setVideoUrl(val.url);
+                          } catch (err) {
+                            alert('Failed to upload video file.');
+                          } finally {
+                            setUploadingVideo(false);
+                          }
+                        }
+                      }}
+                      className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                    />
+                    <Video className="w-8 h-8 text-gray-400" />
+                    {uploadingVideo ? (
+                      <div className="flex items-center gap-2 text-xs font-semibold text-[#051b2e]">
+                        <div className="w-4 h-4 border-2 border-[#c9a15a] border-t-transparent rounded-full animate-spin" />
+                        Uploading video file...
+                      </div>
+                    ) : (
+                      <>
+                        <span className="text-xs font-bold text-gray-700">Option 2: Drag &amp; Drop or click to upload video file</span>
+                        <span className="text-[10px] text-gray-400">Supports MP4, WEBM, OGG formats</span>
+                      </>
+                    )}
+                  </div>
+
+                  {videoUrl && (
+                    <div className="p-3 bg-gray-100 rounded-xl flex items-center justify-between text-xs font-mono text-gray-600 truncate">
+                      <span>Active URL: {videoUrl}</span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

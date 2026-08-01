@@ -282,13 +282,25 @@ export default function AboutPage() {
         {/* Video Embedded Inline */}
         <div className="relative aspect-[16/9] w-full rounded-3xl overflow-hidden shadow-2xl border border-gray-100 bg-gray-50 max-w-4xl mx-auto">
           {doc.videoUrl ? (
-            <iframe
-              src={getEmbedUrl(doc.videoUrl)}
-              title="Work Process Video"
-              className="w-full h-full border-0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
+            doc.videoUrl.startsWith('/uploads/') ||
+            doc.videoUrl.endsWith('.mp4') ||
+            doc.videoUrl.endsWith('.webm') ||
+            doc.videoUrl.endsWith('.ogg') ? (
+              <video
+                src={doc.videoUrl}
+                controls
+                className="w-full h-full object-cover"
+                poster={doc.videoThumbnail || undefined}
+              />
+            ) : (
+              <iframe
+                src={getEmbedUrl(doc.videoUrl)}
+                title="Work Process Video"
+                className="w-full h-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            )
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
               No video URL configured.
