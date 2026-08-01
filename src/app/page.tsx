@@ -1,13 +1,13 @@
 import React from 'react';
 import Link from 'next/link';
-import { prisma } from '@/lib/prisma';
-import HeroSlider from '@/components/public/HeroSlider';
-import DestinationCarousel from '@/components/public/DestinationCarousel';
-import TrustBadgesSection from '@/components/public/TrustBadgesSection';
-import TestimonialsSection from '@/components/public/TestimonialsSection';
-import DestinationByRegionSection from '@/components/public/DestinationByRegionSection';
-import FAQAccordionSection from '@/components/public/FAQAccordionSection';
-import HomeExploreTripsTabs from '@/components/public/HomeExploreTripsTabs';
+import { prisma } from '../lib/prisma';
+import HeroSlider from '../components/public/HeroSlider';
+import DestinationCarousel from '../components/public/DestinationCarousel';
+import TrustBadgesSection from '../components/public/TrustBadgesSection';
+import TestimonialsSection from '../components/public/TestimonialsSection';
+import DestinationByRegionSection from '../components/public/DestinationByRegionSection';
+import FAQAccordionSection from '../components/public/FAQAccordionSection';
+import HomeExploreTripsTabs from '../components/public/HomeExploreTripsTabs';
 import { ArrowRight, Camera } from 'lucide-react';
 
 export const revalidate = 60;
