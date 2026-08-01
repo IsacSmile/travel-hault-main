@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useWishlist } from '@/context/WishlistContext';
 import SearchModal from '@/components/public/SearchModal';
+import Logo from '@/components/layout/Logo';
 import {
   Compass,
   Heart,
@@ -84,26 +85,12 @@ export default function Header() {
         >
           <div className="flex items-center justify-between">
             {/* Logo: Icon + Wordmark */}
-            <Link href="/" className="flex items-center gap-3 group">
-              <div
-                className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold shadow transition-all duration-300 group-hover:scale-105 ${
-                  isScrolledPillState ? 'bg-black text-[#c9a15a]' : 'bg-[#c9a15a] text-[#051b2e]'
-                }`}
-              >
-                <Compass className="w-5 h-5" />
-              </div>
-              <div className="flex flex-col">
-                <span
-                  className={`font-serif font-extrabold text-base sm:text-lg tracking-wider leading-none transition-colors duration-300 ${
-                    isScrolledPillState ? 'text-black' : 'text-white'
-                  }`}
-                >
-                  TRAVEL & HAULT
-                </span>
-                <span className="text-[9px] uppercase tracking-widest font-bold mt-0.5 text-[#b8934b]">
-                  TOUR • TRAVEL
-                </span>
-              </div>
+            <Link href="/" className="flex items-center gap-3 group hover:scale-102 transition-transform duration-300">
+              <Logo
+                variant="compact"
+                color={isScrolledPillState ? 'original' : 'white'}
+                height={40}
+              />
             </Link>
 
             {/* Desktop Navigation Links (Black text when scrolled) */}
@@ -349,13 +336,7 @@ export default function Header() {
         <div className="fixed inset-0 bg-white z-50 flex flex-col p-6 overflow-y-auto lg:hidden animate-in slide-in-from-right duration-300 text-black font-sans h-[100dvh]">
           <div className="flex items-center justify-between border-b border-gray-200 pb-4 mb-6">
             <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-black text-[#c9a15a] flex items-center justify-center font-bold">
-                <Compass className="w-5 h-5" />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-serif font-bold text-base text-black">TRAVEL & HAULT</span>
-                <span className="text-[8px] text-[#b8934b] font-bold tracking-widest">TOUR • TRAVEL</span>
-              </div>
+              <Logo variant="compact" color="original" height={36} />
             </Link>
 
             <button

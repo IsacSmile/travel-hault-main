@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Logo from '@/components/layout/Logo';
 import {
   Compass,
   Phone,
@@ -246,13 +247,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 text-xs font-sans">
           {/* Column 1 — Brand */}
           <div className="lg:col-span-4 space-y-4">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-[#051b2e] text-[#c9a15a] flex items-center justify-center font-bold shadow">
-                <Compass className="w-5 h-5" />
-              </div>
-              <div className="font-serif font-bold text-lg text-[#051b2e] tracking-wider uppercase">
-                Travel & Hault
-              </div>
+            <Link href="/" className="flex items-center gap-3 group hover:scale-101 transition-transform duration-300">
+              <Logo variant="full" color="original" height={45} />
             </Link>
 
             <p className="text-gray-600 leading-relaxed font-sans pr-2 sm:pr-6">

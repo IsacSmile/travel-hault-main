@@ -1,0 +1,32 @@
+<svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dotted orbits -->
+  <path d="M 58 10 A 42 42 0 0 1 90 42" stroke="#b08968" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="1.5 4" />
+  <path d="M 42 90 A 42 42 0 0 1 10 58" stroke="#b08968" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="1.5 4" />
+  <circle cx="92" cy="30" r="1.5" fill="#b08968" />
+  <circle cx="85" cy="18" r="1.5" fill="#b08968" />
+  <circle cx="74" cy="11" r="1.5" fill="#b08968" />
+  <circle cx="8" cy="70" r="1.5" fill="#b08968" />
+  <circle cx="15" cy="82" r="1.5" fill="#b08968" />
+  <circle cx="26" cy="89" r="1.5" fill="#b08968" />
+
+  <!-- Main Globe -->
+  <circle cx="50" cy="50" r="38" stroke="#b08968" stroke-width="2.5" />
+
+  <!-- Meridians -->
+  <path d="M 50 12 A 38 38 0 0 0 32 50 A 38 38 0 0 0 50 88" stroke="#b08968" stroke-width="1.5" stroke-linecap="round" />
+  <path d="M 50 12 A 38 38 0 0 1 68 50 A 38 38 0 0 1 50 88" stroke="#b08968" stroke-width="1.5" stroke-linecap="round" />
+  <path d="M 50 12 V 88" stroke="#b08968" stroke-width="1" stroke-dasharray="2 3" />
+
+  <!-- Parallels -->
+  <path d="M 16 35 Q 50 45 84 35" stroke="#b08968" stroke-width="1.5" stroke-linecap="round" />
+  <path d="M 16 65 Q 50 55 84 65" stroke="#b08968" stroke-width="1.5" stroke-linecap="round" />
+  <path d="M 12 50 H 88" stroke="#b08968" stroke-width="1" stroke-dasharray="2 3" />
+
+  <!-- Center Mask -->
+  <circle cx="50" cy="50" r="16" fill="#ffffff" />
+
+  <!-- Airplane -->
+  <g transform="translate(50, 50) rotate(-45)">
+    <path d="M 0 -13 C 1 -13, 2.5 -9, 2.5 -5 L 2.5 1 L 11 5 C 11.5 5.3, 11.5 6, 11 6.3 L 2.5 5 L 2.5 9 L 5 11 C 5.3 11.2, 5.3 11.7, 5 11.9 L 0.5 11 L -0.5 11 L -5 11.9 C -5.3 11.7, -5.3 11.2, -5 11 L -2.5 9 L -2.5 5 L -11 6.3 C -11.5 6, -11.5 5.3, -11 5 L -2.5 1 L -2.5 -5 C -2.5 -9, -1 -13, 0 -13 Z" fill="#b08968" />
+  </g>
+</svg>

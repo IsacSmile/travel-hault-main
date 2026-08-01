@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Logo from '@/components/layout/Logo';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Compass,
@@ -48,18 +49,11 @@ export default function AdminSidebar() {
     <aside className="w-64 bg-white text-[#051b2e] flex flex-col min-h-screen border-r border-gray-200 shrink-0">
       {/* Brand Header */}
       <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-        <Link href="/manage" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#051b2e] text-[#c9a15a] flex items-center justify-center font-bold shadow">
-            <Compass className="w-5 h-5" />
-          </div>
-          <div>
-            <span className="font-serif font-bold text-lg text-[#051b2e] block leading-tight">
-              Travel & Hault
-            </span>
-            <span className="text-[10px] uppercase text-[#b8934b] font-bold tracking-widest block">
-              Admin Portal
-            </span>
-          </div>
+        <Link href="/manage" className="flex items-center gap-3 group hover:scale-102 transition-transform duration-300">
+          <Logo variant="compact" color="original" height={36} />
+          <span className="text-[10px] uppercase text-[#b8934b] font-bold tracking-widest block shrink-0 mt-0.5">
+            Admin
+          </span>
         </Link>
       </div>
 
