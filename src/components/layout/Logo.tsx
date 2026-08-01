@@ -20,16 +20,16 @@ export default function Logo({
   const strokeClass = color === 'white' ? 'stroke-white' : 'stroke-[#b08968]';
   const circleBg = color === 'white' ? 'fill-[#1a1815]' : 'fill-white';
 
-  // Sizing calculations: aspect ratio for full lockup is roughly 4:1 (width: 400, height: 100)
-  // For compact lockup it is roughly 3:1 (width: 300, height: 100)
+  // Sizing calculations: aspect ratio for full lockup is roughly 5.2:1 (width: 520, height: 100)
+  // For compact lockup it is roughly 4.2:1 (width: 420, height: 100)
   // For icon it is 1:1 (width: 100, height: 100)
-  const width = variant === 'full' ? height * 4 : variant === 'compact' ? height * 3 : height;
+  const width = variant === 'full' ? height * 5.2 : variant === 'compact' ? height * 4.2 : height;
 
   return (
     <svg
       width={width}
       height={height}
-      viewBox={variant === 'full' ? '0 0 400 100' : variant === 'compact' ? '0 0 300 100' : '0 0 100 100'}
+      viewBox={variant === 'full' ? '0 0 520 100' : variant === 'compact' ? '0 0 420 100' : '0 0 100 100'}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={`${className} select-none transition-all duration-300`}
