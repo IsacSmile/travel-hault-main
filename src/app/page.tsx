@@ -88,7 +88,7 @@ export default async function HomePage() {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {gallery.map((g) => (
+            {gallery.map((g: any) => (
               <div
                 key={g.id}
                 className="relative group rounded-3xl overflow-hidden h-60 bg-gray-100 border border-gray-200 shadow-sm hover:shadow-lg transition"
