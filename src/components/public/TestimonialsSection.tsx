@@ -112,7 +112,7 @@ export default function TestimonialsSection({ testimonials }: TestimonialsSectio
         </Link>
       </div>
 
-      {/* Staggered Two-Row Faster Marquee Carousel Container */}
+      {/* Staggered Two-Row Fast Marquee Carousel Container */}
       <div
         className="relative overflow-hidden py-4 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 group"
         onMouseEnter={() => setIsPaused(true)}
@@ -123,13 +123,13 @@ export default function TestimonialsSection({ testimonials }: TestimonialsSectio
         <div className="absolute top-0 bottom-0 right-0 w-16 sm:w-28 bg-gradient-to-l from-white via-white/80 to-transparent z-20 pointer-events-none" />
 
         <div className="space-y-5">
-          {/* Row 1 (Faster Marquee Left - 22s) */}
+          {/* Row 1 (Fast Marquee Left - 12s) */}
           <div
             className={`flex gap-5 transition-all duration-700 ${
               isPaused ? '[animation-play-state:paused]' : ''
             }`}
             style={{
-              animation: 'infiniteDriftLeft 22s linear infinite',
+              animation: 'infiniteDriftLeft 12s linear infinite',
             }}
           >
             {row1Extended.map((item, idx) => (
@@ -137,13 +137,13 @@ export default function TestimonialsSection({ testimonials }: TestimonialsSectio
             ))}
           </div>
 
-          {/* Row 2 (Faster Marquee Right - 25s) */}
+          {/* Row 2 (Fast Marquee Right - 14s) */}
           <div
             className={`flex gap-5 pl-12 transition-all duration-700 ${
               isPaused ? '[animation-play-state:paused]' : ''
             }`}
             style={{
-              animation: 'infiniteDriftRight 25s linear infinite',
+              animation: 'infiniteDriftRight 14s linear infinite',
             }}
           >
             {row2Extended.map((item, idx) => (
