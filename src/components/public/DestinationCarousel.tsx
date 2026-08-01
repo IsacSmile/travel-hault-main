@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useWishlist } from '@/context/WishlistContext';
@@ -10,20 +10,23 @@ interface DestinationCarouselProps {
 }
 
 export default function DestinationCarousel({ destinations }: DestinationCarouselProps) {
-  const [activeIndex, setActiveIndex] = useState(2);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [touchStartX, setTouchStartX] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
   const [windowWidth, setWindowWidth] = useState(1200);
+  const mobileScrollRef = useRef<HTMLDivElement>(null);
 
   const total = destinations.length;
 
-  // Track window resize for responsive card spacing
+  // Track window resize for mobile vs desktop layout
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  const isMobile = windowWidth < 640;
 
   const goNext = useCallback(() => {
     setActiveIndex((prev) => (prev + 1) % total);
@@ -33,7 +36,7 @@ export default function DestinationCarousel({ destinations }: DestinationCarouse
     setActiveIndex((prev) => (prev - 1 + total) % total);
   }, [total]);
 
-  // Touch / swipe handling
+  // Touch / swipe handling for desktop 3D coverflow
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartX(e.touches[0].clientX);
     setIsSwiping(true);
@@ -59,7 +62,16 @@ export default function DestinationCarousel({ destinations }: DestinationCarouse
     return () => window.removeEventListener('keydown', handleKey);
   }, [goNext, goPrev]);
 
-  // Calculate position offset from center for each card
+  // Scroll sync for simple mobile layout
+  const handleMobileScroll = () => {
+    const el = mobileScrollRef.current;
+    if (!el) return;
+    const cardWidth = el.children[0]?.getBoundingClientRect().width || 240;
+    const idx = Math.round(el.scrollLeft / (cardWidth + 16));
+    setActiveIndex(Math.min(idx, total - 1));
+  };
+
+  // Calculate position offset from center for 3D desktop coverflow
   const getCardStyle = (index: number) => {
     let offset = index - activeIndex;
 
@@ -74,20 +86,11 @@ export default function DestinationCarousel({ destinations }: DestinationCarouse
       return { visible: false, style: {} };
     }
 
-    // Scale: center = 1, adjacent = 0.85, outer = 0.72
     const scale = offset === 0 ? 1 : absOffset === 1 ? 0.85 : 0.72;
-
-    // Height: center is tallest, sides progressively shorter
     const height = offset === 0 ? 420 : absOffset === 1 ? 360 : 300;
-
-    // Horizontal translate: generous card spacing matching uploaded screenshot (320px on desktop)
-    const cardGap = windowWidth < 640 ? 200 : windowWidth < 1024 ? 260 : 320;
+    const cardGap = windowWidth < 1024 ? 260 : 320;
     const spacing = offset * cardGap;
-
-    // Z-index: center on top
     const zIndex = 10 - absOffset;
-
-    // Opacity: edges fade slightly
     const opacity = offset === 0 ? 1 : absOffset === 1 ? 0.75 : 0.45;
 
     return {
@@ -101,9 +104,54 @@ export default function DestinationCarousel({ destinations }: DestinationCarouse
     };
   };
 
+  /* ─────────────────────────────────────────────────
+     SIMPLE MOBILE LAYOUT (<640px)
+     ───────────────────────────────────────────────── */
+  if (isMobile) {
+    return (
+      <div className="space-y-4">
+        {/* Simple Horizontal Scroll Row */}
+        <div
+          ref={mobileScrollRef}
+          onScroll={handleMobileScroll}
+          className="flex gap-4 overflow-x-auto snap-x snap-mandatory px-4 -mx-4 pb-2"
+          style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
+        >
+          {destinations.map((dest) => (
+            <SimpleMobileCard key={dest.id} dest={dest} />
+          ))}
+        </div>
+
+        {/* Simple Mobile Pagination Dots */}
+        <div className="flex items-center justify-center gap-1.5 pt-2">
+          {destinations.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => {
+                const el = mobileScrollRef.current;
+                if (el && el.children[idx]) {
+                  el.children[idx].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                }
+              }}
+              className={`rounded-full transition-all duration-300 ${
+                activeIndex === idx
+                  ? 'w-6 h-2 bg-[#b8934b]'
+                  : 'w-2 h-2 bg-gray-300'
+              }`}
+              aria-label={`Go to slide ${idx + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  /* ─────────────────────────────────────────────────
+     DESKTOP 3D COVERFLOW LAYOUT (>=640px)
+     ───────────────────────────────────────────────── */
   return (
     <div className="relative select-none">
-      {/* Carousel Container — generous height for card breathing room */}
+      {/* Carousel Container */}
       <div
         className="relative flex items-center justify-center overflow-hidden"
         style={{ minHeight: '500px' }}
@@ -143,7 +191,7 @@ export default function DestinationCarousel({ destinations }: DestinationCarouse
         <ChevronRight className="w-5 h-5" />
       </button>
 
-      {/* Pagination Dots — spaced below cards */}
+      {/* Pagination Dots */}
       <div className="flex items-center justify-center gap-2 mt-6 sm:mt-8">
         {destinations.map((_, idx) => (
           <button
@@ -163,7 +211,49 @@ export default function DestinationCarousel({ destinations }: DestinationCarouse
 }
 
 /* ─────────────────────────────────────────────────
-   Coverflow Card Component
+   Simple Mobile Card Component (<640px)
+   ───────────────────────────────────────────────── */
+function SimpleMobileCard({ dest }: { dest: any }) {
+  const { isInWishlist, toggleWishlist } = useWishlist();
+  const wishlisted = isInWishlist(dest.id);
+
+  return (
+    <div className="shrink-0 snap-center w-[250px] space-y-2.5">
+      <Link
+        href={`/destinations/${dest.slug}`}
+        className="relative block w-full h-[320px] rounded-3xl overflow-hidden shadow-md bg-gray-100 border border-gray-200/80"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={dest.heroImage}
+          alt={dest.name}
+          className="w-full h-full object-cover"
+        />
+
+        {/* Wishlist Heart */}
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleWishlist(dest.id);
+          }}
+          className={`absolute top-3.5 right-3.5 z-20 w-9 h-9 rounded-full flex items-center justify-center shadow ${
+            wishlisted ? 'bg-red-500 text-white' : 'bg-white/90 text-gray-600'
+          }`}
+        >
+          <Heart className={`w-4 h-4 ${wishlisted ? 'fill-white' : ''}`} />
+        </button>
+      </Link>
+
+      <p className="text-center font-serif font-bold text-base text-[#051b2e]">
+        {dest.name}
+      </p>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────
+   Desktop 3D Coverflow Card Component (>=640px)
    ───────────────────────────────────────────────── */
 function CoverflowCard({
   dest,
@@ -218,7 +308,7 @@ function CoverflowCard({
         )}
       </Link>
 
-      {/* Destination Name — below the card with comfortable spacing */}
+      {/* Destination Name — below the card */}
       <p
         className={`mt-4 text-center font-serif font-bold transition-all duration-300 ${
           isActive
