@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Send, CheckCircle2, Compass } from 'lucide-react';
+import { X, Send, CheckCircle2, Compass, AlertCircle } from 'lucide-react';
 
 interface EnquiryModalProps {
   isOpen: boolean;
@@ -20,16 +20,18 @@ export default function EnquiryModal({
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [preferredDate, setPreferredDate] = useState('');
-  const [numTravelers, setNumTravelers] = useState('2 Travelers');
+  const [numTravelers, setNumTravelers] = useState('Couple (2 Travelers)');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setErrorMessage(null);
 
     try {
       const res = await fetch('/api/public/enquiry', {
@@ -48,13 +50,15 @@ export default function EnquiryModal({
         }),
       });
 
-      if (res.ok) {
+      const data = await res.json();
+      if (res.ok && data.success) {
         setSubmitted(true);
       } else {
-        alert('Submission failed. Please try again.');
+        setErrorMessage(data.error || 'Submission failed. Please check your fields and try again.');
       }
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
+      console.error('Enquiry client submit error:', e);
+      setErrorMessage('Network error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -81,20 +85,20 @@ export default function EnquiryModal({
                 Travel Enquiry
               </span>
               <h2 className="text-xl font-bold font-serif">
-                {packageItem ? `Enquire: ${packageItem.title}` : 'Plan Your Custom Itinerary'}
+                {packageItem ? `Book: ${packageItem.title}` : 'Plan Your Custom Itinerary'}
               </h2>
             </div>
           </div>
         </div>
 
         {submitted ? (
-          <div className="p-8 text-center space-y-4">
+          <div className="p-8 text-center space-y-4 font-sans">
             <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-10 h-10" />
             </div>
-            <h3 className="text-xl font-bold font-serif text-gray-900">Enquiry Submitted!</h3>
+            <h3 className="text-xl font-bold font-serif text-gray-900">Booking Enquiry Submitted!</h3>
             <p className="text-sm text-gray-600 leading-relaxed max-w-sm mx-auto">
-              Thank you, <strong className="text-gray-900">{name}</strong>. Our travel specialist will review your trip request and reach out to you via phone or WhatsApp within 2-4 hours.
+              Thank you, <strong className="text-gray-900">{name}</strong>. Our travel specialist will review your booking request for <strong className="text-gray-900">{packageItem?.title || 'your trip'}</strong> and get in touch within 2-4 hours.
             </p>
             <button
               onClick={() => {
@@ -107,7 +111,14 @@ export default function EnquiryModal({
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+          <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto font-sans">
+            {errorMessage && (
+              <div className="p-3 bg-red-50 border border-red-200 text-red-800 rounded-xl text-xs font-bold flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
             <div className="space-y-3">
               <div>
                 <label className="block text-xs font-semibold uppercase text-gray-600 mb-1">
@@ -183,7 +194,7 @@ export default function EnquiryModal({
 
               <div>
                 <label className="block text-xs font-semibold uppercase text-gray-600 mb-1">
-                  Message & Specific Requests
+                  Message & Custom Requests
                 </label>
                 <textarea
                   rows={3}
@@ -204,7 +215,7 @@ export default function EnquiryModal({
                 <div className="w-5 h-5 border-2 border-[#c9a15a] border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
-                  <Send className="w-4 h-4" /> Send Enquiry Request
+                  <Send className="w-4 h-4" /> Submit Booking Enquiry
                 </>
               )}
             </button>

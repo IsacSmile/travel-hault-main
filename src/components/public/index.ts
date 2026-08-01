@@ -1,0 +1,12 @@
+export { default as HeroSlider } from './HeroSlider';
+export { default as DestinationCarousel } from './DestinationCarousel';
+export { default as TrustBadgesSection } from './TrustBadgesSection';
+export { default as TestimonialsSection } from './TestimonialsSection';
+export { default as DestinationByRegionSection } from './DestinationByRegionSection';
+export { default as FAQAccordionSection } from './FAQAccordionSection';
+export { default as HomeExploreTripsTabs } from './HomeExploreTripsTabs';
+export { default as PackageCard } from './PackageCard';
+export { default as PackageDetailView } from './PackageDetailView';
+export { default as PackagesListingClient } from './PackagesListingClient';
+export { default as GalleryClient } from './GalleryClient';
+export { default as EnquiryModal } from './EnquiryModal';
