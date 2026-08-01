@@ -213,3 +213,38 @@ model SiteSettings {
   packagesPerPage    Int      @default(9) // Number of package cards per page on the public listing
   updatedAt          DateTime @updatedAt
 }
+
+model AboutPageContent {
+  id                   String @id @default("singleton")
+  
+  heroHeading          String
+  heroText             String
+  heroImage            String
+  
+  statsStatementText   String
+  statsJson            String // Array of { number: string, label: string }
+  
+  missionHeading       String
+  missionText          String
+  missionImageBg       String
+  missionImageFg       String
+  missionPointsJson    String // Array of strings
+  
+  visionHeading        String
+  visionText           String
+  visionImageBg        String
+  visionImageFg        String
+  visionPointsJson     String // Array of strings
+  
+  strengthHeading      String
+  strengthText         String
+  strengthImageBg      String
+  strengthImageFg      String
+  strengthPointsJson   String // Array of strings
+  
+  videoHeading         String
+  videoSubtext         String
+  videoThumbnail       String
+  videoUrl             String
+}
+

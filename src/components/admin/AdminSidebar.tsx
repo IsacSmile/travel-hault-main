@@ -17,6 +17,7 @@ import {
   Settings,
   LogOut,
   ExternalLink,
+  Sparkles,
 } from 'lucide-react';
 
 const navigation = [
@@ -26,6 +27,7 @@ const navigation = [
   { name: 'Regions Manager', href: '/manage/regions', icon: Globe },
   { name: 'Trip Themes', href: '/manage/trip-themes', icon: Tag },
   { name: 'Homepage Content', href: '/manage/homepage', icon: Home },
+  { name: 'About Page Content', href: '/manage/about', icon: Sparkles },
   { name: 'Gallery Manager', href: '/manage/gallery', icon: ImageIcon },
   { name: 'Enquiries Inbox', href: '/manage/enquiries', icon: Inbox },
   { name: 'Subscribers', href: '/manage/subscribers', icon: Mail },
