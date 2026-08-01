@@ -34,7 +34,7 @@ export default async function HomePage() {
     ]);
 
   return (
-    <div className="space-y-0">
+    <div className="space-y-0 font-sans">
       {/* Hero Photo Section */}
       <HeroSlider slides={slides} />
 
@@ -45,29 +45,29 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Section 2: Explore Iconic Destinations — Equal Spaced Carousel (WHITE background #FFFFFF) */}
+      {/* Section 2: Explore Destinations — Coverflow (PURE WHITE background #FFFFFF) */}
       <section className="bg-white py-16 sm:py-20 lg:py-24 border-b border-gray-100 overflow-hidden">
         <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
-          {/* Section Header */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-10 lg:mb-12 gap-4">
-            <div className="max-w-xl">
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#051b2e]">
-                Explore Iconic Destinations
+          {/* Section Header (Matching Screenshot) */}
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-8 sm:mb-12 gap-4">
+            <div className="max-w-2xl space-y-2">
+              <h2 className="text-3xl sm:text-5xl font-extrabold text-black font-sans tracking-tight">
+                Explore Destinations
               </h2>
-              <p className="text-sm text-gray-600 mt-3 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-600 leading-relaxed font-sans">
                 From the snow-capped Himalayas to tropical beaches, discover India&apos;s incredible diversity with our handpicked destinations.
               </p>
             </div>
 
             <Link
               href="/destinations"
-              className="text-sm font-bold text-[#051b2e] hover:text-[#b8934b] transition flex items-center gap-1.5 shrink-0 underline underline-offset-4 decoration-[#b8934b]/40 hover:decoration-[#b8934b] py-2 px-1 -mx-1 rounded-lg"
+              className="text-sm font-extrabold text-black hover:text-[#b8934b] transition shrink-0 underline underline-offset-4 font-sans sm:mt-3"
             >
-              See All <ArrowRight className="w-4 h-4" />
+              See All
             </Link>
           </div>
 
-          {/* Equal Spaced Destination Carousel */}
+          {/* Coverflow Destination Carousel */}
           <DestinationCarousel destinations={destinations} />
         </div>
       </section>

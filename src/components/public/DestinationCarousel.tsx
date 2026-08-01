@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
-import { Heart, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Heart, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useWishlist } from '@/context/WishlistContext';
 
 interface DestinationCarouselProps {
@@ -10,157 +10,239 @@ interface DestinationCarouselProps {
 }
 
 export default function DestinationCarousel({ destinations }: DestinationCarouselProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(2);
+  const [touchStartX, setTouchStartX] = useState(0);
+  const [isSwiping, setIsSwiping] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(1200);
+  const mobileScrollRef = useRef<HTMLDivElement>(null);
 
-  const checkScroll = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 10);
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
+  const total = destinations.length;
 
-    const cardWidth = el.children[0]?.getBoundingClientRect().width || 280;
-    const gap = 24;
-    const idx = Math.round(el.scrollLeft / (cardWidth + gap));
-    setActiveIndex(Math.min(Math.max(0, idx), destinations.length - 1));
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isMobile = windowWidth < 640;
+
+  const goNext = useCallback(() => {
+    setActiveIndex((prev) => (prev + 1) % total);
+  }, [total]);
+
+  const goPrev = useCallback(() => {
+    setActiveIndex((prev) => (prev - 1 + total) % total);
+  }, [total]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+    setIsSwiping(true);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!isSwiping) return;
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) goNext();
+      else goPrev();
+    }
+    setIsSwiping(false);
   };
 
   useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    el.addEventListener('scroll', checkScroll, { passive: true });
-    checkScroll();
-    return () => el.removeEventListener('scroll', checkScroll);
-  }, [destinations.length]);
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') goNext();
+      if (e.key === 'ArrowLeft') goPrev();
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [goNext, goPrev]);
 
-  const scrollTo = (direction: 'left' | 'right') => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const cardWidth = el.children[0]?.getBoundingClientRect().width || 280;
-    const gap = 24;
-    const scrollAmount = (cardWidth + gap) * 2;
-    el.scrollBy({ left: direction === 'right' ? scrollAmount : -scrollAmount, behavior: 'smooth' });
+  // Calculate 3D Coverflow positioning
+  const getCardStyle = (index: number) => {
+    let offset = index - activeIndex;
+
+    if (offset > total / 2) offset -= total;
+    if (offset < -total / 2) offset += total;
+
+    const absOffset = Math.abs(offset);
+
+    if (absOffset > 2) {
+      return { visible: false, style: {} };
+    }
+
+    // Coverflow scale, height, spacing matching reference screenshot
+    const scale = offset === 0 ? 1 : absOffset === 1 ? 0.84 : 0.72;
+    const height = offset === 0 ? 440 : absOffset === 1 ? 360 : 300;
+    const cardGap = windowWidth < 1024 ? 240 : 290;
+    const spacing = offset * cardGap;
+    const zIndex = 10 - absOffset;
+    const opacity = offset === 0 ? 1 : absOffset === 1 ? 0.75 : 0.4;
+
+    return {
+      visible: true,
+      style: {
+        transform: `translateX(${spacing}px) scale(${scale})`,
+        height: `${height}px`,
+        zIndex,
+        opacity,
+      },
+    };
   };
 
-  const scrollToIndex = (index: number) => {
-    const el = scrollRef.current;
-    if (!el || !el.children[index]) return;
-    const cardWidth = el.children[0]?.getBoundingClientRect().width || 280;
-    const gap = 24;
-    el.scrollTo({ left: index * (cardWidth + gap), behavior: 'smooth' });
-  };
+  /* ─────────────────────────────────────────────────
+     MOBILE VIEW (<640px)
+     ───────────────────────────────────────────────── */
+  if (isMobile) {
+    return (
+      <div className="space-y-4">
+        <div
+          ref={mobileScrollRef}
+          className="flex gap-4 overflow-x-auto snap-x snap-mandatory px-4 -mx-4 pb-2"
+          style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
+        >
+          {destinations.map((dest, idx) => (
+            <div key={dest.id} className="shrink-0 snap-center w-[250px] space-y-2.5">
+              <Link
+                href={`/destinations/${dest.slug}`}
+                className="relative block w-full h-[320px] rounded-[28px] overflow-hidden shadow-md bg-gray-100 border border-gray-200/80"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={dest.heroImage} alt={dest.name} className="w-full h-full object-cover" />
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  className="absolute top-3.5 right-3.5 z-20 w-9 h-9 rounded-full bg-white/90 text-gray-600 flex items-center justify-center shadow"
+                >
+                  <Heart className="w-4 h-4" />
+                </button>
+              </Link>
+              <p className="text-center font-bold text-base text-black">{dest.name}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
+  /* ─────────────────────────────────────────────────
+     DESKTOP COVERFLOW CAROUSEL (>=640px)
+     ───────────────────────────────────────────────── */
   return (
-    <div className="relative group/carousel">
-      {/* Equal Spaced Horizontal Scroll Row */}
+    <div className="relative select-none py-6">
+      {/* Coverflow Container */}
       <div
-        ref={scrollRef}
-        className="flex gap-6 sm:gap-8 overflow-x-auto snap-x snap-mandatory pb-4 pt-1 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
-        style={{
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-          WebkitOverflowScrolling: 'touch',
-        }}
+        className="relative flex items-center justify-center overflow-hidden"
+        style={{ minHeight: '520px' }}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
-        <style jsx>{`
-          div::-webkit-scrollbar {
-            display: none;
-          }
-        `}</style>
+        {destinations.map((dest, index) => {
+          const { visible, style } = getCardStyle(index);
+          if (!visible) return null;
 
-        {destinations.map((dest) => (
-          <DestinationCardItem key={dest.id} dest={dest} />
-        ))}
+          const isActive = index === activeIndex;
+
+          return (
+            <CoverflowCardItem
+              key={dest.id}
+              dest={dest}
+              isActive={isActive}
+              style={style}
+            />
+          );
+        })}
       </div>
 
-      {/* Desktop Navigation Arrows (Equal Spaced Layout) */}
-      {canScrollLeft && (
-        <button
-          onClick={() => scrollTo('left')}
-          className="absolute left-2 lg:-left-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white border border-gray-200 shadow-xl flex items-center justify-center text-gray-700 hover:text-black hover:scale-110 transition-all duration-300 hidden sm:flex"
-          aria-label="Previous destination"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-      )}
+      {/* Navigation Arrow Buttons (Matching Screenshot) */}
+      <button
+        onClick={goPrev}
+        className="absolute left-8 lg:left-16 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-white border border-gray-200 shadow-xl flex items-center justify-center text-gray-700 hover:text-black hover:scale-110 transition-all duration-300 hidden sm:flex"
+        aria-label="Previous destination"
+      >
+        <ArrowLeft className="w-5 h-5" />
+      </button>
 
-      {canScrollRight && (
-        <button
-          onClick={() => scrollTo('right')}
-          className="absolute right-2 lg:-right-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white border border-gray-200 shadow-xl flex items-center justify-center text-gray-700 hover:text-black hover:scale-110 transition-all duration-300 hidden sm:flex"
-          aria-label="Next destination"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
-      )}
-
-      {/* Pagination Dots */}
-      <div className="flex items-center justify-center gap-2 mt-6 sm:mt-8">
-        {destinations.map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => scrollToIndex(idx)}
-            className={`rounded-full transition-all duration-300 ${
-              activeIndex === idx ? 'w-7 h-2.5 bg-[#b8934b]' : 'w-2.5 h-2.5 bg-gray-300 hover:bg-gray-400'
-            }`}
-            aria-label={`Go to slide ${idx + 1}`}
-          />
-        ))}
-      </div>
+      <button
+        onClick={goNext}
+        className="absolute right-8 lg:right-16 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-white border border-gray-200 shadow-xl flex items-center justify-center text-gray-700 hover:text-black hover:scale-110 transition-all duration-300 hidden sm:flex"
+        aria-label="Next destination"
+      >
+        <ArrowRight className="w-5 h-5" />
+      </button>
     </div>
   );
 }
 
 /* ─────────────────────────────────────────────────
-   Destination Card Item (Equal Spacing)
+   Coverflow Card Item
    ───────────────────────────────────────────────── */
-function DestinationCardItem({ dest }: { dest: any }) {
+function CoverflowCardItem({
+  dest,
+  isActive,
+  style,
+}: {
+  dest: any;
+  isActive: boolean;
+  style: React.CSSProperties;
+}) {
   const { isInWishlist, toggleWishlist } = useWishlist();
   const wishlisted = isInWishlist(dest.id);
 
   return (
-    <div className="shrink-0 snap-start w-[240px] sm:w-[280px] lg:w-[300px] space-y-3 group">
-      {/* Card Image Container */}
+    <div
+      className="absolute flex flex-col items-center transition-all duration-500 ease-out"
+      style={{
+        ...style,
+        width: 'clamp(230px, 26vw, 310px)',
+      }}
+    >
+      {/* Card Image Box */}
       <Link
         href={`/destinations/${dest.slug}`}
-        className="relative block w-full h-[320px] sm:h-[380px] lg:h-[400px] rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 bg-gray-100 border border-gray-200/80"
+        className="relative block w-full overflow-hidden rounded-[32px] shadow-xl hover:shadow-2xl transition-shadow duration-300 group bg-gray-100"
+        style={{ height: (style as any).height || 440 }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={dest.heroImage}
           alt={dest.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
         />
 
-        {/* Wishlist Heart Icon */}
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            toggleWishlist(dest.id);
-          }}
-          className={`absolute top-4 right-4 z-20 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-md ${
-            wishlisted
-              ? 'bg-red-500 text-white scale-110'
-              : 'bg-white/90 text-gray-600 hover:text-red-500 hover:bg-white backdrop-blur-sm'
-          }`}
-          title={wishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
-        >
-          <Heart className={`w-4 h-4 ${wishlisted ? 'fill-white' : ''}`} />
-        </button>
+        {/* Wishlist Heart Icon — on active card */}
+        {isActive && (
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              toggleWishlist(dest.id);
+            }}
+            className={`absolute top-4 right-4 z-20 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-md ${
+              wishlisted
+                ? 'bg-red-500 text-white scale-110'
+                : 'bg-white text-gray-600 hover:text-red-500 backdrop-blur-sm'
+            }`}
+            title={wishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
+          >
+            <Heart className={`w-4 h-4 ${wishlisted ? 'fill-white' : ''}`} />
+          </button>
+        )}
       </Link>
 
-      {/* Destination Name — Clean Centered Label Below */}
-      <div className="text-center pt-1 space-y-0.5">
-        <Link href={`/destinations/${dest.slug}`}>
-          <h3 className="font-serif font-bold text-lg sm:text-xl text-[#051b2e] group-hover:text-[#b8934b] transition-colors duration-300">
-            {dest.name}
-          </h3>
-        </Link>
-        <p className="text-xs text-gray-500 font-medium">{dest.stateOrCountry}</p>
-      </div>
+      {/* Destination Name Below Card */}
+      <p
+        className={`mt-4 text-center transition-all duration-300 ${
+          isActive
+            ? 'text-xl font-bold text-black font-sans'
+            : 'text-sm font-medium italic text-gray-400 font-sans'
+        }`}
+      >
+        {dest.name}
+      </p>
     </div>
   );
 }
