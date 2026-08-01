@@ -220,6 +220,19 @@ export default function Header() {
               </Link>
 
               <Link
+                href="/faqs"
+                className={`text-xs uppercase font-extrabold tracking-wider transition-colors duration-300 ${
+                  pathname === '/faqs'
+                    ? 'text-[#b8934b]'
+                    : isScrolledPillState
+                    ? 'text-black hover:text-[#b8934b]'
+                    : 'text-white/90 hover:text-[#c9a15a]'
+                }`}
+              >
+                FAQs
+              </Link>
+
+              <Link
                 href="/contact"
                 className={`text-xs uppercase font-extrabold tracking-wider transition-colors duration-300 ${
                   pathname === '/contact'
