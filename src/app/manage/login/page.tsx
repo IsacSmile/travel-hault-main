@@ -126,12 +126,6 @@ export default function AdminLoginPage() {
         <Suspense fallback={<div className="text-center text-[#1a1815] text-xs">Loading...</div>}>
           <LoginForm />
         </Suspense>
-
-        <div className="mt-8 text-center border-t border-gray-300/80 pt-4">
-          <p className="text-xs text-gray-600">
-            Default credentials: <code className="text-[#b8934b] font-bold">admin</code> / <code className="text-[#b8934b] font-bold">admin123</code>
-          </p>
-        </div>
       </div>
     </div>
   );
