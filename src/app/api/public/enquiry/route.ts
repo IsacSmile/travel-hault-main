@@ -12,7 +12,13 @@ export async function POST(request: Request) {
       message,
       packageId,
       preferredDate,
+      arrivalDate,
+      departureDate,
       numTravelers,
+      hotelType,
+      numRooms,
+      pickupLocation,
+      dropLocation,
       budgetRange,
       destinationsOfInterest,
     } = body;
@@ -42,7 +48,13 @@ export async function POST(request: Request) {
         message: message ? String(message).trim() : '',
         packageId: validPackageId,
         preferredDate: preferredDate ? String(preferredDate) : null,
+        arrivalDate: arrivalDate ? String(arrivalDate) : null,
+        departureDate: departureDate ? String(departureDate) : null,
         numTravelers: numTravelers ? String(numTravelers) : null,
+        hotelType: hotelType ? String(hotelType) : null,
+        numRooms: numRooms ? Number(numRooms) : null,
+        pickupLocation: pickupLocation ? String(pickupLocation) : null,
+        dropLocation: dropLocation ? String(dropLocation) : null,
         budgetRange: budgetRange ? String(budgetRange) : null,
         destinationsOfInterest: destinationsOfInterest ? String(destinationsOfInterest) : null,
         status: 'New',
@@ -50,10 +62,11 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true, enquiryId: enquiry.id });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Public Enquiry API submission error:', error);
+    const msg = error instanceof Error ? error.message : 'Failed to submit enquiry';
     return NextResponse.json(
-      { success: false, error: error.message || 'Failed to submit enquiry' },
+      { success: false, error: msg },
       { status: 500 }
     );
   }

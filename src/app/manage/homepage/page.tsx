@@ -378,25 +378,25 @@ export default function HomepageManagerPage() {
 
             {activeTab === 'slides' && (
               <div className="space-y-3">
-                <ImageUploader value={editItem.image} onChange={(url) => setEditItem({ ...editItem, image: url })} label="Slide Image" />
+                <ImageUploader value={(editItem as any).image || ''} onChange={(url) => setEditItem({ ...editItem, image: url })} label="Slide Image" />
                 <input
                   type="text"
                   placeholder="Location Tag (e.g. Kashmir Valley)"
-                  value={editItem.locationTag}
+                  value={(editItem as any).locationTag || ''}
                   onChange={(e) => setEditItem({ ...editItem, locationTag: e.target.value })}
                   className="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"
                 />
                 <input
                   type="text"
                   placeholder="Headline"
-                  value={editItem.headline}
+                  value={(editItem as any).headline || ''}
                   onChange={(e) => setEditItem({ ...editItem, headline: e.target.value })}
                   className="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-bold"
                 />
                 <textarea
                   rows={2}
                   placeholder="Subtext..."
-                  value={editItem.subtext}
+                  value={(editItem as any).subtext || ''}
                   onChange={(e) => setEditItem({ ...editItem, subtext: e.target.value })}
                   className="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"
                 />
@@ -408,14 +408,14 @@ export default function HomepageManagerPage() {
                 <input
                   type="text"
                   placeholder="Badge Title (e.g. Bespoke Itineraries)"
-                  value={editItem.title}
+                  value={(editItem as any).title || ''}
                   onChange={(e) => setEditItem({ ...editItem, title: e.target.value })}
                   className="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-bold"
                 />
                 <textarea
                   rows={2}
                   placeholder="Description..."
-                  value={editItem.description}
+                  value={(editItem as any).description || ''}
                   onChange={(e) => setEditItem({ ...editItem, description: e.target.value })}
                   className="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"
                 />
@@ -427,14 +427,14 @@ export default function HomepageManagerPage() {
                 <input
                   type="text"
                   placeholder="Question?"
-                  value={editItem.question}
+                  value={(editItem as any).question || ''}
                   onChange={(e) => setEditItem({ ...editItem, question: e.target.value })}
                   className="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-bold"
                 />
                 <textarea
                   rows={3}
                   placeholder="Answer..."
-                  value={editItem.answer}
+                  value={(editItem as any).answer || ''}
                   onChange={(e) => setEditItem({ ...editItem, answer: e.target.value })}
                   className="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"
                 />
@@ -446,21 +446,21 @@ export default function HomepageManagerPage() {
                 <input
                   type="text"
                   placeholder="Customer Name"
-                  value={editItem.name}
+                  value={(editItem as any).name || ''}
                   onChange={(e) => setEditItem({ ...editItem, name: e.target.value })}
                   className="w-full p-2.5 bg-gray-50 border rounded-xl text-xs font-bold"
                 />
                 <textarea
                   rows={3}
                   placeholder="Review text..."
-                  value={editItem.reviewText}
+                  value={(editItem as any).reviewText || ''}
                   onChange={(e) => setEditItem({ ...editItem, reviewText: e.target.value })}
                   className="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"
                 />
                 <input
                   type="text"
                   placeholder="Source Label (e.g. Google Review)"
-                  value={editItem.sourceLabel}
+                  value={(editItem as any).sourceLabel || ''}
                   onChange={(e) => setEditItem({ ...editItem, sourceLabel: e.target.value })}
                   className="w-full p-2.5 bg-gray-50 border rounded-xl text-xs"
                 />

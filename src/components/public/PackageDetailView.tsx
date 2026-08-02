@@ -34,15 +34,15 @@ interface DestinationItem {
 interface PackageVariantItem {
   id?: string;
   label: string;
-  price: string;
+  price: string | number;
   priceUnit?: string;
-  originalPrice?: string;
+  originalPrice?: string | number | null;
   itineraryDays: Array<{
     id?: string;
     dayNumber: number;
     title: string;
     description: string;
-    imagesJson?: string;
+    imagesJson?: string | null;
   }>;
 }
 
@@ -52,11 +52,16 @@ interface PackageDetailItem {
   tripCode: string;
   type: string;
   shortDescription: string;
+  longDescription: string;
   imagesJson: string;
   highlightsJson: string;
   inclusionsJson: string;
   exclusionsJson: string;
   importantNotesJson: string;
+  groupSizeMax: number;
+  groupSizeAvg: number;
+  tourStyle: string;
+  accommodationType: string;
   themes?: Array<{
     theme: {
       slug: string;
@@ -68,9 +73,9 @@ interface PackageDetailItem {
     destination: DestinationItem;
   }>;
   variants?: PackageVariantItem[];
-  price?: string;
+  price?: string | number;
   priceUnit?: string;
-  originalPrice?: string;
+  originalPrice?: string | number | null;
 }
 
 interface PackageItem {
@@ -84,13 +89,13 @@ interface PackageItem {
   featured?: boolean;
   variants?: Array<{
     label: string;
-    price: string;
+    price: string | number;
     priceUnit?: string;
-    originalPrice?: string;
+    originalPrice?: string | number | null;
   }>;
-  price?: string;
+  price?: string | number;
   priceUnit?: string;
-  originalPrice?: string;
+  originalPrice?: string | number | null;
   destinationsCount?: number;
 }
 

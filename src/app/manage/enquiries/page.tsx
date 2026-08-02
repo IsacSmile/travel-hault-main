@@ -33,15 +33,22 @@ interface EnquiryItem {
   numTravelers?: string;
   budgetRange?: string;
   preferredDate?: string;
+  arrivalDate?: string | null;
+  departureDate?: string | null;
+  hotelType?: string | null;
+  numRooms?: number | null;
+  pickupLocation?: string | null;
+  dropLocation?: string | null;
   destinationsOfInterest?: string;
   package?: {
     id: string;
     title: string;
+    tripCode: string;
   } | null;
 }
 
 const exportCSV = (dataList: EnquiryItem[]) => {
-  const headers = ['ID', 'Type', 'Name', 'Email', 'Phone', 'Package', 'Preferred Date', 'Travelers', 'Budget', 'Status', 'Submitted At'];
+  const headers = ['ID', 'Type', 'Name', 'Email', 'Phone', 'Package', 'Preferred Date', 'Arrival Date', 'Departure Date', 'Travelers', 'Hotel Type', 'Rooms', 'Pickup Location', 'Drop Location', 'Budget', 'Status', 'Submitted At'];
   const rows = dataList.map((e) => [
     e.id,
     e.type,
@@ -50,7 +57,13 @@ const exportCSV = (dataList: EnquiryItem[]) => {
     e.phone,
     `"${(e.package?.title || e.destinationsOfInterest || '').replace(/"/g, '""')}"`,
     e.preferredDate || '',
+    e.arrivalDate || '',
+    e.departureDate || '',
     e.numTravelers || '',
+    e.hotelType || '',
+    e.numRooms || '',
+    `"${(e.pickupLocation || '').replace(/"/g, '""')}"`,
+    `"${(e.dropLocation || '').replace(/"/g, '""')}"`,
     e.budgetRange || '',
     e.status,
     new Date(e.createdAt).toLocaleString(),
@@ -429,16 +442,52 @@ function EnquiriesInboxContent() {
                 ) : null}
 
                 <div className="grid grid-cols-2 gap-3 text-xs">
-                  {selectedEnquiry.preferredDate && (
+                  {selectedEnquiry.preferredDate && !selectedEnquiry.arrivalDate && (
                     <div className="bg-gray-50 p-3 rounded-lg border">
                       <span className="text-gray-400 block">Preferred Date</span>
                       <span className="font-semibold text-gray-900">{selectedEnquiry.preferredDate}</span>
+                    </div>
+                  )}
+                  {selectedEnquiry.arrivalDate && (
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <span className="text-gray-400 block">Arrival Date</span>
+                      <span className="font-semibold text-gray-900">{selectedEnquiry.arrivalDate}</span>
+                    </div>
+                  )}
+                  {selectedEnquiry.departureDate && (
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <span className="text-gray-400 block">Departure Date</span>
+                      <span className="font-semibold text-gray-900">{selectedEnquiry.departureDate}</span>
                     </div>
                   )}
                   {selectedEnquiry.numTravelers && (
                     <div className="bg-gray-50 p-3 rounded-lg border">
                       <span className="text-gray-400 block">Travelers Count</span>
                       <span className="font-semibold text-gray-900">{selectedEnquiry.numTravelers}</span>
+                    </div>
+                  )}
+                  {selectedEnquiry.hotelType && (
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <span className="text-gray-400 block">Hotel Preference</span>
+                      <span className="font-semibold text-gray-900">{selectedEnquiry.hotelType}</span>
+                    </div>
+                  )}
+                  {selectedEnquiry.numRooms && (
+                    <div className="bg-gray-50 p-3 rounded-lg border">
+                      <span className="text-gray-400 block">Rooms Requested</span>
+                      <span className="font-semibold text-gray-900">{selectedEnquiry.numRooms} Room{selectedEnquiry.numRooms > 1 ? 's' : ''}</span>
+                    </div>
+                  )}
+                  {selectedEnquiry.pickupLocation && (
+                    <div className="bg-gray-50 p-3 rounded-lg border col-span-2">
+                      <span className="text-gray-400 block">Pickup Location</span>
+                      <span className="font-semibold text-gray-900">{selectedEnquiry.pickupLocation}</span>
+                    </div>
+                  )}
+                  {selectedEnquiry.dropLocation && (
+                    <div className="bg-gray-50 p-3 rounded-lg border col-span-2">
+                      <span className="text-gray-400 block">Drop Location</span>
+                      <span className="font-semibold text-gray-900">{selectedEnquiry.dropLocation}</span>
                     </div>
                   )}
                   {selectedEnquiry.budgetRange && (

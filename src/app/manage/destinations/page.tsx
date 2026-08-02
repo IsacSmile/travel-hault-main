@@ -11,6 +11,8 @@ interface DestinationItem {
   stateOrCountry: string;
   categoryBadge: string;
   heroImage: string;
+  aboutText?: string;
+  attractions?: Array<{ id: string }>;
 }
 
 export default function DestinationsListPage() {

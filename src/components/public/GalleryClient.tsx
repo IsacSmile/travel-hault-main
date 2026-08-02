@@ -5,10 +5,11 @@ import { X, MapPin, ZoomIn } from 'lucide-react';
 
 interface GalleryImage {
   id: string;
-  url: string;
+  image: string;
   caption?: string;
   category?: string;
   categoryBadge?: string;
+  locationTag?: string;
   location?: string;
 }
 

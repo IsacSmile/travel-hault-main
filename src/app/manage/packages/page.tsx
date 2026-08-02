@@ -10,8 +10,11 @@ interface PackageItem {
   tripCode: string;
   type: string;
   slug: string;
-  price?: string;
+  price?: string | number;
   featured?: boolean;
+  imagesJson?: string;
+  priceUnit?: string;
+  variants?: Array<{ id: string }>;
 }
 
 export default function PackagesListPage() {

@@ -23,8 +23,7 @@ interface DestinationDetailItem {
   stateOrCountry: string;
   aboutText: string;
   bestTimeToVisit: string;
-  idealDuration: string;
-  weatherInfo: string;
+  climate: string;
   attractions: AttractionItem[];
 }
 
@@ -39,13 +38,13 @@ interface PackageItem {
   featured?: boolean;
   variants?: Array<{
     label: string;
-    price: string;
+    price: string | number;
     priceUnit?: string;
-    originalPrice?: string;
+    originalPrice?: string | number | null;
   }>;
-  price?: string;
+  price?: string | number;
   priceUnit?: string;
-  originalPrice?: string;
+  originalPrice?: string | number | null;
   destinationsCount?: number;
 }
 

@@ -191,7 +191,13 @@ model Enquiry {
   packageId              String?
   package                Package? @relation(fields: [packageId], references: [id], onDelete: SetNull)
   preferredDate          String?
+  arrivalDate            String?
+  departureDate          String?
   numTravelers           String?
+  hotelType              String?
+  numRooms               Int?
+  pickupLocation         String?
+  dropLocation           String?
   budgetRange            String?
   destinationsOfInterest String?
   status                 String   @default("New") // "New" | "Contacted" | "Closed"

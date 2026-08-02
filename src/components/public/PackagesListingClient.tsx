@@ -43,13 +43,13 @@ interface PackageItem {
   featured?: boolean;
   variants?: Array<{
     label: string;
-    price: string;
+    price: string | number;
     priceUnit?: string;
-    originalPrice?: string;
+    originalPrice?: string | number | null;
   }>;
-  price?: string;
+  price?: string | number;
   priceUnit?: string;
-  originalPrice?: string;
+  originalPrice?: string | number | null;
   destinationsCount?: number;
   themes?: PackageThemeRelation[];
   destinations?: PackageDestinationRelation[];

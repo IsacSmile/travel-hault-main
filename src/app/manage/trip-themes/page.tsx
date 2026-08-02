@@ -11,6 +11,7 @@ interface TripTheme {
   slug: string;
   bannerImage: string;
   description: string;
+  _count?: { packages: number };
 }
 
 export default function TripThemesManagerPage() {
