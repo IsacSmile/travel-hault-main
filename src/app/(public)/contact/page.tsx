@@ -58,7 +58,7 @@ export default async function ContactPage() {
 
   const mapQuery = address;
   const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
-  const directionsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
+  const directionsUrl = 'https://maps.app.goo.gl/pMY7PyvGK7JChfBo9';
 
   return (
     <div className="pt-28 pb-20 bg-white">

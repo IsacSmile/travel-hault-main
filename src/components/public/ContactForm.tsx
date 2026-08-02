@@ -119,7 +119,7 @@ export default function ContactForm() {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Ananya Sharma"
+              placeholder="Your Name"
               className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200/80 rounded-xl text-sm outline-none focus:border-[#b8934b] shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition duration-200"
             />
           </div>
@@ -133,7 +133,7 @@ export default function ContactForm() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="ananya@example.com"
+              placeholder="Your Email Address"
               className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200/80 rounded-xl text-sm outline-none focus:border-[#b8934b] shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition duration-200"
             />
           </div>
@@ -163,7 +163,7 @@ export default function ContactForm() {
                 required
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
-                placeholder="98765 43210"
+                placeholder="Your Phone Number"
                 className="w-full px-4 py-3 bg-gray-50/50 border border-gray-200/80 rounded-xl text-sm outline-none focus:border-[#b8934b] shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition duration-200"
               />
             </div>
@@ -194,7 +194,7 @@ export default function ContactForm() {
             required
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Tell us about expected dates, number of travelers, budget per person, or hotel preferences..."
+            placeholder="Your Message / Travel Details..."
             className="w-full p-4 bg-gray-50/50 border border-gray-200/80 rounded-xl text-sm outline-none focus:border-[#b8934b] shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition duration-200 resize-none"
           />
         </div>
