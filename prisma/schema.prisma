@@ -223,6 +223,10 @@ model SiteSettings {
   trustTitle         String   @default("Why Travel & Hault?")
   trustSubtext       String   @default("We deliver peace of mind, seamless itineraries, and unforgettable handcrafted memories.")
   packagesPerPage    Int      @default(9) // Number of package cards per page on the public listing
+  whatsappNumber     String   @default("+91 74075 24498")
+  whatsappEnabled    Boolean  @default(true)
+  messengerLink      String   @default("travelhault")
+  messengerEnabled   Boolean  @default(true)
   updatedAt          DateTime @updatedAt
 }
 

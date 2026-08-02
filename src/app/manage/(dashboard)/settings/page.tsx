@@ -61,6 +61,12 @@ export default function SiteSettingsPage() {
   const [trustSubtext, setTrustSubtext] = useState('');
   const [packagesPerPage, setPackagesPerPage] = useState(9);
 
+  // Floating Chat Widget State
+  const [whatsappNumber, setWhatsappNumber] = useState('+91 74075 24498');
+  const [whatsappEnabled, setWhatsappEnabled] = useState(true);
+  const [messengerLink, setMessengerLink] = useState('travelhault');
+  const [messengerEnabled, setMessengerEnabled] = useState(true);
+
   const [activeLegalTab, setActiveLegalTab] = useState<'privacy' | 'terms' | 'cancellation' | 'cookie'>('privacy');
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -106,6 +112,11 @@ export default function SiteSettingsPage() {
           setTrustTitle(data.trustTitle || 'Why Travel & Hault?');
           setTrustSubtext(data.trustSubtext || '');
           setPackagesPerPage(data.packagesPerPage || 9);
+
+          setWhatsappNumber(data.whatsappNumber || '+91 74075 24498');
+          setWhatsappEnabled(data.whatsappEnabled !== undefined ? Boolean(data.whatsappEnabled) : true);
+          setMessengerLink(data.messengerLink || 'travelhault');
+          setMessengerEnabled(data.messengerEnabled !== undefined ? Boolean(data.messengerEnabled) : true);
         }
       } catch (e) {
         console.error(e);
@@ -135,6 +146,10 @@ export default function SiteSettingsPage() {
           trustTitle,
           trustSubtext,
           packagesPerPage,
+          whatsappNumber,
+          whatsappEnabled,
+          messengerLink,
+          messengerEnabled,
         }),
       });
 
@@ -332,6 +347,90 @@ export default function SiteSettingsPage() {
               ))}
             </div>
           )}
+        </div>
+
+        {/* 1.5. FLOATING CHAT WIDGET SYSTEM (WHATSAPP + MESSENGER) */}
+        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-6">
+          <h2 className="text-base font-bold text-gray-900 border-b pb-3 flex items-center justify-between">
+            <span className="flex items-center gap-2">
+              <Globe className="w-5 h-5 text-emerald-600" /> Floating Chat Widget Settings
+            </span>
+            <span className="text-xs font-normal text-gray-500">Live website widget controls</span>
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* WhatsApp Settings */}
+            <div className="p-4 rounded-xl border border-emerald-100 bg-emerald-50/40 space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-extrabold uppercase text-emerald-800 flex items-center gap-1.5">
+                  WhatsApp Support
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setWhatsappEnabled(!whatsappEnabled)}
+                  className={`px-3 py-1 text-xs font-bold rounded-full transition ${
+                    whatsappEnabled
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'bg-gray-200 text-gray-600'
+                  }`}
+                >
+                  {whatsappEnabled ? 'Enabled' : 'Disabled'}
+                </button>
+              </div>
+
+              <div>
+                <span className="text-xs font-semibold text-gray-700 block mb-1">
+                  WhatsApp Support Number
+                </span>
+                <input
+                  type="text"
+                  value={whatsappNumber}
+                  onChange={(e) => setWhatsappNumber(e.target.value)}
+                  placeholder="e.g. +91 74075 24498"
+                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-xl text-sm font-semibold outline-none focus:border-emerald-500"
+                />
+                <span className="text-[10px] text-gray-500 mt-1 block">
+                  Includes country code. Used for deep-link prefilled WhatsApp chat query.
+                </span>
+              </div>
+            </div>
+
+            {/* Messenger Settings */}
+            <div className="p-4 rounded-xl border border-blue-100 bg-blue-50/40 space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-extrabold uppercase text-blue-800 flex items-center gap-1.5">
+                  Facebook Messenger
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setMessengerEnabled(!messengerEnabled)}
+                  className={`px-3 py-1 text-xs font-bold rounded-full transition ${
+                    messengerEnabled
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'bg-gray-200 text-gray-600'
+                  }`}
+                >
+                  {messengerEnabled ? 'Enabled' : 'Disabled'}
+                </button>
+              </div>
+
+              <div>
+                <span className="text-xs font-semibold text-gray-700 block mb-1">
+                  Messenger Page Username or Link
+                </span>
+                <input
+                  type="text"
+                  value={messengerLink}
+                  onChange={(e) => setMessengerLink(e.target.value)}
+                  placeholder="e.g. travelhault or https://m.me/travelhault"
+                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-xl text-sm font-semibold outline-none focus:border-blue-500"
+                />
+                <span className="text-[10px] text-gray-500 mt-1 block">
+                  Facebook Page ID/Username. Used to generate m.me deep-links.
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* 2. BUSINESS & GSTIN REGISTRATION */}

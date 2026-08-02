@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 
@@ -11,18 +12,22 @@ export async function GET() {
     settings = await prisma.siteSettings.create({
       data: {
         id: 'singleton',
-        phoneNumbersJson: JSON.stringify(['+91 98765 43210', '+91 98765 43211']),
+        phoneNumbersJson: JSON.stringify(['+91 74075 24498', '+91 98765 43211']),
         email: 'hello@travelhault.com',
         address: 'Suite 402, Signature Towers, MG Road, New Delhi - 110001',
         workingHours: 'Monday – Sunday: 9:00 AM – 8:00 PM',
         gstinNumber: '07ADZPL9107F1Z3',
+        whatsappNumber: '+91 74075 24498',
+        whatsappEnabled: true,
+        messengerLink: 'travelhault',
+        messengerEnabled: true,
         socialLinksJson: JSON.stringify([
           { id: '1', platform: 'Facebook', url: 'https://facebook.com', isActive: true },
           { id: '2', platform: 'Instagram', url: 'https://instagram.com', isActive: true },
           { id: '3', platform: 'X', url: 'https://twitter.com', isActive: true },
           { id: '4', platform: 'LinkedIn', url: 'https://linkedin.com', isActive: true },
           { id: '5', platform: 'Pinterest', url: 'https://pinterest.com', isActive: true },
-          { id: '6', platform: 'WhatsApp', url: 'https://wa.me/919876543210', isActive: true },
+          { id: '6', platform: 'WhatsApp', url: 'https://wa.me/917407524498', isActive: true },
         ]),
         legalPagesJson: JSON.stringify({ privacy: '', terms: '', cancellation: '', cookie: '' }),
       },
@@ -49,6 +54,10 @@ export async function PUT(request: Request) {
       trustTitle,
       trustSubtext,
       packagesPerPage,
+      whatsappNumber,
+      whatsappEnabled,
+      messengerLink,
+      messengerEnabled,
     } = body;
 
     const updated = await prisma.siteSettings.upsert({
@@ -65,6 +74,10 @@ export async function PUT(request: Request) {
         trustTitle: trustTitle || 'Why Travel & Hault?',
         trustSubtext: trustSubtext || '',
         packagesPerPage: packagesPerPage || 9,
+        whatsappNumber: whatsappNumber !== undefined ? whatsappNumber : '+91 74075 24498',
+        whatsappEnabled: whatsappEnabled !== undefined ? Boolean(whatsappEnabled) : true,
+        messengerLink: messengerLink !== undefined ? messengerLink : 'travelhault',
+        messengerEnabled: messengerEnabled !== undefined ? Boolean(messengerEnabled) : true,
       },
       update: {
         phoneNumbersJson: JSON.stringify(phoneNumbers || []),
@@ -77,9 +90,14 @@ export async function PUT(request: Request) {
         trustTitle: trustTitle || 'Why Travel & Hault?',
         trustSubtext: trustSubtext || '',
         packagesPerPage: packagesPerPage || 9,
+        whatsappNumber: whatsappNumber !== undefined ? whatsappNumber : '+91 74075 24498',
+        whatsappEnabled: whatsappEnabled !== undefined ? Boolean(whatsappEnabled) : true,
+        messengerLink: messengerLink !== undefined ? messengerLink : 'travelhault',
+        messengerEnabled: messengerEnabled !== undefined ? Boolean(messengerEnabled) : true,
       },
     });
 
+    revalidatePath('/', 'layout');
     return NextResponse.json(updated);
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Error updating settings' }, { status: 500 });
