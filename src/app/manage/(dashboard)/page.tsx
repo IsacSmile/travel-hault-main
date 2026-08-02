@@ -3,27 +3,45 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { Package, MapPin, Inbox, Users, Plus, ArrowRight, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 
+interface RecentEnquiryItem {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  type: string;
+  status: string;
+  createdAt: Date | string;
+  package?: { title: string } | null;
+  destinationsOfInterest?: string | null;
+}
+
 export const revalidate = 0;
 
 export default async function AdminDashboardOverview() {
   const now = new Date();
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
+  const packagesCountPromise = prisma.package.count();
+  const destinationsCountPromise = prisma.destination.count();
+  const newEnquiriesCountPromise = prisma.enquiry.count({
+    where: {
+      createdAt: { gte: sevenDaysAgo },
+    },
+  });
+  const totalSubscribersPromise = prisma.subscriber.count();
+  const recentEnquiriesPromise = prisma.enquiry.findMany({
+    take: 5,
+    orderBy: { createdAt: 'desc' },
+    include: { package: true },
+  });
+
   const [packagesCount, destinationsCount, newEnquiriesCount, totalSubscribers, recentEnquiries] =
     await Promise.all([
-      prisma.package.count(),
-      prisma.destination.count(),
-      prisma.enquiry.count({
-        where: {
-          createdAt: { gte: sevenDaysAgo },
-        },
-      }),
-      prisma.subscriber.count(),
-      prisma.enquiry.findMany({
-        take: 5,
-        orderBy: { createdAt: 'desc' },
-        include: { package: true },
-      }),
+      packagesCountPromise,
+      destinationsCountPromise,
+      newEnquiriesCountPromise,
+      totalSubscribersPromise,
+      recentEnquiriesPromise,
     ]);
 
   const stats = [
@@ -136,7 +154,7 @@ export default async function AdminDashboardOverview() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {recentEnquiries.map((item) => (
+                {(recentEnquiries as RecentEnquiryItem[]).map((item) => (
                   <tr key={item.id} className="hover:bg-gray-50/50 transition">
                     <td className="px-6 py-4 font-medium text-gray-900">
                       <div className="font-bold">{item.name}</div>
@@ -158,13 +176,12 @@ export default async function AdminDashboardOverview() {
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                          item.status === 'New'
-                            ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                            : item.status === 'Contacted'
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${item.status === 'New'
+                          ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                          : item.status === 'Contacted'
                             ? 'bg-blue-50 text-blue-700 border border-blue-200'
                             : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                        }`}
+                          }`}
                       >
                         {item.status === 'New' && <AlertCircle className="w-3 h-3 text-amber-600" />}
                         {item.status === 'Contacted' && <Clock className="w-3 h-3 text-blue-600" />}
