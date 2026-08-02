@@ -15,20 +15,29 @@ import {
   Sparkles,
 } from 'lucide-react';
 
-const tripThemesList = [
-  { name: 'Honeymoon Special', slug: 'honeymoon-special', desc: 'Romantic villas & candlelit beach suppers' },
-  { name: 'Beach Getaways', slug: 'beach-getaways', desc: 'Turquoise ocean water sports & island hopping' },
-  { name: 'Luxury Tours', slug: 'luxury-tours', desc: '5-star resorts, private transfers & concierge' },
-  { name: 'Spiritual Journeys', slug: 'spiritual-journeys', desc: 'Ancient heritage temples & meditation retreats' },
-  { name: 'Wildlife & Nature', slug: 'wildlife-nature', desc: 'Thrilling national park safaris & nature walks' },
-  { name: 'Budget Travel', slug: 'budget-travel', desc: 'Smart high-value itineraries for budget explorers' },
-  { name: 'Weekend Trips', slug: 'weekend-trips', desc: 'Quick 2-to-3 day refreshers from city hustle' },
+interface TripThemeNav {
+  id?: string;
+  name: string;
+  slug: string;
+  description?: string;
+  desc?: string;
+}
+
+const fallbackThemes: TripThemeNav[] = [
+  { name: 'Honeymoon Special', slug: 'honeymoon-special', description: 'Romantic villas & candlelit suppers' },
+  { name: 'Beach Getaways', slug: 'beach-getaways', description: 'Turquoise ocean water sports & island hopping' },
+  { name: 'Luxury Tours', slug: 'luxury-tours', description: '5-star resorts & private concierge' },
+  { name: 'Spiritual Journeys', slug: 'spiritual-journeys', description: 'Ancient heritage temples & meditation retreats' },
+  { name: 'Wildlife & Nature', slug: 'wildlife-nature', description: 'Thrilling national park safaris' },
+  { name: 'Budget Travel', slug: 'budget-travel', description: 'Smart high-value itineraries' },
+  { name: 'Weekend Trips', slug: 'weekend-trips', description: 'Quick 2-to-3 day refreshers from city hustle' },
 ];
 
 export default function Header() {
   const pathname = usePathname();
   const { wishlist } = useWishlist();
 
+  const [tripThemes, setTripThemes] = useState<TripThemeNav[]>(fallbackThemes);
   const [isScrolled, setIsScrolled] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -37,6 +46,24 @@ export default function Header() {
   const leaveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   const isHome = pathname === '/';
+
+  const fetchPublicThemes = async () => {
+    try {
+      const res = await fetch('/api/public/trip-themes', { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setTripThemes(data);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    fetchPublicThemes();
+  }, []);
 
   // Scroll listener (triggers at 60px scroll)
   useEffect(() => {
@@ -125,6 +152,7 @@ export default function Header() {
                 className="relative py-2"
                 onMouseEnter={() => {
                   if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
+                  fetchPublicThemes();
                   setMegaMenuOpen(true);
                 }}
                 onMouseLeave={() => {
@@ -169,7 +197,7 @@ export default function Header() {
                           <Sparkles className="w-3.5 h-3.5 text-[#b8934b]" /> Curated Theme Collections
                         </span>
                       </div>
-                      {tripThemesList.map((theme) => (
+                      {tripThemes.map((theme) => (
                         <Link
                           key={theme.slug}
                           href={`/trip-themes/${theme.slug}`}
@@ -179,7 +207,9 @@ export default function Header() {
                           <span className="text-sm font-bold text-black group-hover:text-[#b8934b] transition">
                             {theme.name}
                           </span>
-                          <span className="text-xs text-gray-500 mt-0.5 line-clamp-1">{theme.desc}</span>
+                          <span className="text-xs text-gray-500 mt-0.5 line-clamp-1">
+                            {theme.description || theme.desc || ''}
+                          </span>
                         </Link>
                       ))}
                     </div>
@@ -374,7 +404,7 @@ export default function Header() {
 
               {mobileThemesOpen && (
                 <div className="mt-2 space-y-2 pl-3 border-l-2 border-[#b8934b]/30">
-                  {tripThemesList.map((theme) => (
+                  {tripThemes.map((theme) => (
                     <Link
                       key={theme.slug}
                       href={`/trip-themes/${theme.slug}`}

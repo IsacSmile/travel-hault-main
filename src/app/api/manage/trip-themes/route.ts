@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 
@@ -29,6 +30,7 @@ export async function POST(request: Request) {
       },
     });
 
+    revalidatePath('/', 'layout');
     return NextResponse.json(theme);
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Error' }, { status: 500 });
@@ -50,6 +52,7 @@ export async function PUT(request: Request) {
       data: { name, slug, bannerImage, description },
     });
 
+    revalidatePath('/', 'layout');
     return NextResponse.json(updated);
   } catch (error: any) {
     return NextResponse.json({ error: error.message || 'Error' }, { status: 500 });
@@ -66,6 +69,7 @@ export async function DELETE(request: Request) {
     if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
 
     await prisma.theme.delete({ where: { id } });
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: 'Failed to delete theme' }, { status: 500 });
