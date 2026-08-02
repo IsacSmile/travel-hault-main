@@ -47,37 +47,119 @@ interface EnquiryItem {
   } | null;
 }
 
-const exportCSV = (dataList: EnquiryItem[]) => {
-  const headers = ['ID', 'Type', 'Name', 'Email', 'Phone', 'Package', 'Preferred Date', 'Arrival Date', 'Departure Date', 'Travelers', 'Hotel Type', 'Rooms', 'Pickup Location', 'Drop Location', 'Budget', 'Status', 'Submitted At'];
-  const rows = dataList.map((e) => [
-    e.id,
-    e.type,
-    `"${e.name.replace(/"/g, '""')}"`,
-    e.email,
-    e.phone,
-    `"${(e.package?.title || e.destinationsOfInterest || '').replace(/"/g, '""')}"`,
-    e.preferredDate || '',
-    e.arrivalDate || '',
-    e.departureDate || '',
-    e.numTravelers || '',
-    e.hotelType || '',
-    e.numRooms || '',
-    `"${(e.pickupLocation || '').replace(/"/g, '""')}"`,
-    `"${(e.dropLocation || '').replace(/"/g, '""')}"`,
-    e.budgetRange || '',
-    e.status,
-    new Date(e.createdAt).toLocaleString(),
-  ]);
+/** RFC-4180 safe field — wraps in quotes and escapes inner quotes & newlines */
+const csvField = (val: unknown): string => {
+  const str = val == null ? '' : String(val);
+  // Always wrap in quotes so commas/newlines inside values don't break Excel
+  return `"${str.replace(/"/g, '""')}"`;
+};
 
-  const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
-  const encodedUri = encodeURI(csvContent);
+const todayDate = () => new Date().toISOString().slice(0, 10);
+
+const downloadCSV = (rows: string[][], filename: string) => {
+  const csv = rows.map((r) => r.join(',')).join('\r\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
-  link.setAttribute('href', encodedUri);
-  link.setAttribute('download', `enquiries_export_${Date.now()}.csv`);
+  link.href = url;
+  link.download = filename;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 };
+
+const exportPackageBookingsCSV = (dataList: EnquiryItem[]) => {
+  if (dataList.length === 0) return;
+  const headers = [
+    'Full Name',
+    'Email',
+    'Phone',
+    'Package Reference',
+    'Arrival Date',
+    'Departure Date',
+    'Trip Length',
+    'Traveler Count',
+    'Hotel Type / Category',
+    'Number of Rooms',
+    'Pickup Location',
+    'Drop Location',
+    'Additional Message',
+    'Submitted Date/Time',
+    'Status',
+  ];
+
+  const rows: string[][] = [headers.map(csvField)];
+  for (const e of dataList) {
+    const arrivalDate = e.arrivalDate ? new Date(e.arrivalDate) : null;
+    const departureDate = e.departureDate ? new Date(e.departureDate) : null;
+    let tripLength = '';
+    if (arrivalDate && departureDate && !isNaN(arrivalDate.getTime()) && !isNaN(departureDate.getTime())) {
+      const days = Math.round((departureDate.getTime() - arrivalDate.getTime()) / 86400000);
+      tripLength = days > 0 ? `${days} day${days !== 1 ? 's' : ''}` : '';
+    }
+
+    rows.push([
+      csvField(e.name),
+      csvField(e.email),
+      csvField(e.phone),
+      csvField(e.package ? `${e.package.title} (${e.package.tripCode})` : e.destinationsOfInterest || ''),
+      csvField(e.arrivalDate || e.preferredDate || ''),
+      csvField(e.departureDate || ''),
+      csvField(tripLength),
+      csvField(e.numTravelers || ''),
+      csvField(e.hotelType || ''),
+      csvField(e.numRooms || ''),
+      csvField(e.pickupLocation || ''),
+      csvField(e.dropLocation || ''),
+      csvField(e.message || ''),
+      csvField(new Date(e.createdAt).toLocaleString()),
+      csvField(e.status),
+    ]);
+  }
+
+  downloadCSV(rows, `package-bookings-${todayDate()}.csv`);
+};
+
+const exportCustomItineraryCSV = (dataList: EnquiryItem[]) => {
+  if (dataList.length === 0) return;
+  const headers = [
+    'Full Name',
+    'Email',
+    'Phone',
+    'Message',
+    'Submitted Date/Time',
+    'Status',
+  ];
+
+  const rows: string[][] = [headers.map(csvField)];
+  for (const e of dataList) {
+    rows.push([
+      csvField(e.name),
+      csvField(e.email),
+      csvField(e.phone),
+      csvField(e.message || ''),
+      csvField(new Date(e.createdAt).toLocaleString()),
+      csvField(e.status),
+    ]);
+  }
+
+  downloadCSV(rows, `custom-itinerary-requests-${todayDate()}.csv`);
+};
+
+const handleExport = (dataList: EnquiryItem[], typeFilter: string) => {
+  if (typeFilter === 'PackageBooking') {
+    exportPackageBookingsCSV(dataList);
+  } else if (typeFilter === 'CustomItinerary' || typeFilter === 'Contact') {
+    exportCustomItineraryCSV(dataList);
+  } else {
+    const bookings = dataList.filter((e) => e.type === 'PackageBooking');
+    const custom = dataList.filter((e) => e.type !== 'PackageBooking');
+    if (bookings.length > 0) exportPackageBookingsCSV(bookings);
+    if (custom.length > 0) exportCustomItineraryCSV(custom);
+  }
+};
+
 
 function EnquiriesInboxContent() {
   const searchParams = useSearchParams();
@@ -196,7 +278,7 @@ function EnquiriesInboxContent() {
         </div>
 
         <button
-          onClick={() => exportCSV(filteredEnquiries)}
+          onClick={() => handleExport(filteredEnquiries, typeFilter)}
           className="px-4 py-2.5 bg-white border border-gray-300 hover:border-gray-400 text-gray-700 font-semibold rounded-xl text-sm transition flex items-center gap-2 shadow-sm shrink-0"
         >
           <Download className="w-4 h-4 text-[#c9a15a]" /> Export to CSV
