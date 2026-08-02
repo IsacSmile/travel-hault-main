@@ -1,15 +1,10 @@
 import React from 'react';
-import AdminSidebar from '@/components/admin/AdminSidebar';
 
-export const metadata = {
-  title: 'Admin Content Manager | Travel & Hault',
-};
-
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex h-screen overflow-hidden bg-[#F5F0E6] font-sans antialiased text-[#051b2e]">
-      <AdminSidebar />
-      <main className="flex-1 overflow-y-auto p-6 sm:p-10">{children}</main>
-    </div>
-  );
+/**
+ * Root /manage layout — plain passthrough with no sidebar or admin chrome.
+ * The sidebar is applied only inside the (dashboard) route group,
+ * which covers all authenticated admin pages but NOT /manage/login.
+ */
+export default function ManageRootLayout({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
 }
