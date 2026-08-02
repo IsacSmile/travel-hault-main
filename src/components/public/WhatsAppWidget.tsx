@@ -66,7 +66,6 @@ export default function WhatsAppWidget() {
   };
 
   const handleMouseLeave = () => {
-    // Keep open if user has an active chat popover card typed or focused
     if (activeChannel && userQuery.trim().length > 0) return;
 
     leaveTimeoutRef.current = setTimeout(() => {
@@ -106,20 +105,19 @@ export default function WhatsAppWidget() {
     setUserQuery('');
   };
 
-  // If both channels are disabled in admin settings, do not render widget
   if (!settings.whatsappEnabled && !settings.messengerEnabled) {
     return null;
   }
 
   return (
     <div
-      className="fixed bottom-5 right-5 z-50 flex flex-col items-end font-sans group/widget"
+      className="fixed bottom-6 right-6 z-50 flex flex-col items-end font-sans"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       {/* Active Channel Popover Card */}
       {open && activeChannel && (
-        <div className="mb-2.5 w-76 sm:w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="mb-3 w-76 sm:w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden animate-in zoom-in-95 duration-200 shrink-0">
           {/* Header */}
           <div
             className={`p-3.5 text-white flex items-center justify-between ${
@@ -194,71 +192,73 @@ export default function WhatsAppWidget() {
         </div>
       )}
 
-      {/* Stacked Circular Action Buttons (shown on hover/expand) */}
-      {open && (
-        <div className="flex flex-col items-center gap-2 mb-2 animate-in fade-in slide-in-from-bottom-2 duration-200">
-          {/* Messenger Icon Button */}
-          {settings.messengerEnabled && (
-            <button
-              onClick={() => setActiveChannel(activeChannel === 'messenger' ? null : 'messenger')}
-              className={`w-10 h-10 rounded-full bg-[#0084FF] hover:bg-[#006FDF] text-white flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 relative group ${
-                activeChannel === 'messenger' ? 'ring-2 ring-blue-300 scale-110' : ''
-              }`}
-              title="Chat on Messenger"
-            >
-              <MessengerIcon className="w-4 h-4" />
-              <span className="absolute right-12 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-gray-900 text-white text-[10px] font-bold rounded-md shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                Messenger Chat
-              </span>
-            </button>
-          )}
-
-          {/* WhatsApp Icon Button */}
-          {settings.whatsappEnabled && (
-            <button
-              onClick={() => setActiveChannel(activeChannel === 'whatsapp' ? null : 'whatsapp')}
-              className={`w-10 h-10 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 relative group ${
-                activeChannel === 'whatsapp' ? 'ring-2 ring-emerald-300 scale-110' : ''
-              }`}
-              title="Chat on WhatsApp"
-            >
-              <WhatsAppIcon className="w-4 h-4" />
-              <span className="absolute right-12 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-gray-900 text-white text-[10px] font-bold rounded-md shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                WhatsApp Support
-              </span>
-            </button>
-          )}
-        </div>
-      )}
-
-      {/* Main Trigger Launcher Button (Small size, hover-triggered) */}
-      <button
-        onClick={() => {
-          if (open) {
-            setOpen(false);
-            setActiveChannel(null);
-          } else {
-            setOpen(true);
-          }
-        }}
-        className={`w-11 h-11 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 ${
-          open
-            ? 'bg-[#1a1815] text-white hover:bg-black'
-            : 'bg-emerald-500 hover:bg-emerald-600 text-white'
-        }`}
-        title={open ? 'Close Chat Menu' : 'Chat with Us'}
-      >
-        {open ? (
-          <X className="w-5 h-5" />
-        ) : (
+      {/* Stacked Launcher Column */}
+      <div className="flex flex-col items-center gap-3 shrink-0">
+        {open && (
           <>
-            <MessageCircle className="w-5 h-5" />
-            <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-[#c9a15a] border-2 border-white text-[8px] font-extrabold flex items-center justify-center text-[#1a1815]">
-              1
-            </span>
+            {/* Messenger Icon Button */}
+            {settings.messengerEnabled && (
+              <button
+                onClick={() => setActiveChannel(activeChannel === 'messenger' ? null : 'messenger')}
+                className={`w-10 h-10 rounded-full bg-[#0084FF] hover:bg-[#006FDF] text-white flex items-center justify-center shadow-lg transition-all duration-200 ease-out hover:scale-110 hover:shadow-xl active:scale-95 relative group shrink-0 animate-in fade-in slide-in-from-bottom-2 ${
+                  activeChannel === 'messenger' ? 'ring-2 ring-blue-300 scale-110' : ''
+                }`}
+                title="Chat on Messenger"
+              >
+                <MessengerIcon className="w-5 h-5" />
+                <span className="absolute right-12 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-gray-900/90 text-white text-[10px] font-bold rounded-md shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none">
+                  Messenger Chat
+                </span>
+              </button>
+            )}
+
+            {/* WhatsApp Icon Button */}
+            {settings.whatsappEnabled && (
+              <button
+                onClick={() => setActiveChannel(activeChannel === 'whatsapp' ? null : 'whatsapp')}
+                className={`w-10 h-10 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-lg transition-all duration-200 ease-out hover:scale-110 hover:shadow-xl active:scale-95 relative group shrink-0 animate-in fade-in slide-in-from-bottom-2 ${
+                  activeChannel === 'whatsapp' ? 'ring-2 ring-emerald-300 scale-110' : ''
+                }`}
+                title="Chat on WhatsApp"
+              >
+                <WhatsAppIcon className="w-5 h-5" />
+                <span className="absolute right-12 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-gray-900/90 text-white text-[10px] font-bold rounded-md shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none">
+                  WhatsApp Support
+                </span>
+              </button>
+            )}
           </>
         )}
-      </button>
+
+        {/* Main Trigger Launcher Button */}
+        <button
+          onClick={() => {
+            if (open) {
+              setOpen(false);
+              setActiveChannel(null);
+            } else {
+              setOpen(true);
+            }
+          }}
+          className={`w-11 h-11 rounded-full flex items-center justify-center shadow-xl transition-all duration-200 ease-out hover:scale-110 hover:shadow-2xl active:scale-95 shrink-0 relative group ${
+            open
+              ? 'bg-[#1a1815] text-white hover:bg-black'
+              : 'bg-emerald-500 hover:bg-emerald-600 text-white'
+          }`}
+          title={open ? 'Close Chat Menu' : 'Chat with Us'}
+        >
+          {open ? (
+            <X className="w-5 h-5" />
+          ) : (
+            <>
+              <MessageCircle className="w-5 h-5" />
+              <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-[#c9a15a] border-2 border-white text-[8px] font-extrabold flex items-center justify-center text-[#1a1815]">
+                1
+              </span>
+            </>
+          )}
+        </button>
+      </div>
     </div>
   );
 }
