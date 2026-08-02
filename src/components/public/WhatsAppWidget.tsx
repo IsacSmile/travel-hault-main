@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { MessageCircle, X, Send } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Send } from 'lucide-react';
 
 interface ChatWidgetSettings {
   whatsappNumber: string;
@@ -24,10 +24,8 @@ const MessengerIcon = ({ className = 'w-5 h-5' }: { className?: string }) => (
 );
 
 export default function WhatsAppWidget() {
-  const [open, setOpen] = useState(false);
   const [activeChannel, setActiveChannel] = useState<'whatsapp' | 'messenger' | null>(null);
   const [userQuery, setUserQuery] = useState('');
-  const leaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [settings, setSettings] = useState<ChatWidgetSettings>({
     whatsappNumber: '+91 74075 24498',
@@ -60,20 +58,6 @@ export default function WhatsAppWidget() {
     };
   }, []);
 
-  const handleMouseEnter = () => {
-    if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current);
-    setOpen(true);
-  };
-
-  const handleMouseLeave = () => {
-    if (activeChannel && userQuery.trim().length > 0) return;
-
-    leaveTimeoutRef.current = setTimeout(() => {
-      setOpen(false);
-      setActiveChannel(null);
-    }, 350);
-  };
-
   const handleSendWhatsApp = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const cleanNum = settings.whatsappNumber.replace(/[^0-9]/g, '');
@@ -81,7 +65,6 @@ export default function WhatsAppWidget() {
       ? encodeURIComponent(userQuery.trim())
       : encodeURIComponent('Hello Travel & Hault! I would like to inquire about tour packages.');
     window.open(`https://wa.me/${cleanNum}?text=${message}`, '_blank');
-    setOpen(false);
     setActiveChannel(null);
     setUserQuery('');
   };
@@ -100,7 +83,6 @@ export default function WhatsAppWidget() {
       link += `?text=${encodeURIComponent(userQuery.trim())}`;
     }
     window.open(link, '_blank');
-    setOpen(false);
     setActiveChannel(null);
     setUserQuery('');
   };
@@ -110,13 +92,9 @@ export default function WhatsAppWidget() {
   }
 
   return (
-    <div
-      className="fixed bottom-6 right-6 z-50 flex flex-col items-end font-sans"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end font-sans">
       {/* Active Channel Popover Card */}
-      {open && activeChannel && (
+      {activeChannel && (
         <div className="mb-3 w-76 sm:w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden animate-in zoom-in-95 duration-200 shrink-0">
           {/* Header */}
           <div
@@ -192,72 +170,39 @@ export default function WhatsAppWidget() {
         </div>
       )}
 
-      {/* Stacked Launcher Column */}
+      {/* Direct Floating Channel Buttons (Always visible) */}
       <div className="flex flex-col items-center gap-3 shrink-0">
-        {open && (
-          <>
-            {/* Messenger Icon Button */}
-            {settings.messengerEnabled && (
-              <button
-                onClick={() => setActiveChannel(activeChannel === 'messenger' ? null : 'messenger')}
-                className={`w-10 h-10 rounded-full bg-[#0084FF] hover:bg-[#006FDF] text-white flex items-center justify-center shadow-lg transition-all duration-200 ease-out hover:scale-110 hover:shadow-xl active:scale-95 relative group shrink-0 animate-in fade-in slide-in-from-bottom-2 ${
-                  activeChannel === 'messenger' ? 'ring-2 ring-blue-300 scale-110' : ''
-                }`}
-                title="Chat on Messenger"
-              >
-                <MessengerIcon className="w-5 h-5" />
-                <span className="absolute right-12 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-gray-900/90 text-white text-[10px] font-bold rounded-md shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none">
-                  Messenger Chat
-                </span>
-              </button>
-            )}
-
-            {/* WhatsApp Icon Button */}
-            {settings.whatsappEnabled && (
-              <button
-                onClick={() => setActiveChannel(activeChannel === 'whatsapp' ? null : 'whatsapp')}
-                className={`w-10 h-10 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-lg transition-all duration-200 ease-out hover:scale-110 hover:shadow-xl active:scale-95 relative group shrink-0 animate-in fade-in slide-in-from-bottom-2 ${
-                  activeChannel === 'whatsapp' ? 'ring-2 ring-emerald-300 scale-110' : ''
-                }`}
-                title="Chat on WhatsApp"
-              >
-                <WhatsAppIcon className="w-5 h-5" />
-                <span className="absolute right-12 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-gray-900/90 text-white text-[10px] font-bold rounded-md shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none">
-                  WhatsApp Support
-                </span>
-              </button>
-            )}
-          </>
+        {/* Messenger Icon Button */}
+        {settings.messengerEnabled && (
+          <button
+            onClick={() => setActiveChannel(activeChannel === 'messenger' ? null : 'messenger')}
+            className={`w-11 h-11 rounded-full bg-[#0084FF] hover:bg-[#006FDF] text-white flex items-center justify-center shadow-xl transition-all duration-200 ease-out hover:scale-110 hover:shadow-2xl active:scale-95 relative group shrink-0 ${
+              activeChannel === 'messenger' ? 'ring-3 ring-blue-300 scale-110' : ''
+            }`}
+            title="Chat on Messenger"
+          >
+            <MessengerIcon className="w-5 h-5" />
+            <span className="absolute right-14 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-gray-900/90 text-white text-[10px] font-bold rounded-md shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none">
+              Messenger Chat
+            </span>
+          </button>
         )}
 
-        {/* Main Trigger Launcher Button */}
-        <button
-          onClick={() => {
-            if (open) {
-              setOpen(false);
-              setActiveChannel(null);
-            } else {
-              setOpen(true);
-            }
-          }}
-          className={`w-11 h-11 rounded-full flex items-center justify-center shadow-xl transition-all duration-200 ease-out hover:scale-110 hover:shadow-2xl active:scale-95 shrink-0 relative group ${
-            open
-              ? 'bg-[#1a1815] text-white hover:bg-black'
-              : 'bg-emerald-500 hover:bg-emerald-600 text-white'
-          }`}
-          title={open ? 'Close Chat Menu' : 'Chat with Us'}
-        >
-          {open ? (
-            <X className="w-5 h-5" />
-          ) : (
-            <>
-              <MessageCircle className="w-5 h-5" />
-              <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-[#c9a15a] border-2 border-white text-[8px] font-extrabold flex items-center justify-center text-[#1a1815]">
-                1
-              </span>
-            </>
-          )}
-        </button>
+        {/* WhatsApp Icon Button */}
+        {settings.whatsappEnabled && (
+          <button
+            onClick={() => setActiveChannel(activeChannel === 'whatsapp' ? null : 'whatsapp')}
+            className={`w-11 h-11 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-xl transition-all duration-200 ease-out hover:scale-110 hover:shadow-2xl active:scale-95 relative group shrink-0 ${
+              activeChannel === 'whatsapp' ? 'ring-3 ring-emerald-300 scale-110' : ''
+            }`}
+            title="Chat on WhatsApp"
+          >
+            <WhatsAppIcon className="w-5 h-5" />
+            <span className="absolute right-14 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-gray-900/90 text-white text-[10px] font-bold rounded-md shadow-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none">
+              WhatsApp Support
+            </span>
+          </button>
+        )}
       </div>
     </div>
   );
