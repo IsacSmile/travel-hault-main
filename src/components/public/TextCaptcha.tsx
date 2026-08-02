@@ -134,19 +134,20 @@ export default function TextCaptcha({
 
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
         {/* Captcha Image Canvas Box */}
-        <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl border border-gray-200 shrink-0">
+        <div className="flex items-center justify-between sm:justify-start gap-2 bg-slate-100/80 p-1.5 rounded-2xl border border-gray-200/80 shrink-0">
           <canvas
             ref={canvasRef}
-            width={140}
-            height={40}
-            className="rounded-lg shadow-inner select-none"
+            width={150}
+            height={44}
+            className="rounded-xl shadow-inner select-none bg-white min-w-[150px] min-h-[44px]"
             title="Visual Security Captcha Code"
           />
           <button
             type="button"
             onClick={refreshCaptcha}
-            className="p-2 text-gray-500 hover:text-[#051b2e] hover:bg-white rounded-lg transition shadow-sm active:scale-95"
+            className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-700 hover:text-[#051b2e] hover:bg-white bg-white sm:bg-transparent rounded-xl transition shadow-xs active:scale-95 border border-gray-200/60 sm:border-transparent shrink-0"
             title="Generate new Captcha image"
+            aria-label="Refresh security captcha"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
@@ -161,9 +162,9 @@ export default function TextCaptcha({
             value={value}
             onChange={(e) => onChange(e.target.value.toUpperCase().trim())}
             placeholder="Type code above..."
-            className={`w-full px-3.5 py-2.5 bg-white border ${
-              error ? 'border-red-400 bg-red-50/20' : 'border-gray-200'
-            } rounded-xl text-sm font-mono font-bold tracking-widest outline-none focus:border-[#b8934b] shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.02)] transition min-h-[44px] uppercase`}
+            className={`w-full px-4 py-2.5 bg-white border ${
+              error ? 'border-red-500 ring-2 ring-red-100 bg-red-50/20' : 'border-gray-200'
+            } rounded-xl text-sm font-mono font-bold tracking-widest outline-none focus:border-[#b8934b] focus:ring-2 focus:ring-[#b8934b]/20 shadow-xs transition min-h-[44px] uppercase`}
           />
         </div>
       </div>

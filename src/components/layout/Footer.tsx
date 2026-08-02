@@ -454,7 +454,7 @@ export default function Footer() {
       </div>
 
       {/* Floating Speed-Dial Chat FAB */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col-reverse items-center gap-3">
+      <div className="fixed bottom-24 sm:bottom-6 right-5 sm:right-6 z-40 flex flex-col-reverse items-center gap-3">
         {/* Main toggle button */}
         <button
           onClick={() => setFabOpen((prev) => !prev)}
