@@ -696,31 +696,12 @@ export default function EnquiryModal({
               </div>
             </div>
 
-            {/* Submit Button Docks */}
-            {/* Mobile Sticky Dock */}
-            <div className="block sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-150 p-4 shrink-0 shadow-[0_-5px_15px_rgba(0,0,0,0.04)] z-20">
+            {/* Unified Submit Button Footer Dock */}
+            <div className="p-4 sm:p-5 bg-white border-t border-gray-100 shrink-0 sticky bottom-0 z-10 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full inline-flex items-center justify-center gap-2 py-3.5 min-h-[44px] bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-extrabold text-sm rounded-full transition-all duration-150 shadow-md hover:-translate-y-px active:translate-y-0 disabled:opacity-50"
-              >
-                {loading ? (
-                  <div className="w-5 h-5 border-2 border-[#c9a15a] border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <>
-                    {isBooking ? <Send className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
-                    <span>{isBooking ? 'Send Booking Request' : 'Request Custom Itinerary Quote'}</span>
-                  </>
-                )}
-              </button>
-            </div>
-
-            {/* Desktop Dock */}
-            <div className="hidden sm:block p-5 bg-white border-t border-gray-100 shrink-0">
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full inline-flex items-center justify-center gap-2 py-3.5 min-h-[44px] bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-extrabold text-sm rounded-full transition-all duration-150 shadow-md hover:-translate-y-px active:translate-y-0 disabled:opacity-50"
+                className="w-full inline-flex items-center justify-center gap-2 py-3.5 min-h-[48px] bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-extrabold text-sm sm:text-base rounded-full transition-all duration-150 shadow-md hover:-translate-y-px active:translate-y-0 disabled:opacity-50"
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-[#c9a15a] border-t-transparent rounded-full animate-spin" />

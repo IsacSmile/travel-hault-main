@@ -112,19 +112,21 @@ export default function WishlistClient({ allPackages, allDestinations }: Wishlis
               </h2>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col min-[400px]:flex-row items-stretch min-[400px]:items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
               <button
                 onClick={clearWishlist}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white text-xs font-bold rounded-full transition-all duration-150"
+                className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 min-h-[44px] bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white text-xs font-bold rounded-full transition-all duration-150 whitespace-nowrap shrink-0 w-full min-[400px]:w-auto"
               >
-                <Trash2 className="w-4 h-4" /> Clear All
+                <Trash2 className="w-4 h-4 shrink-0" />
+                <span className="whitespace-nowrap">Clear All</span>
               </button>
 
               <button
                 onClick={() => setBulkModalOpen(true)}
-                className="inline-flex items-center gap-2 px-6 py-2.5 min-h-[44px] bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-extrabold text-xs rounded-full transition-all duration-150 shadow-md hover:-translate-y-px active:translate-y-0"
+                className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 min-h-[44px] bg-white/10 sm:bg-[#1a1815] hover:bg-white/20 sm:hover:bg-[#2b2722] text-[#c9a15a] font-extrabold text-xs rounded-full transition-all duration-150 shadow-md border border-[#c9a15a]/40 sm:border-transparent whitespace-nowrap shrink-0 w-full min-[400px]:w-auto"
               >
-                <Send className="w-4 h-4" /> Enquire About All Wishlisted Items
+                <Send className="w-4 h-4 shrink-0 text-[#c9a15a]" />
+                <span className="whitespace-nowrap">Enquire About All</span>
               </button>
             </div>
           </div>
