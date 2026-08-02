@@ -45,7 +45,7 @@ export default function AdminSidebar() {
   };
 
   return (
-    <aside className="w-64 bg-white text-[#051b2e] flex flex-col min-h-screen border-r border-gray-200 shrink-0">
+    <aside className="w-64 bg-white text-[#051b2e] flex flex-col border-r border-gray-200 shrink-0 overflow-hidden">
       {/* Brand Header */}
       <div className="p-6 border-b border-gray-200 flex items-center justify-between">
         <Link href="/manage" className="flex items-center gap-3 group hover:scale-102 transition-transform duration-300">
@@ -57,7 +57,7 @@ export default function AdminSidebar() {
       </div>
 
       {/* Nav List */}
-      <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
+      <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto min-h-0">
         {navigation.map((item) => {
           const isActive =
             pathname === item.href || (item.href !== '/manage' && pathname.startsWith(item.href));
