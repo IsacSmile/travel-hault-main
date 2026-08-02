@@ -75,34 +75,33 @@ export default function EnquiryModal({
   // Auto-close countdown logic
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    if (submitted) {
+    if (submitted && countdown > 0) {
       timer = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            onClose();
-            setSubmitted(false);
-            // Reset state
-            setName('');
-            setEmail('');
-            setPhoneNo('');
-            setArrivalDate('');
-            setDepartureDate('');
-            setAdults(1);
-            setChildren(0);
-            setHotelType('3 Star (Standard)');
-            setNumRooms(1);
-            setPickupLocation('');
-            setDropLocation('');
-            setMessage('');
-            return 0;
-          }
-          return prev - 1;
-        });
+        setCountdown((prev) => prev - 1);
       }, 1000);
     }
     return () => clearInterval(timer);
-  }, [submitted, onClose]);
+  }, [submitted, countdown]);
+
+  useEffect(() => {
+    if (submitted && countdown <= 0) {
+      onClose();
+      setSubmitted(false);
+      // Reset state
+      setName('');
+      setEmail('');
+      setPhoneNo('');
+      setArrivalDate('');
+      setDepartureDate('');
+      setAdults(1);
+      setChildren(0);
+      setHotelType('3 Star (Standard)');
+      setNumRooms(1);
+      setPickupLocation('');
+      setDropLocation('');
+      setMessage('');
+    }
+  }, [submitted, countdown, onClose]);
 
   if (!isOpen) return null;
 
