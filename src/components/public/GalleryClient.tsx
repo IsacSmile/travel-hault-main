@@ -67,6 +67,8 @@ export default function GalleryClient({ images }: GalleryClientProps) {
               <img
                 src={g.image}
                 alt={g.caption || 'Gallery Image'}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover group-hover:scale-110 transition duration-700 opacity-95"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 flex flex-col justify-between opacity-90 group-hover:opacity-100 transition">

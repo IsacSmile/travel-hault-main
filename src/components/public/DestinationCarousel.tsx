@@ -120,7 +120,7 @@ export default function DestinationCarousel({ destinations }: DestinationCarouse
                 className="relative block w-full h-[320px] rounded-[28px] overflow-hidden shadow-md bg-gray-100 border border-gray-200/80"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={dest.heroImage} alt={dest.name} className="w-full h-full object-cover" />
+                <img src={dest.heroImage} alt={dest.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                 <button
                   onClick={(e) => {
                     e.preventDefault();
@@ -221,6 +221,8 @@ function CoverflowCardItem({
         <img
           src={dest.heroImage}
           alt={dest.name}
+          loading="lazy"
+          decoding="async"
           className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
         />
 

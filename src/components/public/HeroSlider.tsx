@@ -84,6 +84,9 @@ export default function HeroSlider({ slides }: HeroSliderProps) {
             <img
               src={slide.image}
               alt={slide.headline}
+              loading={idx === 0 ? 'eager' : 'lazy'}
+              fetchPriority={idx === 0 ? 'high' : 'low'}
+              decoding="async"
               className={`w-full h-full object-cover transition-transform duration-10000 ease-out ${
                 isActive ? 'scale-105' : 'scale-100'
               }`}

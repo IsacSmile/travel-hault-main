@@ -171,11 +171,11 @@ export default function AboutPage() {
           <div className="relative w-full aspect-[4/3] sm:aspect-[16/11]">
             <div className="absolute top-0 left-0 w-3/4 h-3/4 rounded-3xl overflow-hidden shadow-xl border border-gray-200">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={doc.missionImageBg} alt="Mission Background" className="w-full h-full object-cover" />
+              <img src={doc.missionImageBg} alt="Mission Background" loading="lazy" decoding="async" className="w-full h-full object-cover" />
             </div>
             <div className="absolute bottom-0 right-0 w-1/2 h-1/2 rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={doc.missionImageFg} alt="Mission Foreground" className="w-full h-full object-cover" />
+              <img src={doc.missionImageFg} alt="Mission Foreground" loading="lazy" decoding="async" className="w-full h-full object-cover" />
             </div>
           </div>
 
@@ -224,11 +224,11 @@ export default function AboutPage() {
           <div className="relative w-full aspect-[4/3] sm:aspect-[16/11] lg:order-2 order-1">
             <div className="absolute top-0 right-0 w-3/4 h-3/4 rounded-3xl overflow-hidden shadow-xl border border-gray-200">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={doc.visionImageBg} alt="Vision Background" className="w-full h-full object-cover" />
+              <img src={doc.visionImageBg} alt="Vision Background" loading="lazy" decoding="async" className="w-full h-full object-cover" />
             </div>
             <div className="absolute bottom-0 left-0 w-1/2 h-1/2 rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={doc.visionImageFg} alt="Vision Foreground" className="w-full h-full object-cover" />
+              <img src={doc.visionImageFg} alt="Vision Foreground" loading="lazy" decoding="async" className="w-full h-full object-cover" />
             </div>
           </div>
         </div>
@@ -239,11 +239,11 @@ export default function AboutPage() {
           <div className="relative w-full aspect-[4/3] sm:aspect-[16/11]">
             <div className="absolute top-0 left-0 w-3/4 h-3/4 rounded-3xl overflow-hidden shadow-xl border border-gray-200">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={doc.strengthImageBg} alt="Strength Background" className="w-full h-full object-cover" />
+              <img src={doc.strengthImageBg} alt="Strength Background" loading="lazy" decoding="async" className="w-full h-full object-cover" />
             </div>
             <div className="absolute bottom-0 right-0 w-1/2 h-1/2 rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={doc.strengthImageFg} alt="Strength Foreground" className="w-full h-full object-cover" />
+              <img src={doc.strengthImageFg} alt="Strength Foreground" loading="lazy" decoding="async" className="w-full h-full object-cover" />
             </div>
           </div>
 

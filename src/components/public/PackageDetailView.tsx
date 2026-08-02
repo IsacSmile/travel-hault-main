@@ -211,6 +211,8 @@ export default function PackageDetailView({ pkg, relatedPackages = [] }: Package
         <img
           src={galleryImages[carouselIdx]}
           alt={pkg.title}
+          loading="eager"
+          decoding="async"
           className="w-full h-full object-cover"
         />
         <button onClick={() => openLightbox(carouselIdx)} className="absolute top-3 right-3 bg-black/40 backdrop-blur-sm text-white rounded-full p-2 hover:bg-black/60 transition">
@@ -248,6 +250,8 @@ export default function PackageDetailView({ pkg, relatedPackages = [] }: Package
               <img
                 src={getImgUrl(slotIdx)}
                 alt={`Gallery ${slotIdx + 1}`}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition flex items-center justify-center">
@@ -265,6 +269,9 @@ export default function PackageDetailView({ pkg, relatedPackages = [] }: Package
           <img
             src={getImgUrl(2)}
             alt="Main Big Image"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
             className="w-full h-full object-cover transition-all duration-500"
           />
         </div>
@@ -282,6 +289,8 @@ export default function PackageDetailView({ pkg, relatedPackages = [] }: Package
               <img
                 src={getImgUrl(slotIdx)}
                 alt={`Gallery ${slotIdx + 1}`}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition flex items-center justify-center">
@@ -472,7 +481,7 @@ export default function PackageDetailView({ pkg, relatedPackages = [] }: Package
                               {dayImgs.map((img, i) => (
                                 <button key={i} onClick={() => openLightbox(galleryImages.indexOf(img) >= 0 ? galleryImages.indexOf(img) : 0)} className="h-28 rounded-lg overflow-hidden border border-gray-200 group relative">
                                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                                  <img src={img} alt={`Day ${day.dayNumber}`} className="w-full h-full object-cover group-hover:scale-105 transition" />
+                                  <img src={img} alt={`Day ${day.dayNumber}`} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition" />
                                 </button>
                               ))}
                             </div>

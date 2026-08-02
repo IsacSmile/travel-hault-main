@@ -72,7 +72,7 @@ export default function DestinationDetailView({ dest, relatedPackages }: Destina
       {/* Hero Banner */}
       <div className="relative h-[450px] rounded-3xl overflow-hidden shadow-xl border border-gray-200 bg-gray-900">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={dest.heroImage} alt={dest.name} className="w-full h-full object-cover" />
+        <img src={dest.heroImage} alt={dest.name} loading="eager" fetchPriority="high" decoding="async" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#1a1815] via-[#1a1815]/40 to-black/30" />
 
         <button
@@ -168,7 +168,7 @@ export default function DestinationDetailView({ dest, relatedPackages }: Destina
               >
                 <div className="h-44 rounded-2xl overflow-hidden bg-gray-100 relative">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={att.image} alt={att.name} className="w-full h-full object-cover" />
+                  <img src={att.image} alt={att.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                 </div>
                 <div className="space-y-1">
                   <h4 className="font-serif font-bold text-base text-[#1a1815]">{att.name}</h4>

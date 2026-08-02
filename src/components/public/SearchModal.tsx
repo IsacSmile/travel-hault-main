@@ -135,7 +135,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                   >
                     <div className="flex items-center gap-3">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={d.heroImage} alt={d.name} className="w-10 h-10 rounded-lg object-cover" />
+                      <img src={d.heroImage} alt={d.name} loading="lazy" decoding="async" className="w-10 h-10 rounded-lg object-cover" />
                       <div>
                         <div className="font-bold text-gray-900 text-sm">{d.name}</div>
                         <div className="text-xs text-gray-400">{d.stateOrCountry} • {d.categoryBadge}</div>
@@ -166,7 +166,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                     >
                       <div className="flex items-center gap-3">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={imgs[0]} alt={p.title} className="w-12 h-12 rounded-lg object-cover" />
+                        <img src={imgs[0]} alt={p.title} loading="lazy" decoding="async" className="w-12 h-12 rounded-lg object-cover" />
                         <div>
                           <div className="font-bold text-gray-900 text-sm line-clamp-1">{p.title}</div>
                           <div className="text-xs text-gray-400">{p.type} • {p.tripCode}</div>
