@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Send, CheckCircle2 } from 'lucide-react';
+import { Send, CheckCircle2, AlertCircle } from 'lucide-react';
+import TextCaptcha from '@/components/public/TextCaptcha';
+import { isValidEmail } from '@/lib/validation';
 
 export default function ContactForm() {
   const [name, setName] = useState('');
@@ -10,11 +12,27 @@ export default function ContactForm() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [subject, setSubject] = useState('General Enquiry');
   const [message, setMessage] = useState('');
+  const [captchaInput, setCaptchaInput] = useState('');
+  const [captchaCode, setCaptchaCode] = useState('');
+  const [captchaError, setCaptchaError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
+
+    if (!isValidEmail(email.trim())) {
+      return setErrorMessage('Please enter a valid email address (e.g. name@example.com).');
+    }
+
+    if (!captchaInput.trim() || captchaInput.toUpperCase().trim() !== captchaCode.toUpperCase().trim()) {
+      setCaptchaError(true);
+      return setErrorMessage('Incorrect security captcha code. Please type the characters shown in the image.');
+    }
+    setCaptchaError(false);
+
     setLoading(true);
 
     const fullPhone = `${countryCode} ${phoneNumber.trim()}`;
@@ -35,11 +53,12 @@ export default function ContactForm() {
       if (res.ok) {
         setSubmitted(true);
       } else {
-        alert('Failed to send message. Please try again.');
+        const data = await res.json();
+        setErrorMessage(data.error || 'Failed to send message. Please try again.');
       }
     } catch (e) {
       console.error(e);
-      alert('An error occurred. Please try again.');
+      setErrorMessage('An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -83,6 +102,13 @@ export default function ContactForm() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
+        {errorMessage && (
+          <div className="p-3.5 bg-red-50 border border-red-200 text-red-800 rounded-xl text-xs font-bold flex items-center gap-2.5 shadow-sm animate-in slide-in-from-top-2">
+            <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+            <span>{errorMessage}</span>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
             <label className="block text-[10px] font-extrabold uppercase text-gray-400 tracking-wider mb-1.5">
@@ -172,6 +198,14 @@ export default function ContactForm() {
             className="w-full p-4 bg-gray-50/50 border border-gray-200/80 rounded-xl text-sm outline-none focus:border-[#b8934b] shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] transition duration-200 resize-none"
           />
         </div>
+
+        {/* Captcha Verification */}
+        <TextCaptcha
+          value={captchaInput}
+          onChange={setCaptchaInput}
+          onCodeGenerated={setCaptchaCode}
+          error={captchaError}
+        />
 
         <button
           type="submit"

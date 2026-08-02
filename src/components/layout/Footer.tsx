@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Logo from '@/components/layout/Logo';
+import TextCaptcha from '@/components/public/TextCaptcha';
+import { isValidEmail } from '@/lib/validation';
 import {
   Phone,
   Mail,
@@ -25,6 +27,11 @@ export default function Footer() {
   const [subscribed, setSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fabOpen, setFabOpen] = useState(false);
+  const [captchaInput, setCaptchaInput] = useState('');
+  const [captchaCode, setCaptchaCode] = useState('');
+  const [captchaError, setCaptchaError] = useState(false);
+  const [subscribeError, setSubscribeError] = useState<string | null>(null);
+  const [showCaptcha, setShowCaptcha] = useState(false);
 
   // Settings State loaded from DB
   const [phoneNumbers, setPhoneNumbers] = useState<string[]>([
@@ -92,21 +99,46 @@ export default function Footer() {
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    setSubscribeError(null);
 
+    const trimmedEmail = email ? email.trim() : '';
+
+    if (!trimmedEmail || !isValidEmail(trimmedEmail)) {
+      setSubscribeError('Please enter a valid email address (e.g. name@domain.com).');
+      return;
+    }
+
+    if (!showCaptcha) {
+      setShowCaptcha(true);
+      return;
+    }
+
+    if (!captchaInput.trim() || captchaInput.toUpperCase().trim() !== captchaCode.toUpperCase().trim()) {
+      setCaptchaError(true);
+      setSubscribeError('Incorrect captcha code. Please verify the security characters.');
+      return;
+    }
+
+    setCaptchaError(false);
     setLoading(true);
     try {
       const res = await fetch('/api/public/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: trimmedEmail }),
       });
-      if (res.ok) {
+      const data = await res.json();
+      if (res.ok && data.success) {
         setSubscribed(true);
         setEmail('');
+        setShowCaptcha(false);
+        setCaptchaInput('');
+      } else {
+        setSubscribeError(data.error || 'Subscription failed. Please try again.');
       }
     } catch (e) {
       console.error(e);
+      setSubscribeError('A network error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -210,35 +242,66 @@ export default function Footer() {
           {activeSocialLinks.length > 0 && <div className="hidden lg:block w-px h-10 bg-gray-200 mx-2" />}
 
           {/* Newsletter Input Field */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <span className="font-extrabold text-sm sm:text-base text-[#1a1815] font-sans shrink-0">
-              Join our <br className="hidden sm:inline" /> Newsletter
-            </span>
+          <div className="flex flex-col space-y-2.5 w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+              <span className="font-extrabold text-sm sm:text-base text-[#1a1815] font-sans shrink-0">
+                Join our <br className="hidden sm:inline" /> Newsletter
+              </span>
 
-            {subscribed ? (
-              <div className="p-2.5 bg-emerald-50 text-emerald-800 rounded-full text-xs font-bold flex items-center gap-2 border border-emerald-200">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Thanks — you&apos;re subscribed!
-              </div>
-            ) : (
-              <form onSubmit={handleSubscribe} className="relative flex items-center w-full sm:w-[310px]">
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your e-mail"
-                  className="w-full pl-5 pr-14 py-3 bg-white border border-gray-200 rounded-full text-xs text-[#1a1815] placeholder-gray-400 outline-none focus:border-[#051b2e] shadow-2xs font-sans"
-                />
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="absolute right-1.5 w-9 h-9 rounded-full bg-[#051b2e] hover:bg-[#0a253e] text-white flex items-center justify-center transition shadow-xs"
-                  aria-label="Submit newsletter email"
-                >
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </form>
-            )}
+              {subscribed ? (
+                <div className="p-2.5 bg-emerald-50 text-emerald-800 rounded-full text-xs font-bold flex items-center gap-2 border border-emerald-200">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Thanks — you&apos;re subscribed!
+                </div>
+              ) : (
+                <form onSubmit={handleSubscribe} className="relative flex flex-col gap-2.5 w-full sm:w-[320px]">
+                  <div className="relative flex items-center w-full">
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        if (!showCaptcha && e.target.value.includes('@')) {
+                          setShowCaptcha(true);
+                        }
+                      }}
+                      placeholder="Enter your e-mail address"
+                      className="w-full pl-5 pr-14 py-3 bg-white border border-gray-200 rounded-full text-xs text-[#1a1815] placeholder-gray-400 outline-none focus:border-[#051b2e] shadow-2xs font-sans"
+                    />
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="absolute right-1.5 w-9 h-9 rounded-full bg-[#051b2e] hover:bg-[#0a253e] text-white flex items-center justify-center transition shadow-xs disabled:opacity-50"
+                      aria-label="Submit newsletter email"
+                    >
+                      {loading ? (
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <ArrowRight className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
+
+                  {showCaptcha && (
+                    <div className="bg-slate-50 p-3 rounded-2xl border border-gray-200 shadow-lg animate-in fade-in slide-in-from-top-2 duration-200 space-y-2">
+                      <TextCaptcha
+                        value={captchaInput}
+                        onChange={setCaptchaInput}
+                        onCodeGenerated={setCaptchaCode}
+                        error={captchaError}
+                        label="Security Verification"
+                      />
+                    </div>
+                  )}
+
+                  {subscribeError && (
+                    <div className="text-[11px] font-bold text-red-600 bg-red-50 p-2 rounded-lg border border-red-200">
+                      {subscribeError}
+                    </div>
+                  )}
+                </form>
+              )}
+            </div>
           </div>
         </div>
 

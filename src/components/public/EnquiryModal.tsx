@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import TextCaptcha from '@/components/public/TextCaptcha';
+import { isValidEmail } from '@/lib/validation';
 import {
   X,
   Send,
@@ -68,6 +70,9 @@ export default function EnquiryModal({
   const [budgetRange, setBudgetRange] = useState('Premium Comfort');
   const [duration, setDuration] = useState('6 to 8 Days');
   const [message, setMessage] = useState('');
+  const [captchaInput, setCaptchaInput] = useState('');
+  const [captchaCode, setCaptchaCode] = useState('');
+  const [captchaError, setCaptchaError] = useState(false);
 
   // UI State
   const [loading, setLoading] = useState(false);
@@ -173,11 +178,17 @@ export default function EnquiryModal({
     if (!email.trim()) return setErrorMessage('Email Address is required.');
     if (!phoneNo.trim()) return setErrorMessage('Phone Number is required.');
 
-    // 2. Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email.trim())) {
-      return setErrorMessage('Please enter a valid email address.');
+    // 2. Strict Email format validation
+    if (!isValidEmail(email.trim())) {
+      return setErrorMessage('Please enter a valid email address (e.g. name@example.com).');
     }
+
+    // 3. Captcha Security Verification
+    if (!captchaInput.trim() || captchaInput.toUpperCase().trim() !== captchaCode.toUpperCase().trim()) {
+      setCaptchaError(true);
+      return setErrorMessage('Incorrect security captcha code. Please type the characters shown in the image.');
+    }
+    setCaptchaError(false);
 
     // 3. Date Validations
     if (isBooking) {
@@ -674,6 +685,14 @@ export default function EnquiryModal({
                     className="w-full p-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#c9a15a] shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.02)] transition resize-y min-h-[75px]"
                   />
                 </div>
+
+                {/* Security Captcha Verification */}
+                <TextCaptcha
+                  value={captchaInput}
+                  onChange={setCaptchaInput}
+                  onCodeGenerated={setCaptchaCode}
+                  error={captchaError}
+                />
               </div>
             </div>
 

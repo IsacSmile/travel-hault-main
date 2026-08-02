@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { isValidEmail } from '@/lib/validation';
 
 export async function POST(request: Request) {
   try {
@@ -26,6 +27,13 @@ export async function POST(request: Request) {
     if (!name || (!email && !phone)) {
       return NextResponse.json(
         { success: false, error: 'Name and either Phone or Email are required' },
+        { status: 400 }
+      );
+    }
+
+    if (email && !isValidEmail(String(email))) {
+      return NextResponse.json(
+        { success: false, error: 'Please provide a valid email address (e.g. name@example.com)' },
         { status: 400 }
       );
     }
