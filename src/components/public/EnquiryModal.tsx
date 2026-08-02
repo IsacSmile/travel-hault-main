@@ -17,6 +17,10 @@ import {
   MapPin,
   BedDouble,
   ChevronDown,
+  Sparkles,
+  Clock,
+  Wallet,
+  MessageSquare,
 } from 'lucide-react';
 
 interface EnquiryModalProps {
@@ -28,6 +32,16 @@ interface EnquiryModalProps {
   } | null;
   defaultType?: string; // "PackageBooking" | "CustomItinerary"
 }
+
+const QUICK_DESTINATIONS = [
+  'Kashmir & Ladakh',
+  'Kerala Backwaters',
+  'Rajasthan Heritage',
+  'Himachal Pradesh',
+  'Goa Beach Holiday',
+  'Dubai Luxury',
+  'Thailand Escape',
+];
 
 export default function EnquiryModal({
   isOpen,
@@ -46,10 +60,13 @@ export default function EnquiryModal({
   const [departureDate, setDepartureDate] = useState('');
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
-  const [hotelType, setHotelType] = useState('3 Star (Standard)');
+  const [hotelType, setHotelType] = useState('4 Star (Premium)');
   const [numRooms, setNumRooms] = useState(1);
   const [pickupLocation, setPickupLocation] = useState('');
   const [dropLocation, setDropLocation] = useState('');
+  const [destinationsOfInterest, setDestinationsOfInterest] = useState(packageItem?.title || '');
+  const [budgetRange, setBudgetRange] = useState('Premium Comfort');
+  const [duration, setDuration] = useState('6 to 8 Days');
   const [message, setMessage] = useState('');
 
   // UI State
@@ -60,6 +77,13 @@ export default function EnquiryModal({
   const [travelerDropdownOpen, setTravelerDropdownOpen] = useState(false);
 
   const travelerRef = useRef<HTMLDivElement>(null);
+
+  // Synchronize initial destination if packageItem changes
+  useEffect(() => {
+    if (packageItem?.title) {
+      setDestinationsOfInterest(packageItem.title);
+    }
+  }, [packageItem]);
 
   // Close popover when clicking outside
   useEffect(() => {
@@ -95,10 +119,13 @@ export default function EnquiryModal({
       setDepartureDate('');
       setAdults(1);
       setChildren(0);
-      setHotelType('3 Star (Standard)');
+      setHotelType('4 Star (Premium)');
       setNumRooms(1);
       setPickupLocation('');
       setDropLocation('');
+      setDestinationsOfInterest('');
+      setBudgetRange('Premium Comfort');
+      setDuration('6 to 8 Days');
       setMessage('');
     }
   }, [submitted, countdown, onClose]);
@@ -127,6 +154,14 @@ export default function EnquiryModal({
   };
 
   const totalTravelers = adults + children;
+
+  const handleQuickDestinationSelect = (destName: string) => {
+    if (!destinationsOfInterest) {
+      setDestinationsOfInterest(destName);
+    } else if (!destinationsOfInterest.includes(destName)) {
+      setDestinationsOfInterest(`${destinationsOfInterest}, ${destName}`);
+    }
+  };
 
   // Validation & Submit Handler
   const handleSubmit = async (e: React.FormEvent) => {
@@ -157,6 +192,7 @@ export default function EnquiryModal({
     } else {
       // General CustomItinerary preferred date validation
       if (!arrivalDate) return setErrorMessage('Preferred Travel Date is required.');
+      if (!destinationsOfInterest.trim()) return setErrorMessage('Please specify your Destinations of Interest.');
     }
 
     // 4. Travelers check
@@ -175,16 +211,18 @@ export default function EnquiryModal({
         phone: fullPhone,
         message: message.trim(),
         packageId: packageItem?.id || null,
-        // Map fields correctly to DB
-        preferredDate: isBooking ? `${formatDateFriendly(arrivalDate)} to ${formatDateFriendly(departureDate)}` : formatDateFriendly(arrivalDate),
+        preferredDate: isBooking
+          ? `${formatDateFriendly(arrivalDate)} to ${formatDateFriendly(departureDate)}`
+          : `${formatDateFriendly(arrivalDate)} (${duration})`,
         arrivalDate: arrivalDate || null,
-        departureDate: departureDate || null,
+        departureDate: isBooking ? (departureDate || null) : null,
         numTravelers: `${totalTravelers} Traveler${totalTravelers > 1 ? 's' : ''} (${adults} Adult${adults > 1 ? 's' : ''}${children > 0 ? `, ${children} Child${children > 1 ? 'ren' : ''}` : ''})`,
-        hotelType: isBooking ? hotelType : null,
+        hotelType: hotelType,
         numRooms: isBooking ? numRooms : null,
         pickupLocation: isBooking ? pickupLocation.trim() : null,
         dropLocation: isBooking ? dropLocation.trim() : null,
-        destinationsOfInterest: packageItem?.title || 'Custom Plan',
+        budgetRange: budgetRange,
+        destinationsOfInterest: destinationsOfInterest.trim() || packageItem?.title || 'Custom Itinerary Plan',
       };
 
       const res = await fetch('/api/public/enquiry', {
@@ -211,10 +249,10 @@ export default function EnquiryModal({
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200">
       {/* Modal Container */}
-      <div className="bg-white w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl flex flex-col shadow-[0_10px_40px_rgba(0,0,0,0.12)] border border-gray-100 sm:rounded-3xl overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="bg-white w-full h-full sm:h-auto sm:max-h-[92vh] sm:max-w-2xl flex flex-col shadow-[0_10px_40px_rgba(0,0,0,0.12)] border border-gray-100 sm:rounded-3xl overflow-hidden animate-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="bg-[#051b2e] text-white px-6 py-5 relative shrink-0 flex items-center gap-4">
+        <div className="bg-[#051b2e] text-white px-6 py-5 relative shrink-0 flex items-center gap-4 border-b border-[#c9a15a]/20">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 p-2 text-gray-400 hover:text-white rounded-full hover:bg-white/10 transition"
@@ -224,15 +262,17 @@ export default function EnquiryModal({
             <X className="w-5 h-5" />
           </button>
 
-          <div className="w-10 h-10 rounded-xl bg-[#c9a15a] text-[#051b2e] flex items-center justify-center font-bold shrink-0 shadow-inner">
-            <Compass className="w-5.5 h-5.5" />
+          <div className="w-11 h-11 rounded-2xl bg-[#c9a15a] text-[#051b2e] flex items-center justify-center font-bold shrink-0 shadow-lg">
+            {isBooking ? <Compass className="w-6 h-6" /> : <Sparkles className="w-6 h-6" />}
           </div>
           <div className="pr-8">
             <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#c9a15a] block mb-0.5">
-              {isBooking ? 'Direct Package Booking Request' : 'Custom Tour Customizer'}
+              {isBooking ? 'Direct Package Booking Request' : 'Bespoke Tour Customizer'}
             </span>
-            <h2 className="text-base sm:text-lg font-bold font-serif line-clamp-1">
-              {packageItem ? `Book: ${packageItem.title}` : 'Plan Your Custom Itinerary'}
+            <h2 className="text-base sm:text-xl font-bold font-serif line-clamp-1">
+              {isBooking
+                ? packageItem ? `Book: ${packageItem.title}` : 'Direct Tour Booking'
+                : packageItem ? `Customize: ${packageItem.title}` : 'Plan Your Custom Itinerary'}
             </h2>
           </div>
         </div>
@@ -244,9 +284,9 @@ export default function EnquiryModal({
               <CheckCircle2 className="w-12 h-12" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-2xl font-bold font-serif text-gray-900">Enquiry Received!</h3>
+              <h3 className="text-2xl font-bold font-serif text-gray-900">Custom Itinerary Received!</h3>
               <p className="text-sm text-gray-600 leading-relaxed max-w-md mx-auto">
-                Thank you, <strong className="text-gray-900">{name}</strong>. Our travel coordinator has received your request for <strong>{packageItem?.title || 'your trip'}</strong> and will call you back shortly with a custom quote.
+                Thank you, <strong className="text-gray-900">{name}</strong>. Our custom trip architect is building your personalized itinerary for <strong>{destinationsOfInterest || packageItem?.title || 'your trip'}</strong> and will send a custom proposal shortly.
               </p>
             </div>
             <div className="pt-2 text-xs font-semibold text-gray-400">
@@ -264,7 +304,7 @@ export default function EnquiryModal({
           </div>
         ) : (
           /* Form View */
-          <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0 bg-gray-50/30">
+          <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0 bg-gray-50/30 font-sans">
             
             {/* Scrollable Form Body */}
             <div className="flex-1 overflow-y-auto px-6 py-6 space-y-5 max-h-[calc(100vh-140px)] sm:max-h-[calc(90vh-140px)]">
@@ -346,11 +386,47 @@ export default function EnquiryModal({
                   </div>
                 </div>
 
-                {/* 4 & 5. Arrival & Departure Dates */}
+                {!isBooking && (
+                  /* Custom Itinerary Specific: Destinations of Interest */
+                  <div className="space-y-2 bg-amber-50/40 p-4 rounded-2xl border border-[#c9a15a]/30">
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-extrabold uppercase text-[#051b2e] tracking-wider flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-[#c9a15a]" /> Destinations of Interest *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={destinationsOfInterest}
+                        onChange={(e) => setDestinationsOfInterest(e.target.value)}
+                        placeholder="e.g. Kashmir Valley, Pahalgam, Gulmarg..."
+                        className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#c9a15a] shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.02)] transition min-h-[44px]"
+                      />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-1.5">
+                        Quick Add Destinations:
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {QUICK_DESTINATIONS.map((dest) => (
+                          <button
+                            key={dest}
+                            type="button"
+                            onClick={() => handleQuickDestinationSelect(dest)}
+                            className="px-2.5 py-1 bg-white hover:bg-[#051b2e] text-gray-700 hover:text-[#c9a15a] border border-gray-200 rounded-lg text-[11px] font-bold transition shadow-sm active:scale-95"
+                          >
+                            + {dest}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Dates & Duration */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="block text-xs font-extrabold uppercase text-gray-500 tracking-wider">
-                      {isBooking ? 'Arrival Date *' : 'Preferred Travel Date *'}
+                      {isBooking ? 'Arrival Date *' : 'Preferred Travel Date / Month *'}
                     </label>
                     <div className="relative">
                       <Calendar className="absolute left-3.5 top-3.5 w-4 h-4 text-[#c9a15a]" />
@@ -387,21 +463,25 @@ export default function EnquiryModal({
                       <label className="block text-xs font-extrabold uppercase text-gray-500 tracking-wider">
                         Approx Duration
                       </label>
-                      <select
-                        value={hotelType} // Reused local state for general enquiries if custom itinerary
-                        onChange={(e) => setHotelType(e.target.value)}
-                        className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#c9a15a] shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.02)] transition min-h-[44px]"
-                      >
-                        <option value="1-3 Days">1 to 3 Days</option>
-                        <option value="4-7 Days">4 to 7 Days</option>
-                        <option value="8-14 Days">8 to 14 Days</option>
-                        <option value="15+ Days">15+ Days</option>
-                      </select>
+                      <div className="relative">
+                        <Clock className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400 pointer-events-none" />
+                        <select
+                          value={duration}
+                          onChange={(e) => setDuration(e.target.value)}
+                          className="w-full pl-10 pr-8 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#c9a15a] appearance-none shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.02)] transition min-h-[44px]"
+                        >
+                          <option value="3 to 5 Days">3 to 5 Days</option>
+                          <option value="6 to 8 Days">6 to 8 Days</option>
+                          <option value="9 to 12 Days">9 to 12 Days</option>
+                          <option value="14+ Days">14+ Days (Extended)</option>
+                        </select>
+                        <ChevronDown className="absolute right-3.5 top-4 w-4 h-4 text-gray-400 pointer-events-none" />
+                      </div>
                     </div>
                   )}
                 </div>
 
-                {/* 6. Travelers Stepper Selector */}
+                {/* Travelers Stepper Selector */}
                 <div className="space-y-1.5" ref={travelerRef}>
                   <label className="block text-xs font-extrabold uppercase text-gray-500 tracking-wider">
                     Number of Travelers *
@@ -479,95 +559,119 @@ export default function EnquiryModal({
                   </div>
                 </div>
 
+                {/* Hotel Category & Budget Style */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-extrabold uppercase text-gray-500 tracking-wider">
+                      Hotel Category
+                    </label>
+                    <div className="relative">
+                      <Building className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400" />
+                      <select
+                        value={hotelType}
+                        onChange={(e) => setHotelType(e.target.value)}
+                        className="w-full pl-10 pr-8 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#c9a15a] appearance-none shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.02)] transition min-h-[44px]"
+                      >
+                        <option value="3 Star (Standard)">3 Star (Standard)</option>
+                        <option value="4 Star (Premium)">4 Star (Premium)</option>
+                        <option value="5 Star (Luxury)">5 Star (Luxury)</option>
+                        <option value="Boutique / Heritage">Boutique / Heritage</option>
+                      </select>
+                      <ChevronDown className="absolute right-3.5 top-4 w-4 h-4 text-gray-400 pointer-events-none" />
+                    </div>
+                  </div>
+
+                  {!isBooking ? (
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-extrabold uppercase text-gray-500 tracking-wider">
+                        Budget Range
+                      </label>
+                      <div className="relative">
+                        <Wallet className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400" />
+                        <select
+                          value={budgetRange}
+                          onChange={(e) => setBudgetRange(e.target.value)}
+                          className="w-full pl-10 pr-8 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#c9a15a] appearance-none shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.02)] transition min-h-[44px]"
+                        >
+                          <option value="Standard Value">Standard / Value</option>
+                          <option value="Premium Comfort">Premium Comfort</option>
+                          <option value="Luxury Experience">Luxury Experience</option>
+                          <option value="Flexible Budget">Flexible Budget</option>
+                        </select>
+                        <ChevronDown className="absolute right-3.5 top-4 w-4 h-4 text-gray-400 pointer-events-none" />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-extrabold uppercase text-gray-500 tracking-wider">
+                        Number of Rooms
+                      </label>
+                      <div className="relative">
+                        <BedDouble className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400" />
+                        <input
+                          type="number"
+                          min={1}
+                          value={numRooms}
+                          onChange={(e) => setNumRooms(Math.max(1, parseInt(e.target.value) || 1))}
+                          className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#c9a15a] shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.02)] transition min-h-[44px]"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 {isBooking && (
-                  <>
-                    {/* 7 & 8. Hotel Category & Rooms */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
-                        <label className="block text-xs font-extrabold uppercase text-gray-500 tracking-wider">
-                          Hotel Category
-                        </label>
-                        <div className="relative">
-                          <Building className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400" />
-                          <select
-                            value={hotelType}
-                            onChange={(e) => setHotelType(e.target.value)}
-                            className="w-full pl-10 pr-8 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#c9a15a] appearance-none shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.02)] transition min-h-[44px]"
-                          >
-                            <option value="Budget">Budget / Standard</option>
-                            <option value="3 Star (Standard)">3 Star (Standard)</option>
-                            <option value="4 Star (Premium)">4 Star (Premium)</option>
-                            <option value="5 Star (Luxury)">5 Star (Luxury)</option>
-                          </select>
-                          <ChevronDown className="absolute right-3.5 top-4 w-4 h-4 text-gray-400 pointer-events-none" />
-                        </div>
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <label className="block text-xs font-extrabold uppercase text-gray-500 tracking-wider">
-                          Number of Rooms
-                        </label>
-                        <div className="relative">
-                          <BedDouble className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400" />
-                          <input
-                            type="number"
-                            min={1}
-                            value={numRooms}
-                            onChange={(e) => setNumRooms(Math.max(1, parseInt(e.target.value) || 1))}
-                            className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#c9a15a] shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.02)] transition min-h-[44px]"
-                          />
-                        </div>
+                  /* Pickup & Drop Locations for Direct Package Booking */
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-extrabold uppercase text-gray-500 tracking-wider">
+                        Pickup Location
+                      </label>
+                      <div className="relative">
+                        <MapPin className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400" />
+                        <input
+                          type="text"
+                          value={pickupLocation}
+                          onChange={(e) => setPickupLocation(e.target.value)}
+                          placeholder="e.g. Airport / Railway Stn"
+                          className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#c9a15a] shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.02)] transition min-h-[44px]"
+                        />
                       </div>
                     </div>
 
-                    {/* 9 & 10. Pickup & Drop Locations */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
-                        <label className="block text-xs font-extrabold uppercase text-gray-500 tracking-wider">
-                          Pickup Location
-                        </label>
-                        <div className="relative">
-                          <MapPin className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400" />
-                          <input
-                            type="text"
-                            value={pickupLocation}
-                            onChange={(e) => setPickupLocation(e.target.value)}
-                            placeholder="e.g. Airport / Railway Stn"
-                            className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#c9a15a] shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.02)] transition min-h-[44px]"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <label className="block text-xs font-extrabold uppercase text-gray-500 tracking-wider">
-                          Drop Location
-                        </label>
-                        <div className="relative">
-                          <MapPin className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400" />
-                          <input
-                            type="text"
-                            value={dropLocation}
-                            onChange={(e) => setDropLocation(e.target.value)}
-                            placeholder="e.g. Airport / Hotel"
-                            className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#c9a15a] shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.02)] transition min-h-[44px]"
-                          />
-                        </div>
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-extrabold uppercase text-gray-500 tracking-wider">
+                        Drop Location
+                      </label>
+                      <div className="relative">
+                        <MapPin className="absolute left-3.5 top-3.5 w-4 h-4 text-gray-400" />
+                        <input
+                          type="text"
+                          value={dropLocation}
+                          onChange={(e) => setDropLocation(e.target.value)}
+                          placeholder="e.g. Airport / Hotel"
+                          className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#c9a15a] shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.02)] transition min-h-[44px]"
+                        />
                       </div>
                     </div>
-                  </>
+                  </div>
                 )}
 
-                {/* 11. Custom message */}
+                {/* Message & Custom Requirements */}
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-extrabold uppercase text-gray-500 tracking-wider">
-                    Additional Message & Special Requests
+                  <label className="block text-xs font-extrabold uppercase text-gray-500 tracking-wider flex items-center gap-1.5">
+                    <MessageSquare className="w-3.5 h-3.5 text-gray-400" /> Special Requests & Travel Notes
                   </label>
                   <textarea
                     rows={isBooking ? 3 : 4}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Tell us about special requirements, group discounts, customized extensions, or arrangements..."
-                    className="w-full p-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#c9a15a] shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.02)] transition resize-y min-h-[70px]"
+                    placeholder={
+                      isBooking
+                        ? 'Tell us about special requirements, group discounts, or custom arrangements...'
+                        : 'Tell us about flight details, celebration plans (honeymoon, birthday), preferred sightseeing activities, or custom requests...'
+                    }
+                    className="w-full p-3 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#c9a15a] shadow-[inset_0_1.5px_3px_rgba(0,0,0,0.02)] transition resize-y min-h-[75px]"
                   />
                 </div>
               </div>
@@ -585,7 +689,8 @@ export default function EnquiryModal({
                   <div className="w-5 h-5 border-2 border-[#c9a15a] border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>
-                    <Send className="w-4 h-4" /> Send Booking Enquiry
+                    {isBooking ? <Send className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
+                    <span>{isBooking ? 'Send Booking Request' : 'Request Custom Itinerary Quote'}</span>
                   </>
                 )}
               </button>
@@ -602,7 +707,8 @@ export default function EnquiryModal({
                   <div className="w-5 h-5 border-2 border-[#c9a15a] border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>
-                    <Send className="w-4 h-4" /> Send Booking Enquiry
+                    {isBooking ? <Send className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
+                    <span>{isBooking ? 'Send Booking Request' : 'Request Custom Itinerary Quote'}</span>
                   </>
                 )}
               </button>
