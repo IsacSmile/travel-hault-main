@@ -114,7 +114,7 @@ export default async function HomePage() {
           <div className="text-center mt-10">
             <Link
               href="/gallery"
-              className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#051b2e] hover:bg-[#0a253e] text-[#c9a15a] font-bold text-xs rounded-xl shadow-md transition"
+              className="inline-flex items-center gap-2 px-7 py-3.5 min-h-[44px] bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-bold text-sm rounded-full transition-all duration-150 shadow-sm hover:-translate-y-px active:translate-y-0"
             >
               <span>View Full Gallery</span> <ArrowRight className="w-4 h-4" />
             </Link>

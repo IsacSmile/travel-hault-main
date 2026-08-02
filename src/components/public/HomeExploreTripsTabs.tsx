@@ -89,7 +89,7 @@ export default function HomeExploreTripsTabs({ initialPackages }: HomeExploreTri
       <div className="text-center pt-4">
         <Link
           href="/packages"
-          className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-bold text-xs rounded-xl shadow-lg transition"
+          className="inline-flex items-center gap-2 px-8 py-3 min-h-[44px] bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-bold text-sm rounded-full transition-all duration-150 shadow-sm hover:-translate-y-px active:translate-y-0"
         >
           <span>View All Tour Packages</span>
           <ArrowRight className="w-4 h-4" />

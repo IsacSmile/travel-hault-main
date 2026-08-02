@@ -100,7 +100,7 @@ export default function NotFound() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full max-w-sm sm:max-w-none mx-auto mb-10 sm:mb-12">
             <Link
               href="/"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 bg-[#051b2e] hover:bg-[#0a253e] text-white font-extrabold text-sm rounded-xl transition-all duration-200 shadow-lg hover:shadow-[#051b2e]/30 hover:-translate-y-0.5 active:translate-y-0"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 min-h-[44px] bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-extrabold text-sm rounded-full transition-all duration-150 shadow-md hover:-translate-y-px active:translate-y-0"
             >
               <Home className="w-4 h-4" />
               Back to Home
@@ -108,7 +108,7 @@ export default function NotFound() {
 
             <Link
               href="/packages"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 bg-white border-2 border-[#051b2e] text-[#051b2e] hover:bg-[#051b2e] hover:text-white font-extrabold text-sm rounded-xl transition-all duration-200 shadow-sm hover:-translate-y-0.5 active:translate-y-0"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 min-h-[44px] bg-white border-2 border-[#1a1815] text-[#1a1815] hover:bg-[#1a1815] hover:text-[#c9a15a] font-extrabold text-sm rounded-full transition-all duration-150 shadow-sm hover:-translate-y-px active:translate-y-0"
             >
               <Compass className="w-4 h-4" />
               Browse Packages

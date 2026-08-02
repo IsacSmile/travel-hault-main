@@ -92,7 +92,7 @@ export default function WishlistClient({ allPackages, allDestinations }: Wishlis
           <div className="pt-2">
             <Link
               href="/packages"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[#1a1815] text-[#c9a15a] font-bold text-xs rounded-xl shadow"
+              className="inline-flex items-center gap-2 px-6 py-3 min-h-[44px] bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-bold text-xs rounded-full transition-all duration-150 shadow-sm hover:-translate-y-px active:translate-y-0"
             >
               <span>Explore Tour Packages</span>
               <ArrowRight className="w-4 h-4" />
@@ -115,14 +115,14 @@ export default function WishlistClient({ allPackages, allDestinations }: Wishlis
             <div className="flex items-center gap-3">
               <button
                 onClick={clearWishlist}
-                className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 min-h-[44px] bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white text-xs font-bold rounded-full transition-all duration-150"
               >
                 <Trash2 className="w-4 h-4" /> Clear All
               </button>
 
               <button
                 onClick={() => setBulkModalOpen(true)}
-                className="px-6 py-2.5 bg-[#c9a15a] hover:bg-[#b8934b] text-[#1a1815] font-extrabold text-xs rounded-xl transition shadow-lg flex items-center gap-2"
+                className="inline-flex items-center gap-2 px-6 py-2.5 min-h-[44px] bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-extrabold text-xs rounded-full transition-all duration-150 shadow-md hover:-translate-y-px active:translate-y-0"
               >
                 <Send className="w-4 h-4" /> Enquire About All Wishlisted Items
               </button>

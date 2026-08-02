@@ -82,7 +82,7 @@ export default function ContactForm() {
             setPhoneNumber('');
             setMessage('');
           }}
-          className="px-6 py-3 bg-[#051b2e] hover:bg-[#0a253e] text-[#c9a15a] font-bold text-xs rounded-xl shadow transition"
+          className="inline-flex items-center gap-2 px-6 py-3 min-h-[44px] bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-bold text-xs rounded-full transition-all duration-150 shadow-sm hover:-translate-y-px active:translate-y-0"
         >
           Send Another Message
         </button>
@@ -210,7 +210,7 @@ export default function ContactForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-4 bg-[#051b2e] hover:bg-[#0a253e] text-[#c9a15a] font-extrabold text-sm rounded-xl transition flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 mt-2"
+          className="w-full inline-flex items-center justify-center gap-2 py-4 min-h-[44px] bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-extrabold text-sm rounded-full transition-all duration-150 shadow-md hover:-translate-y-px active:translate-y-0 disabled:opacity-50 mt-2"
         >
           {loading ? (
             <div className="w-5 h-5 border-2 border-[#c9a15a] border-t-transparent rounded-full animate-spin" />

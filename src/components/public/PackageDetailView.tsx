@@ -583,14 +583,14 @@ export default function PackageDetailView({ pkg, relatedPackages = [] }: Package
 
               <button
                 onClick={() => setEnquiryModalOpen(true)}
-                className="w-full py-3.5 bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-extrabold text-sm rounded-xl transition shadow-lg flex items-center justify-center gap-2"
+                className="w-full inline-flex items-center justify-center gap-2 py-3.5 min-h-[44px] bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-extrabold text-sm rounded-full transition-all duration-150 shadow-md hover:-translate-y-px active:translate-y-0"
               >
                 <Send className="w-4 h-4" /> Book Now
               </button>
 
               <button
                 onClick={() => toggleWishlist(pkg.id)}
-                className={`w-full py-3 rounded-xl text-xs font-bold border transition flex items-center justify-center gap-2 ${
+                className={`w-full inline-flex items-center justify-center gap-2 py-3 min-h-[44px] text-xs font-bold border rounded-full transition-all duration-150 ${
                   isInWishlist(pkg.id)
                     ? 'bg-red-50 text-red-600 border-red-200'
                     : 'bg-gray-50 text-gray-700 border-gray-200 hover:border-[#b8934b] hover:text-[#b8934b]'
@@ -605,7 +605,7 @@ export default function PackageDetailView({ pkg, relatedPackages = [] }: Package
             <div className="px-6 py-4 bg-[#f9f6f1] border-t border-gray-100 space-y-2">
               <p className="text-xs text-gray-600 font-medium">Need a custom itinerary?</p>
               <Link href="/contact"
-                className="w-full py-2.5 border border-[#1a1815] text-[#1a1815] text-xs font-bold rounded-xl hover:bg-[#1a1815] hover:text-white transition flex items-center justify-center gap-2">
+                className="w-full inline-flex items-center justify-center gap-2 py-2.5 min-h-[44px] border-2 border-[#1a1815] text-[#1a1815] text-xs font-bold rounded-full hover:bg-[#1a1815] hover:text-[#c9a15a] transition-all duration-150">
                 <Phone className="w-3.5 h-3.5" /> Contact Us
               </Link>
             </div>
@@ -657,7 +657,7 @@ export default function PackageDetailView({ pkg, relatedPackages = [] }: Package
         </div>
         <button
           onClick={() => setEnquiryModalOpen(true)}
-          className="px-6 py-3 bg-[#c9a15a] text-[#1a1815] font-extrabold text-xs rounded-xl shadow-lg flex items-center gap-2"
+          className="inline-flex items-center gap-2 px-6 py-3 min-h-[44px] bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-extrabold text-xs rounded-full transition-all duration-150 shadow-md hover:-translate-y-px active:translate-y-0"
         >
           <Send className="w-3.5 h-3.5" /> Book Now
         </button>

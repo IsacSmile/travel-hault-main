@@ -140,7 +140,7 @@ export default function DestinationDetailView({ dest, relatedPackages }: Destina
 
             <button
               onClick={() => setEnquiryModalOpen(true)}
-              className="w-full py-3.5 bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-bold rounded-xl transition flex items-center justify-center gap-2 shadow"
+              className="w-full inline-flex items-center justify-center gap-2 py-3.5 min-h-[44px] bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-bold rounded-full transition-all duration-150 shadow-md hover:-translate-y-px active:translate-y-0"
             >
               <Send className="w-4 h-4" /> Plan Trip To {dest.name}
             </button>

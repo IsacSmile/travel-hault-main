@@ -151,7 +151,7 @@ export default function PackageCard({ pkg }: PackageCardProps) {
 
           <Link
             href={`/packages/${pkg.slug}`}
-            className="px-4 py-2 bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-bold text-xs rounded-xl transition flex items-center gap-1.5 shadow"
+            className="inline-flex items-center gap-1.5 px-5 py-2 min-h-[44px] bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-bold text-xs rounded-full transition-all duration-150 shadow-sm hover:-translate-y-px active:translate-y-0"
           >
             <span>Explore Trip</span>
             <ArrowRight className="w-3.5 h-3.5" />
