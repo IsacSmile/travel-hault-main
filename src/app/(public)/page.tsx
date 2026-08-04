@@ -36,19 +36,19 @@ export default async function HomePage() {
     ]);
 
   return (
-    <div className="space-y-0 font-sans bg-white">
+    <div className="space-y-0 font-sans transition-colors duration-300" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
       {/* Hero Photo Section */}
       <HeroSlider slides={slides} />
 
-      {/* Section 1: Explore Packages (WHITE background) */}
-      <section className="bg-white py-12 sm:py-16 border-b border-gray-100">
+      {/* Section 1: Explore Packages (PRIMARY background) */}
+      <section className="py-12 sm:py-16 border-b border-gray-100/80 transition-colors duration-300" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <HomeExploreTripsTabs initialPackages={packages} />
         </div>
       </section>
 
-      {/* Section 2: Explore Destinations — Coverflow (WHITE background) */}
-      <section className="bg-white py-10 sm:py-14 border-b border-gray-100 overflow-hidden">
+      {/* Section 2: Explore Destinations — Coverflow (SECONDARY background) */}
+      <section className="py-10 sm:py-14 border-b border-gray-100/80 overflow-hidden transition-colors duration-300" style={{ backgroundColor: 'var(--color-bg-secondary)' }}>
         <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
           {/* Section Header */}
           <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-6 sm:mb-8 gap-4">
@@ -63,7 +63,7 @@ export default async function HomePage() {
 
             <Link
               href="/destinations"
-              className="text-sm font-extrabold text-black hover:text-[#b8934b] transition shrink-0 underline underline-offset-4 font-sans sm:mt-3"
+              className="text-sm font-extrabold text-black hover:text-[var(--color-accent)] transition shrink-0 underline underline-offset-4 font-sans sm:mt-3"
             >
               See All
             </Link>
@@ -74,12 +74,12 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Section 3: Visual Travel Diary (WHITE background) */}
-      <section className="bg-white py-12 sm:py-16 border-b border-gray-100">
+      {/* Section 3: Visual Travel Diary (PRIMARY background) */}
+      <section className="py-12 sm:py-16 border-b border-gray-100/80 transition-colors duration-300" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10 space-y-3">
-            <span className="text-xs font-extrabold uppercase tracking-widest text-[#b8934b] inline-flex items-center gap-1.5">
-              <Camera className="w-4 h-4 text-[#b8934b]" /> Captured Moments
+            <span className="text-xs font-extrabold uppercase tracking-widest text-site-accent inline-flex items-center gap-1.5" style={{ color: 'var(--color-accent)' }}>
+              <Camera className="w-4 h-4" style={{ color: 'var(--color-accent)' }} /> Captured Moments
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#051b2e]">
               Visual Travel Diary
@@ -93,7 +93,7 @@ export default async function HomePage() {
             {gallery.map((g: any) => (
               <div
                 key={g.id}
-                className="relative group rounded-3xl overflow-hidden h-60 bg-gray-100 border border-gray-200 shadow-sm hover:shadow-lg transition"
+                className="relative group rounded-3xl overflow-hidden h-60 bg-gray-100 border border-gray-200/80 shadow-sm hover:shadow-lg transition"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -102,7 +102,7 @@ export default async function HomePage() {
                   className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent p-4 flex flex-col justify-end">
-                  <span className="text-[10px] font-extrabold text-[#c9a15a] uppercase tracking-wider">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider" style={{ color: 'var(--color-accent)' }}>
                     {g.locationTag}
                   </span>
                   <p className="text-xs text-white font-medium line-clamp-1">{g.caption}</p>
@@ -115,6 +115,7 @@ export default async function HomePage() {
             <Link
               href="/gallery"
               className="inline-flex items-center gap-2 px-7 py-3.5 min-h-[44px] bg-[#1a1815] hover:bg-[#2b2722] text-[#c9a15a] font-bold text-sm rounded-full transition-all duration-150 shadow-sm hover:-translate-y-px active:translate-y-0"
+              style={{ color: 'var(--color-accent)' }}
             >
               <span>View Full Gallery</span> <ArrowRight className="w-4 h-4" />
             </Link>
@@ -122,29 +123,29 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Section 4: What Our Customers Say / Guest Reviews (WHITE background) */}
-      <section className="bg-white py-12 sm:py-16 border-b border-gray-100">
+      {/* Section 4: What Our Customers Say / Guest Reviews (SECONDARY background) */}
+      <section className="py-12 sm:py-16 border-b border-gray-100/80 transition-colors duration-300" style={{ backgroundColor: 'var(--color-bg-secondary)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <TestimonialsSection testimonials={testimonials} />
         </div>
       </section>
 
-      {/* Section 5: Destination By Region (WHITE background) */}
-      <section className="bg-white py-12 sm:py-16 border-b border-gray-100">
+      {/* Section 5: Destination By Region (PRIMARY background) */}
+      <section className="py-12 sm:py-16 border-b border-gray-100/80 transition-colors duration-300" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <DestinationByRegionSection initialRegions={regions} />
         </div>
       </section>
 
-      {/* Section 6: Trust Badges (WHITE background) */}
-      <section className="bg-white py-12 sm:py-16 border-b border-gray-100">
+      {/* Section 6: Trust Badges (SECONDARY background) */}
+      <section className="py-12 sm:py-16 border-b border-gray-100/80 transition-colors duration-300" style={{ backgroundColor: 'var(--color-bg-secondary)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <TrustBadgesSection badges={trustBadges} />
         </div>
       </section>
 
-      {/* Section 7: FAQ Accordion (WHITE background) */}
-      <section className="bg-white py-12 sm:py-16">
+      {/* Section 7: FAQ Accordion (PRIMARY background) */}
+      <section className="py-12 sm:py-16 transition-colors duration-300" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FAQAccordionSection faqs={faqs} />
         </div>

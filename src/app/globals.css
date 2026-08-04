@@ -4,6 +4,9 @@
   :root {
     --font-serif: 'Playfair Display', Georgia, serif;
     --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --color-bg-primary: #FFFFFF;
+    --color-bg-secondary: #F5F0E6;
+    --color-accent: #b8934b;
   }
 }
 
@@ -13,4 +16,25 @@
 
 .font-sans {
   font-family: var(--font-sans);
+}
+
+/* Custom Theme Dynamic Utility Classes */
+.bg-site-primary {
+  background-color: var(--color-bg-primary, #FFFFFF);
+}
+
+.bg-site-secondary {
+  background-color: var(--color-bg-secondary, #F5F0E6);
+}
+
+.text-site-accent {
+  color: var(--color-accent, #b8934b);
+}
+
+.bg-site-accent {
+  background-color: var(--color-accent, #b8934b);
+}
+
+.border-site-accent {
+  border-color: var(--color-accent, #b8934b);
 }

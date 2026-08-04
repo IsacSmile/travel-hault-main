@@ -58,6 +58,10 @@ export async function PUT(request: Request) {
       whatsappEnabled,
       messengerLink,
       messengerEnabled,
+      primaryBgColor,
+      secondaryBgColor,
+      accentColor,
+      themePreset,
     } = body;
 
     const updated = await prisma.siteSettings.upsert({
@@ -78,6 +82,10 @@ export async function PUT(request: Request) {
         whatsappEnabled: whatsappEnabled !== undefined ? Boolean(whatsappEnabled) : true,
         messengerLink: messengerLink !== undefined ? messengerLink : 'travelhault',
         messengerEnabled: messengerEnabled !== undefined ? Boolean(messengerEnabled) : true,
+        primaryBgColor: primaryBgColor || '#FFFFFF',
+        secondaryBgColor: secondaryBgColor || '#F5F0E6',
+        accentColor: accentColor || '#b8934b',
+        themePreset: themePreset || 'classic-ivory',
       },
       update: {
         phoneNumbersJson: JSON.stringify(phoneNumbers || []),
@@ -94,6 +102,10 @@ export async function PUT(request: Request) {
         whatsappEnabled: whatsappEnabled !== undefined ? Boolean(whatsappEnabled) : true,
         messengerLink: messengerLink !== undefined ? messengerLink : 'travelhault',
         messengerEnabled: messengerEnabled !== undefined ? Boolean(messengerEnabled) : true,
+        primaryBgColor: primaryBgColor || '#FFFFFF',
+        secondaryBgColor: secondaryBgColor || '#F5F0E6',
+        accentColor: accentColor || '#b8934b',
+        themePreset: themePreset || 'classic-ivory',
       },
     });
 

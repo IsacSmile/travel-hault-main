@@ -18,6 +18,10 @@ export async function GET() {
         workingHours: true,
         gstinNumber: true,
         socialLinksJson: true,
+        primaryBgColor: true,
+        secondaryBgColor: true,
+        accentColor: true,
+        themePreset: true,
       },
     });
 
@@ -27,6 +31,10 @@ export async function GET() {
         whatsappEnabled: true,
         messengerLink: 'travelhault',
         messengerEnabled: true,
+        primaryBgColor: '#FFFFFF',
+        secondaryBgColor: '#F5F0E6',
+        accentColor: '#b8934b',
+        themePreset: 'classic-ivory',
         phoneNumbersJson: JSON.stringify(['+91 74075 24498']),
         email: 'hello@travelhault.com',
         address: 'Suite 402, Signature Towers, MG Road, New Delhi - 110001',
@@ -53,6 +61,10 @@ export async function GET() {
       whatsappEnabled: true,
       messengerLink: 'travelhault',
       messengerEnabled: true,
+      primaryBgColor: '#FFFFFF',
+      secondaryBgColor: '#F5F0E6',
+      accentColor: '#b8934b',
+      themePreset: 'classic-ivory',
       phoneNumbersJson: JSON.stringify(['+91 74075 24498']),
       email: 'hello@travelhault.com',
     });

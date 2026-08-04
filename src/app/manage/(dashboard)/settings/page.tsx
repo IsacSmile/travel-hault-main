@@ -17,6 +17,11 @@ import {
   Eye,
   EyeOff,
   LayoutGrid,
+  Palette,
+  RotateCcw,
+  Sparkles,
+  CheckCircle2,
+  AlertTriangle,
 } from 'lucide-react';
 
 interface SocialLinkItem {
@@ -24,6 +29,93 @@ interface SocialLinkItem {
   platform: string;
   url: string;
   isActive: boolean;
+}
+
+interface ThemePresetItem {
+  id: string;
+  name: string;
+  description: string;
+  primaryBg: string;
+  secondaryBg: string;
+  accent: string;
+}
+
+const PRESET_PALETTES: ThemePresetItem[] = [
+  {
+    id: 'classic-ivory',
+    name: 'Classic Ivory',
+    description: 'Original white & soft warm beige with gold accent',
+    primaryBg: '#FFFFFF',
+    secondaryBg: '#F5F0E6',
+    accent: '#b8934b',
+  },
+  {
+    id: 'warm-linen',
+    name: 'Warm Linen',
+    description: 'Earthy cream & linen tones with warm bronze',
+    primaryBg: '#FAF8F5',
+    secondaryBg: '#EFECE6',
+    accent: '#A67C37',
+  },
+  {
+    id: 'crisp-snow',
+    name: 'Crisp Snow',
+    description: 'Pure white & cool slate-tinted background',
+    primaryBg: '#F8FAFC',
+    secondaryBg: '#EDF2F7',
+    accent: '#2563EB',
+  },
+  {
+    id: 'desert-sands',
+    name: 'Desert Sands',
+    description: 'Sun-kissed sand background with warm terracotta accent',
+    primaryBg: '#FFFDF9',
+    secondaryBg: '#F7EBE1',
+    accent: '#C25E00',
+  },
+  {
+    id: 'soft-pearl',
+    name: 'Soft Pearl',
+    description: 'Ultra-soft off-white pearl with subtle champagne gold',
+    primaryBg: '#FDFBF7',
+    secondaryBg: '#F4ECE1',
+    accent: '#9E7B3B',
+  },
+  {
+    id: 'nordic-slate',
+    name: 'Nordic Slate',
+    description: 'Modern minimalist light grey with deep slate navy',
+    primaryBg: '#F8FAFC',
+    secondaryBg: '#E2E8F0',
+    accent: '#0F172A',
+  },
+];
+
+function getContrastRatio(hexColor1: string, hexColor2: string = '#051b2e'): number {
+  const getLuminance = (hex: string) => {
+    let cleaned = hex.replace('#', '');
+    if (cleaned.length === 3) {
+      cleaned = cleaned.split('').map((c) => c + c).join('');
+    }
+    const r = parseInt(cleaned.substring(0, 2), 16) / 255;
+    const g = parseInt(cleaned.substring(2, 4), 16) / 255;
+    const b = parseInt(cleaned.substring(4, 6), 16) / 255;
+
+    const a = [r, g, b].map((v) =>
+      v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)
+    );
+    return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+  };
+
+  try {
+    const l1 = getLuminance(hexColor1);
+    const l2 = getLuminance(hexColor2);
+    const brightest = Math.max(l1, l2);
+    const darkest = Math.min(l1, l2);
+    return (brightest + 0.05) / (darkest + 0.05);
+  } catch {
+    return 21;
+  }
 }
 
 const PREDEFINED_PLATFORMS = [
@@ -66,6 +158,12 @@ export default function SiteSettingsPage() {
   const [whatsappEnabled, setWhatsappEnabled] = useState(true);
   const [messengerLink, setMessengerLink] = useState('travelhault');
   const [messengerEnabled, setMessengerEnabled] = useState(true);
+
+  // Background Theme Palette State
+  const [primaryBgColor, setPrimaryBgColor] = useState('#FFFFFF');
+  const [secondaryBgColor, setSecondaryBgColor] = useState('#F5F0E6');
+  const [accentColor, setAccentColor] = useState('#b8934b');
+  const [themePreset, setThemePreset] = useState('classic-ivory');
 
   const [activeLegalTab, setActiveLegalTab] = useState<'privacy' | 'terms' | 'cancellation' | 'cookie'>('privacy');
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -117,6 +215,11 @@ export default function SiteSettingsPage() {
           setWhatsappEnabled(data.whatsappEnabled !== undefined ? Boolean(data.whatsappEnabled) : true);
           setMessengerLink(data.messengerLink || 'travelhault');
           setMessengerEnabled(data.messengerEnabled !== undefined ? Boolean(data.messengerEnabled) : true);
+
+          setPrimaryBgColor(data.primaryBgColor || '#FFFFFF');
+          setSecondaryBgColor(data.secondaryBgColor || '#F5F0E6');
+          setAccentColor(data.accentColor || '#b8934b');
+          setThemePreset(data.themePreset || 'classic-ivory');
         }
       } catch (e) {
         console.error(e);
@@ -150,17 +253,35 @@ export default function SiteSettingsPage() {
           whatsappEnabled,
           messengerLink,
           messengerEnabled,
+          primaryBgColor,
+          secondaryBgColor,
+          accentColor,
+          themePreset,
         }),
       });
 
       if (!res.ok) throw new Error('Failed to save settings');
-      alert('Site settings updated successfully!');
+      alert('Site settings & background theme updated successfully!');
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Save error';
       alert(msg);
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleSelectPreset = (preset: ThemePresetItem) => {
+    setPrimaryBgColor(preset.primaryBg);
+    setSecondaryBgColor(preset.secondaryBg);
+    setAccentColor(preset.accent);
+    setThemePreset(preset.id);
+  };
+
+  const handleResetTheme = () => {
+    setPrimaryBgColor('#FFFFFF');
+    setSecondaryBgColor('#F5F0E6');
+    setAccentColor('#b8934b');
+    setThemePreset('classic-ivory');
   };
 
   // Social Links Handlers
@@ -250,6 +371,304 @@ export default function SiteSettingsPage() {
       </div>
 
       <form onSubmit={handleSave} className="space-y-8">
+        {/* 0. SITE BACKGROUND THEME & COLOR PALETTE MANAGER */}
+        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-4 gap-3">
+            <div>
+              <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
+                <Palette className="w-5 h-5 text-[#b8934b]" /> Site Background & Color Theme
+              </h2>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Customize site-wide background colors and brand accents while maintaining minimal luxury design standards.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleResetTheme}
+              className="px-3.5 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition flex items-center gap-1.5 shrink-0 self-start sm:self-auto"
+              title="Reset to default minimal palette"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-gray-500" /> Reset to Classic Palette
+            </button>
+          </div>
+
+          {/* Curated Preset Palettes */}
+          <div className="space-y-3">
+            <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-[#b8934b]" /> Curated Minimal Preset Combinations
+            </label>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {PRESET_PALETTES.map((preset) => {
+                const isSelected = themePreset === preset.id &&
+                  primaryBgColor.toUpperCase() === preset.primaryBg.toUpperCase() &&
+                  secondaryBgColor.toUpperCase() === preset.secondaryBg.toUpperCase();
+
+                return (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    onClick={() => handleSelectPreset(preset)}
+                    className={`p-3.5 rounded-xl border text-left transition flex flex-col justify-between gap-3 ${
+                      isSelected
+                        ? 'bg-amber-50/50 border-[#b8934b] ring-2 ring-[#b8934b]/20 shadow-xs'
+                        : 'bg-white border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-xs text-gray-900">{preset.name}</span>
+                        {isSelected && (
+                          <span className="px-2 py-0.5 bg-[#b8934b] text-white text-[10px] font-extrabold rounded-full">
+                            Active
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-gray-500 mt-1 leading-snug">{preset.description}</p>
+                    </div>
+
+                    {/* Color Swatch Indicators */}
+                    <div className="flex items-center gap-2 pt-1 border-t border-gray-100">
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className="w-4 h-4 rounded-full border border-gray-300 shadow-2xs"
+                          style={{ backgroundColor: preset.primaryBg }}
+                          title={`Primary BG: ${preset.primaryBg}`}
+                        />
+                        <span
+                          className="w-4 h-4 rounded-full border border-gray-300 shadow-2xs"
+                          style={{ backgroundColor: preset.secondaryBg }}
+                          title={`Secondary BG: ${preset.secondaryBg}`}
+                        />
+                        <span
+                          className="w-4 h-4 rounded-full border border-gray-300 shadow-2xs"
+                          style={{ backgroundColor: preset.accent }}
+                          title={`Accent: ${preset.accent}`}
+                        />
+                      </div>
+                      <span className="text-[10px] font-mono text-gray-400 ml-auto">
+                        {preset.primaryBg} / {preset.secondaryBg}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Custom Color Pickers & WCAG AA Contrast Check */}
+          <div className="pt-2 space-y-4">
+            <label className="block text-xs font-bold uppercase tracking-wider text-gray-700">
+              Custom Color Controls & Contrast Validation
+            </label>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Primary Background */}
+              <div className="p-4 rounded-xl border border-gray-200 bg-gray-50/50 space-y-2">
+                <label className="block text-xs font-bold text-gray-800">Primary Background</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={primaryBgColor}
+                    onChange={(e) => {
+                      setPrimaryBgColor(e.target.value);
+                      setThemePreset('custom');
+                    }}
+                    className="w-9 h-9 rounded-lg border border-gray-300 cursor-pointer p-0.5 bg-white"
+                  />
+                  <input
+                    type="text"
+                    value={primaryBgColor}
+                    onChange={(e) => {
+                      setPrimaryBgColor(e.target.value);
+                      setThemePreset('custom');
+                    }}
+                    className="flex-1 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-mono font-bold uppercase"
+                  />
+                </div>
+                <span className="text-[10px] text-gray-500 block">Main page background canvas</span>
+              </div>
+
+              {/* Secondary Background */}
+              <div className="p-4 rounded-xl border border-gray-200 bg-gray-50/50 space-y-2">
+                <label className="block text-xs font-bold text-gray-800">Secondary Background</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={secondaryBgColor}
+                    onChange={(e) => {
+                      setSecondaryBgColor(e.target.value);
+                      setThemePreset('custom');
+                    }}
+                    className="w-9 h-9 rounded-lg border border-gray-300 cursor-pointer p-0.5 bg-white"
+                  />
+                  <input
+                    type="text"
+                    value={secondaryBgColor}
+                    onChange={(e) => {
+                      setSecondaryBgColor(e.target.value);
+                      setThemePreset('custom');
+                    }}
+                    className="flex-1 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-mono font-bold uppercase"
+                  />
+                </div>
+                <span className="text-[10px] text-gray-500 block">Alternating section background</span>
+              </div>
+
+              {/* Brand Accent Color */}
+              <div className="p-4 rounded-xl border border-gray-200 bg-gray-50/50 space-y-2">
+                <label className="block text-xs font-bold text-gray-800">Brand Accent Color</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={accentColor}
+                    onChange={(e) => {
+                      setAccentColor(e.target.value);
+                      setThemePreset('custom');
+                    }}
+                    className="w-9 h-9 rounded-lg border border-gray-300 cursor-pointer p-0.5 bg-white"
+                  />
+                  <input
+                    type="text"
+                    value={accentColor}
+                    onChange={(e) => {
+                      setAccentColor(e.target.value);
+                      setThemePreset('custom');
+                    }}
+                    className="flex-1 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-mono font-bold uppercase"
+                  />
+                </div>
+                <span className="text-[10px] text-gray-500 block">Buttons, badges & active links</span>
+              </div>
+            </div>
+
+            {/* Contrast Checker Badges */}
+            {(() => {
+              const primaryRatio = getContrastRatio(primaryBgColor, '#051b2e');
+              const secondaryRatio = getContrastRatio(secondaryBgColor, '#051b2e');
+              const isPrimaryPass = primaryRatio >= 4.5;
+              const isSecondaryPass = secondaryRatio >= 4.5;
+
+              return (
+                <div className="flex flex-col sm:flex-row gap-3 pt-1">
+                  <div
+                    className={`flex-1 p-3 rounded-xl border text-xs flex items-center gap-2.5 ${
+                      isPrimaryPass
+                        ? 'bg-emerald-50/60 border-emerald-200 text-emerald-900'
+                        : 'bg-amber-50/60 border-amber-200 text-amber-900'
+                    }`}
+                  >
+                    {isPrimaryPass ? (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    ) : (
+                      <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                    )}
+                    <div>
+                      <span className="font-bold">Primary BG Contrast: {primaryRatio.toFixed(1)}:1</span>
+                      <span className="block text-[11px] opacity-80">
+                        {isPrimaryPass
+                          ? 'WCAG AA Compliant (Passes 4.5:1 text readability)'
+                          : 'Warning: Low text contrast! Dark body text may be hard to read.'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div
+                    className={`flex-1 p-3 rounded-xl border text-xs flex items-center gap-2.5 ${
+                      isSecondaryPass
+                        ? 'bg-emerald-50/60 border-emerald-200 text-emerald-900'
+                        : 'bg-amber-50/60 border-amber-200 text-amber-900'
+                    }`}
+                  >
+                    {isSecondaryPass ? (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    ) : (
+                      <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                    )}
+                    <div>
+                      <span className="font-bold">Secondary BG Contrast: {secondaryRatio.toFixed(1)}:1</span>
+                      <span className="block text-[11px] opacity-80">
+                        {isSecondaryPass
+                          ? 'WCAG AA Compliant (Passes 4.5:1 section contrast)'
+                          : 'Warning: Low text contrast! Section text may be hard to read.'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+
+          {/* Live Preview Panel */}
+          <div className="pt-2 space-y-2">
+            <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 flex items-center justify-between">
+              <span>Real-Time Public Site Live Preview</span>
+              <span className="text-[10px] font-normal text-gray-400">Updates live as you adjust colors</span>
+            </label>
+
+            <div className="border border-gray-300 rounded-2xl overflow-hidden shadow-sm">
+              {/* Simulated Header */}
+              <div className="bg-[#051b2e] px-4 py-3 text-white flex items-center justify-between text-xs">
+                <span className="font-bold font-serif tracking-wider flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: accentColor }} />
+                  TRAVEL & HAULT
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-white/70">
+                  Header Navigation
+                </span>
+              </div>
+
+              {/* Simulated Primary Section */}
+              <div className="p-5 space-y-4" style={{ backgroundColor: primaryBgColor }}>
+                <div>
+                  <span
+                    className="text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-full inline-block mb-1.5"
+                    style={{ backgroundColor: `${accentColor}20`, color: accentColor }}
+                  >
+                    FEATURED TRIPS
+                  </span>
+                  <h3 className="text-base font-bold font-serif text-[#051b2e]">
+                    Handcrafted Luxury Itineraries
+                  </h3>
+                  <p className="text-xs text-gray-600 mt-0.5">
+                    Sample body text rendered against your primary background setting.
+                  </p>
+                </div>
+
+                {/* Simulated Secondary Section Card */}
+                <div
+                  className="p-4 rounded-xl border border-black/10 space-y-3 transition-colors duration-200"
+                  style={{ backgroundColor: secondaryBgColor }}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#051b2e]">Alternating Section Card</span>
+                    <span
+                      className="text-[10px] font-bold px-2 py-0.5 rounded text-white"
+                      style={{ backgroundColor: accentColor }}
+                    >
+                      7 Days
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-600">
+                    Sample card content showing secondary background fill contrast.
+                  </p>
+                  <div className="pt-1 flex items-center justify-between border-t border-black/10">
+                    <span className="text-xs font-extrabold text-[#051b2e]">₹45,000 / person</span>
+                    <button
+                      type="button"
+                      className="px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow-2xs"
+                      style={{ backgroundColor: accentColor }}
+                    >
+                      Book Now
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* 1. SOCIAL LINKS MANAGEMENT */}
         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-6">
           <div className="flex items-center justify-between border-b pb-3">

@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -227,6 +227,10 @@ model SiteSettings {
   whatsappEnabled    Boolean  @default(true)
   messengerLink      String   @default("travelhault")
   messengerEnabled   Boolean  @default(true)
+  primaryBgColor     String   @default("#FFFFFF")
+  secondaryBgColor   String   @default("#F5F0E6")
+  accentColor        String   @default("#b8934b")
+  themePreset        String   @default("classic-ivory")
   updatedAt          DateTime @updatedAt
 }
 
